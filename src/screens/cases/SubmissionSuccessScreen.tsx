@@ -12,11 +12,12 @@ import { useTheme } from '../../hooks/useTheme';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
 
 interface Props {
-  submittedCase: Case;
+  route: { params: { submittedCase: Case } };
   navigation: any;
 }
 
-export default function SubmissionSuccessScreen({ submittedCase, navigation }: Props) {
+export default function SubmissionSuccessScreen({ route, navigation }: Props) {
+  const { submittedCase } = route.params;
   const { colors, typography } = useTheme();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
