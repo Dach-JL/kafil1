@@ -24,13 +24,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchProfile(userId: string) {
+  async function fetchProfile(userObj: User) {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('id', userObj.id)
       .single();
       
+    if (error?.code === 'PGRST116') {
+      const { data: newProfile } = await supabase.from('profiles').insert({
+        id: userObj.id,
+        name: userObj.user_metadata?.name || 'Anonymous User',
+        email: userObj.email || '',
+        role: userObj.user_metadata?.role || 'contributor'
+      }).select().single();
+
+      if (newProfile) {
+        setProfile(newProfile);
+        return;
+      }
+    }
+
     if (!error && data) {
       setProfile(data);
     }
@@ -41,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id).finally(() => setLoading(false));
+        fetchProfile(session.user).finally(() => setLoading(false));
       } else {
         setLoading(false);
       }
@@ -52,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       if (!session) setProfile(null);
       if (session?.user) {
-        fetchProfile(session.user.id).finally(() => setLoading(false));
+        fetchProfile(session.user).finally(() => setLoading(false));
       } else {
         setLoading(false);
       }
