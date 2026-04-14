@@ -19,6 +19,18 @@ export async function getPublicCases(category?: CaseCategory): Promise<Case[]> {
   return data as Case[];
 }
 
+// Admin: Fetch all cases pending review
+export async function getPendingCases(): Promise<Case[]> {
+  const { data, error } = await supabase
+    .from('cases')
+    .select('*')
+    .eq('status', 'PENDING_REVIEW')
+    .order('updated_at', { ascending: true }); // Oldest first
+
+  if (error) throw error;
+  return data as Case[];
+}
+
 // Fetch cases owned by the current user
 export async function getMyCases(userId: string): Promise<Case[]> {
   const { data, error } = await supabase

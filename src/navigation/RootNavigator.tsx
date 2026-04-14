@@ -2,15 +2,21 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Home, FolderHeart, User } from 'lucide-react-native';
+import { Home, FolderHeart, User, ShieldAlert } from 'lucide-react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { useTheme } from '../hooks/useTheme';
+import { useAuth } from '../supabase/AuthContext';
 import HomeScreen from '../screens/HomeScreen';
 import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import CreateCaseScreen from '../screens/cases/CreateCaseScreen';
+import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
+
+import AdminQueueScreen from '../screens/admin/AdminQueueScreen';
+import AdminCaseVerificationScreen from '../screens/admin/AdminCaseVerificationScreen';
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -18,6 +24,7 @@ const AuthStack = createNativeStackNavigator();
 
 function TabNavigator() {
   const { colors, typography } = useTheme();
+  const { profile } = useAuth();
 
   return (
     <Tab.Navigator
@@ -53,6 +60,16 @@ function TabNavigator() {
           title: 'Cases',
         }}
       />
+      {profile?.role === 'admin' && (
+        <Tab.Screen 
+          name="AdminQueue" 
+          component={AdminQueueScreen} 
+          options={{
+            tabBarIcon: ({ color, size }) => <ShieldAlert color={color} size={size} />,
+            title: 'Verify',
+          }}
+        />
+      )}
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen} 
@@ -63,10 +80,6 @@ function TabNavigator() {
     </Tab.Navigator>
   );
 }
-
-import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
-import { useAuth } from '../supabase/AuthContext';
-import { ActivityIndicator, View } from 'react-native';
 
 function MainNavigator() {
   return (
@@ -80,6 +93,10 @@ function MainNavigator() {
       <MainStack.Screen 
         name="SubmissionSuccess" 
         component={SubmissionSuccessScreen}
+      />
+      <MainStack.Screen 
+        name="AdminCaseVerification" 
+        component={AdminCaseVerificationScreen}
       />
     </MainStack.Navigator>
   );
