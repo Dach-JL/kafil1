@@ -10,9 +10,11 @@ import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
+import CreateCaseScreen from '../screens/cases/CreateCaseScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
+const MainStack = createNativeStackNavigator();
+const AuthStack = createNativeStackNavigator();
 
 function TabNavigator() {
   const { colors, typography } = useTheme();
@@ -65,10 +67,23 @@ function TabNavigator() {
 import { useAuth } from '../supabase/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 
+function MainNavigator() {
+  return (
+    <MainStack.Navigator screenOptions={{ headerShown: false }}>
+      <MainStack.Screen name="Tabs" component={TabNavigator} />
+      <MainStack.Screen
+        name="CreateCase"
+        component={CreateCaseScreen}
+        options={{ presentation: 'modal' }}
+      />
+    </MainStack.Navigator>
+  );
+}
+
 export default function RootNavigator() {
   const { colors } = useTheme();
   const { session, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
@@ -79,16 +94,16 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <AuthStack.Navigator screenOptions={{ headerShown: false }}>
         {session ? (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <AuthStack.Screen name="Main" component={MainNavigator} />
         ) : (
           <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+            <AuthStack.Screen name="Login" component={LoginScreen} />
+            <AuthStack.Screen name="Register" component={RegisterScreen} />
           </>
         )}
-      </Stack.Navigator>
+      </AuthStack.Navigator>
     </NavigationContainer>
   );
 }
