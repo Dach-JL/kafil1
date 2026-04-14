@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function SubmissionSuccessScreen({ route, navigation }: Props) {
-  const { submittedCase } = route.params;
+  const submittedCase = route.params.submittedCase as Case;
   const { colors, typography } = useTheme();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;

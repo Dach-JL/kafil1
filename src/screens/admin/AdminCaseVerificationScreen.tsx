@@ -24,7 +24,7 @@ interface Props {
 }
 
 export default function AdminCaseVerificationScreen({ route, navigation }: Props) {
-  const { caseInfo } = route.params;
+  const caseInfo = route.params.caseInfo as Case;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
   
