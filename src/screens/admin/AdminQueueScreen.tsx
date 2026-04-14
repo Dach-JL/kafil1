@@ -10,9 +10,9 @@ import {
   RefreshControl,
 } from 'react-native';
 import { ShieldAlert, AlertCircle, Clock } from 'lucide-react-native';
-import { useTheme } from '../hooks/useTheme';
-import { getPendingCases } from '../api/cases';
-import { Case, CATEGORY_LABELS } from '../types/cases';
+import { useTheme } from '../../hooks/useTheme';
+import { getPendingCases } from '../../api/cases';
+import { Case, CATEGORY_LABELS } from '../../types/cases';
 import { formatDistanceToNow } from 'date-fns';
 
 function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {

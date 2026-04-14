@@ -12,7 +12,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
 
 interface Props {
-  route: { params: { submittedCase: Case } };
+  route: any;
   navigation: any;
 }
 

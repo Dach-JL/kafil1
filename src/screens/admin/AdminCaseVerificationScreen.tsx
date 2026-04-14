@@ -19,7 +19,7 @@ import { Check, X, FileText, Download, ArrowLeft } from 'lucide-react-native';
 import { format } from 'date-fns';
 
 interface Props {
-  route: { params: { caseInfo: Case } };
+  route: any;
   navigation: any;
 }
 
@@ -88,7 +88,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
         {
           text: 'Reject',
           style: 'destructive',
-          onPress: async (reason) => {
+          onPress: async (reason: string | undefined) => {
             if (!reason?.trim()) {
               Alert.alert('Required', 'You must provide a rejection reason.');
               return;
