@@ -17,6 +17,8 @@ import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
 
 import AdminQueueScreen from '../screens/admin/AdminQueueScreen';
 import AdminCaseVerificationScreen from '../screens/admin/AdminCaseVerificationScreen';
+import AdminContributionsScreen from '../screens/admin/AdminContributionsScreen';
+import AdminContributionDetailScreen from '../screens/admin/AdminContributionDetailScreen';
 import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 import FundCaseScreen from '../screens/cases/FundCaseScreen';
 
@@ -99,6 +101,14 @@ function MainNavigator() {
       <MainStack.Screen 
         name="AdminCaseVerification" 
         component={AdminCaseVerificationScreen}
+      />
+      <MainStack.Screen 
+        name="AdminContributions" 
+        component={AdminContributionsScreen}
+      />
+      <MainStack.Screen 
+        name="AdminContributionDetail" 
+        component={AdminContributionDetailScreen}
       />
       <MainStack.Screen 
         name="CaseDetail" 
