@@ -11,14 +11,14 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { Upload, X, FileText, CheckCircle } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
-import { uploadFile, validateFile, StorageBucket } from '../services/storageService';
+import { uploadFile, validateFile, computeFileSHA256, StorageBucket } from '../services/storageService';
 
 interface FileUploadProps {
   bucket: StorageBucket;
   userId: string;
   caseId?: string;
   label: string;
-  onUploadComplete: (path: string) => void;
+  onUploadComplete: (path: string, hash?: string) => void;
   existingPath?: string;
   disabled?: boolean;
 }
@@ -66,10 +66,15 @@ export default function FileUpload({
 
     setUploading(true);
     try {
+      // 1. Upload File
       const { path } = await uploadFile(bucket, userId, fileName, asset.uri, contentType, caseId);
+      
+      // 2. Compute Integrity Hash
+      const hash = await computeFileSHA256(asset.uri);
+
       setPreview(asset.uri);
       setUploaded(true);
-      onUploadComplete(path);
+      onUploadComplete(path, hash);
     } catch (err: any) {
       Alert.alert('Upload Failed', err.message ?? 'An error occurred during upload.');
     } finally {

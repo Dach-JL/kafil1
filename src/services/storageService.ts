@@ -1,4 +1,6 @@
 import { supabase } from '../supabase/supabaseClient';
+import * as Crypto from 'expo-crypto';
+import * as FileSystem from 'expo-file-system';
 
 export type StorageBucket =
   | 'case-evidence'
@@ -110,11 +112,12 @@ export async function listFiles(
  * Returns hex string.
  */
 export async function computeFileSHA256(fileUri: string): Promise<string> {
-  const response = await fetch(fileUri);
-  const buffer = await response.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  const base64Str = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
+  const hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    base64Str
+  );
+  return hash;
 }
 
 /**

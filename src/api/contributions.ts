@@ -6,6 +6,7 @@ export async function createContribution(payload: {
   donor_id: string | null;
   amount: number;
   payment_proof_url: string;
+  payment_proof_hash?: string;
 }): Promise<Contribution> {
   const { data, error } = await supabase
     .from('contributions')

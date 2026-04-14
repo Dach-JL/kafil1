@@ -9,6 +9,7 @@ export interface Contribution {
   amount: number;
   status: ContributionStatus;
   payment_proof_url: string;
+  payment_proof_hash?: string;
   rejection_reason?: string;
   verified_by?: string;
   created_at: string;

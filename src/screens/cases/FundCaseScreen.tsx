@@ -25,10 +25,12 @@ export default function FundCaseScreen({ route, navigation }: any) {
   
   const [amountStr, setAmountStr] = useState('');
   const [proofPaths, setProofPaths] = useState<string[]>([]);
+  const [proofHashes, setProofHashes] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleProofUploaded(path: string) {
+  function handleProofUploaded(path: string, hash?: string) {
     setProofPaths((prev) => [...prev, path]);
+    if (hash) setProofHashes((prev) => [...prev, hash]);
   }
 
   async function handleSubmit() {
@@ -48,12 +50,14 @@ export default function FundCaseScreen({ route, navigation }: any) {
     try {
       // Just taking the first proof path for the contribution
       const paymentProofUrl = proofPaths[0];
+      const paymentProofHash = proofHashes[0];
 
       await createContribution({
         case_id: caseId,
         donor_id: user ? user.id : null,
         amount,
         payment_proof_url: paymentProofUrl,
+        payment_proof_hash: paymentProofHash,
       });
 
       Alert.alert(
