@@ -174,8 +174,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <TouchableOpacity
             style={[styles.donateBtn, { backgroundColor: colors.primary }]}
             activeOpacity={0.85}
-            onPress={() => console.log('Navigate to Funding Flow (Phase 16)')}
-            // onPress={() => navigation.navigate('FundCase', { caseId })}
+            onPress={() => navigation.navigate('FundCase', { caseId })}
           >
             <Text style={[styles.donateBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
               Fund this Case

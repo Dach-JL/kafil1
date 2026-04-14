@@ -18,6 +18,7 @@ import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
 import AdminQueueScreen from '../screens/admin/AdminQueueScreen';
 import AdminCaseVerificationScreen from '../screens/admin/AdminCaseVerificationScreen';
 import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
+import FundCaseScreen from '../screens/cases/FundCaseScreen';
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -102,6 +103,11 @@ function MainNavigator() {
       <MainStack.Screen 
         name="CaseDetail" 
         component={CaseDetailScreen}
+      />
+      <MainStack.Screen 
+        name="FundCase" 
+        component={FundCaseScreen}
+        options={{ presentation: 'modal' }}
       />
     </MainStack.Navigator>
   );
