@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useTheme } from '../../hooks/useTheme';
-import { CaseCategory, CATEGORY_LABELS } from '../../types/cases';
+import { useTheme } from '../../../hooks/useTheme';
+import { CaseCategory, CATEGORY_LABELS } from '../../../types/cases';
 
 interface Step1Props {
   data: {
