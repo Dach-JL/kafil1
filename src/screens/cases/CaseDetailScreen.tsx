@@ -11,12 +11,14 @@ import {
 import { useTheme } from '../../hooks/useTheme';
 import { getCaseById } from '../../api/cases';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
-import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target } from 'lucide-react-native';
+import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2 } from 'lucide-react-native';
 import { formatDistanceToNow, format } from 'date-fns';
+import { useAuth } from '../../supabase/AuthContext';
 
 export default function CaseDetailScreen({ route, navigation }: any) {
   const { caseId } = route.params;
   const { colors, typography } = useTheme();
+  const { user } = useAuth();
   const [caseInfo, setCaseInfo] = useState<Case | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -182,6 +184,48 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           </TouchableOpacity>
         </View>
       )}
+
+      {/* Owner Action: Submit Completion Proof */}
+      {caseInfo.status === 'FUNDED' && user?.id === caseInfo.owner_id && !caseInfo.completion_proof_url && (
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+          <TouchableOpacity
+            style={[styles.donateBtn, { backgroundColor: colors.primary }]}
+            activeOpacity={0.85}
+            onPress={() => navigation.navigate('SubmitCompletionProof', { caseId })}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <CheckCircle2 color={colors.primaryForeground} size={20} />
+              <Text style={[styles.donateBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+                Submit Completion Proof
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Completion Pending Banner */}
+      {caseInfo.status === 'FUNDED' && caseInfo.completion_proof_url && (
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+          <View style={[styles.statusBanner, { backgroundColor: colors.secondary }]}>
+            <Clock color={colors.mutedForeground} size={20} />
+            <Text style={[styles.statusBannerText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+              Completion Proof Pending Review
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* Completed Banner */}
+      {caseInfo.status === 'COMPLETED' && (
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+          <View style={[styles.statusBanner, { backgroundColor: colors.primary + '20' }]}>
+            <CheckCircle2 color={colors.primary} size={20} />
+            <Text style={[styles.statusBannerText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+              Case Successfully Completed
+            </Text>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -244,4 +288,14 @@ const styles = StyleSheet.create({
   footer: { padding: 20, borderTopWidth: 1 },
   donateBtn: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   donateBtnText: { fontSize: 18 },
+  statusBanner: {
+    height: 56,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+  },
+  statusBannerText: { fontSize: 16 },
 });

@@ -103,3 +103,41 @@ export async function rejectCase(id: string, reason: string): Promise<void> {
 
   if (error) throw error;
 }
+
+// Case Owner: submit proof of case completion (e.g., medical bill receipt)
+export async function submitCaseCompletionProof(id: string, proofUrl: string): Promise<void> {
+  const { error } = await supabase
+    .from('cases')
+    .update({ completion_proof_url: proofUrl })
+    .eq('id', id)
+    .eq('status', 'FUNDED'); // Must be funded first
+
+  if (error) throw error;
+}
+
+// Admin: Fetch all cases awaiting completion verification
+export async function getPendingCompletionCases(): Promise<Case[]> {
+  const { data, error } = await supabase
+    .from('cases')
+    .select('*')
+    .eq('status', 'FUNDED')
+    .not('completion_proof_url', 'is', null) // Only fetch funded cases that uploaded a proof
+    .order('updated_at', { ascending: true });
+
+  if (error) throw error;
+  return data as Case[];
+}
+
+// Admin: Verify the completion proof and finalize the case
+export async function verifyCaseCompletion(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('cases')
+    .update({ 
+      status: 'COMPLETED',
+      completed_at: new Date().toISOString()
+    })
+    .eq('id', id)
+    .eq('status', 'FUNDED');
+
+  if (error) throw error;
+}

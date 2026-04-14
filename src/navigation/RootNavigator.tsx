@@ -19,8 +19,11 @@ import AdminQueueScreen from '../screens/admin/AdminQueueScreen';
 import AdminCaseVerificationScreen from '../screens/admin/AdminCaseVerificationScreen';
 import AdminContributionsScreen from '../screens/admin/AdminContributionsScreen';
 import AdminContributionDetailScreen from '../screens/admin/AdminContributionDetailScreen';
+import AdminCompletionQueueScreen from '../screens/admin/AdminCompletionQueueScreen';
+import AdminCaseCompletionDetailScreen from '../screens/admin/AdminCaseCompletionDetailScreen';
 import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 import FundCaseScreen from '../screens/cases/FundCaseScreen';
+import SubmitCompletionProofScreen from '../screens/cases/SubmitCompletionProofScreen';
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -111,12 +114,25 @@ function MainNavigator() {
         component={AdminContributionDetailScreen}
       />
       <MainStack.Screen 
+        name="AdminCompletionQueue" 
+        component={AdminCompletionQueueScreen}
+      />
+      <MainStack.Screen 
+        name="AdminCaseCompletionDetail" 
+        component={AdminCaseCompletionDetailScreen}
+      />
+      <MainStack.Screen 
         name="CaseDetail" 
         component={CaseDetailScreen}
       />
       <MainStack.Screen 
         name="FundCase" 
         component={FundCaseScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <MainStack.Screen 
+        name="SubmitCompletionProof" 
+        component={SubmitCompletionProofScreen}
         options={{ presentation: 'modal' }}
       />
     </MainStack.Navigator>

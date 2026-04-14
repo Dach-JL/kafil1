@@ -27,6 +27,7 @@ export interface Case {
   target_amount: number;
   collected_amount: number;
   location?: string;
+  completion_proof_url?: string;
   beneficiary_name: string;
   beneficiary_age?: number;
   urgency_level: number; // 1–5
