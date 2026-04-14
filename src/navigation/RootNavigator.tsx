@@ -17,6 +17,7 @@ import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
 
 import AdminQueueScreen from '../screens/admin/AdminQueueScreen';
 import AdminCaseVerificationScreen from '../screens/admin/AdminCaseVerificationScreen';
+import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -97,6 +98,10 @@ function MainNavigator() {
       <MainStack.Screen 
         name="AdminCaseVerification" 
         component={AdminCaseVerificationScreen}
+      />
+      <MainStack.Screen 
+        name="CaseDetail" 
+        component={CaseDetailScreen}
       />
     </MainStack.Navigator>
   );
