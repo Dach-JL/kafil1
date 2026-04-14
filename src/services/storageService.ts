@@ -31,13 +31,19 @@ export async function uploadFile(
     : [userId, fileName];
   const filePath = pathParts.join('/');
 
-  // Convert URI to Blob for upload
-  const response = await fetch(fileUri);
-  const blob = await response.blob();
+  // Read as base64 using expo-file-system (reliable on React Native)
+  const base64 = await FileSystem.readAsStringAsync(fileUri, { encoding: 'base64' });
+  
+  // Decode base64 string to Uint8Array for Supabase upload
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
 
   const { data, error } = await supabase.storage
     .from(bucket)
-    .upload(filePath, blob, {
+    .upload(filePath, bytes, {
       contentType,
       upsert: false,
     });
