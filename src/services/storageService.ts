@@ -112,7 +112,7 @@ export async function listFiles(
  * Returns hex string.
  */
 export async function computeFileSHA256(fileUri: string): Promise<string> {
-  const base64Str = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
+  const base64Str = await FileSystem.readAsStringAsync(fileUri, { encoding: 'base64' });
   const hash = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
     base64Str
