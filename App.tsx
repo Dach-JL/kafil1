@@ -16,7 +16,7 @@ import { useTheme } from './src/hooks/useTheme';
 import RootNavigator from './src/navigation/RootNavigator';
 
 // Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
+import { AuthProvider } from './src/supabase/AuthContext';
 
 export default function App() {
   const { isDark } = useTheme();
@@ -40,9 +40,9 @@ export default function App() {
   }
 
   return (
-    <>
+    <AuthProvider>
       <RootNavigator />
       <StatusBar style={isDark ? 'light' : 'dark'} />
-    </>
+    </AuthProvider>
   );
 }

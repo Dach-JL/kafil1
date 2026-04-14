@@ -61,19 +61,31 @@ function TabNavigator() {
   );
 }
 
+import { useAuth } from '../supabase/AuthContext';
+import { ActivityIndicator, View } from 'react-native';
+
 export default function RootNavigator() {
   const { colors } = useTheme();
+  const { session, loading } = useAuth();
   
-  // Placeholder auth state
-  const isAuthenticated = true;
+  if (loading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
+        {session ? (
           <Stack.Screen name="Main" component={TabNavigator} />
         ) : (
-          <Stack.Screen name="Auth" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
