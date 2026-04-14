@@ -11,10 +11,11 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { ArrowLeft, ArrowRight, Send } from 'lucide-react-native';
+import { ArrowLeft, ArrowRight, Send, AlertCircle, RefreshCw } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../supabase/AuthContext';
-import { createCase, submitCaseForReview } from '../../api/cases';
+import { createCase } from '../../api/cases';
+import { useSubmitCase } from '../../hooks/useSubmitCase';
 import { CaseCategory } from '../../types/cases';
 import StepIndicator from '../../components/StepIndicator';
 import Step1BasicInfo from './steps/Step1BasicInfo';
@@ -44,7 +45,8 @@ export default function CreateCaseScreen({ navigation }: any) {
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [savedCaseId, setSavedCaseId] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const { submit, state: submitState, error: submitError, submittedCase, retry } = useSubmitCase();
 
   function updateField(field: string, value: any) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -85,7 +87,7 @@ export default function CreateCaseScreen({ navigation }: any) {
     // Auto-save draft when moving from step 2 → 3
     if (currentStep === 2 && !savedCaseId) {
       try {
-        setSubmitting(true);
+        setIsSavingDraft(true);
         const newCase = await createCase({
           owner_id: user!.id,
           title: form.title,
@@ -104,7 +106,7 @@ export default function CreateCaseScreen({ navigation }: any) {
         Alert.alert('Error', 'Failed to save draft: ' + err.message);
         return;
       } finally {
-        setSubmitting(false);
+        setIsSavingDraft(false);
       }
     }
 
@@ -114,21 +116,15 @@ export default function CreateCaseScreen({ navigation }: any) {
   async function handleSubmit() {
     if (!validateStep()) return;
     if (!savedCaseId) { Alert.alert('Error', 'Case draft not found. Please go back and try again.'); return; }
-
-    setSubmitting(true);
-    try {
-      await submitCaseForReview(savedCaseId);
-      Alert.alert(
-        '🎉 Submitted for Review!',
-        'Your case has been submitted. Our team will review it within 1-3 business days. You will be notified once a decision is made.',
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
-      );
-    } catch (err: any) {
-      Alert.alert('Submission Failed', err.message);
-    } finally {
-      setSubmitting(false);
-    }
+    await submit(savedCaseId);
   }
+
+  // Navigate to success screen on successful submission
+  useEffect(() => {
+    if (submitState === 'success' && submittedCase) {
+      navigation.replace('SubmissionSuccess', { submittedCase });
+    }
+  }, [submitState, submittedCase]);
 
   const reviewData = {
     ...form,
@@ -193,10 +189,10 @@ export default function CreateCaseScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.nextButton, { backgroundColor: colors.primary }]}
               onPress={saveDraftAndNext}
-              disabled={submitting}
+              disabled={isSavingDraft}
               activeOpacity={0.85}
             >
-              {submitting ? (
+              {isSavingDraft ? (
                 <ActivityIndicator color={colors.primaryForeground} />
               ) : (
                 <>
@@ -211,10 +207,10 @@ export default function CreateCaseScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.nextButton, { backgroundColor: colors.accent }]}
               onPress={handleSubmit}
-              disabled={submitting}
+              disabled={submitState === 'submitting'}
               activeOpacity={0.85}
             >
-              {submitting ? (
+              {submitState === 'submitting' ? (
                 <ActivityIndicator color={colors.accentForeground} />
               ) : (
                 <>

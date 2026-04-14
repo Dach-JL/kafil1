@@ -64,6 +64,7 @@ function TabNavigator() {
   );
 }
 
+import SubmissionSuccessScreen from '../screens/cases/SubmissionSuccessScreen';
 import { useAuth } from '../supabase/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 
@@ -75,6 +76,10 @@ function MainNavigator() {
         name="CreateCase"
         component={CreateCaseScreen}
         options={{ presentation: 'modal' }}
+      />
+      <MainStack.Screen 
+        name="SubmissionSuccess" 
+        component={SubmissionSuccessScreen}
       />
     </MainStack.Navigator>
   );
