@@ -112,7 +112,9 @@ export default function FundCaseScreen({ route, navigation }: any) {
             
             <FileUpload
               bucket="proof-of-payment"
-              pathPrefix={user ? `donors/${user.id}/${caseId}` : `guests/${Date.now()}/${caseId}`}
+              userId={user ? user.id : `guest_${Date.now()}`}
+              caseId={caseId}
+              label="Upload Receipt"
               onUploadComplete={handleProofUploaded}
               disabled={submitting || proofPaths.length >= 1}
             />

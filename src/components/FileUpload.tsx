@@ -20,6 +20,7 @@ interface FileUploadProps {
   label: string;
   onUploadComplete: (path: string) => void;
   existingPath?: string;
+  disabled?: boolean;
 }
 
 export default function FileUpload({
@@ -29,6 +30,7 @@ export default function FileUpload({
   label,
   onUploadComplete,
   existingPath,
+  disabled,
 }: FileUploadProps) {
   const { colors, typography } = useTheme();
   const [uploading, setUploading] = useState(false);
@@ -90,7 +92,7 @@ export default function FileUpload({
           },
         ]}
         onPress={pickAndUpload}
-        disabled={uploading}
+        disabled={uploading || disabled}
         activeOpacity={0.7}
       >
         {uploading ? (
