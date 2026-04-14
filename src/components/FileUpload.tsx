@@ -76,7 +76,14 @@ export default function FileUpload({
       setUploaded(true);
       onUploadComplete(path, hash);
     } catch (err: any) {
-      Alert.alert('Upload Failed', err.message ?? 'An error occurred during upload.');
+      const msg = err?.message ?? '';
+      if (msg.includes('Bucket not found')) {
+        Alert.alert('Upload Failed', 'Storage bucket is not configured. Please contact support.');
+      } else if (msg.includes('new row violates') || msg.includes('policy')) {
+        Alert.alert('Upload Failed', 'You do not have permission to upload to this bucket. Please ensure your account profile is set up correctly.');
+      } else {
+        Alert.alert('Upload Failed', msg || 'An error occurred during upload. Please try again.');
+      }
     } finally {
       setUploading(false);
     }

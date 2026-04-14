@@ -10,23 +10,31 @@ import {
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { getCaseById } from '../../api/cases';
+import { getCaseTimeline } from '../../api/events';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
+import { EventLog } from '../../types/events';
 import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2 } from 'lucide-react-native';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
+import CaseTimeline from '../../components/CaseTimeline';
 
 export default function CaseDetailScreen({ route, navigation }: any) {
   const { caseId } = route.params;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
   const [caseInfo, setCaseInfo] = useState<Case | null>(null);
+  const [events, setEvents] = useState<EventLog[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadCase() {
       try {
-        const data = await getCaseById(caseId);
+        const [data, timeline] = await Promise.all([
+          getCaseById(caseId),
+          getCaseTimeline(caseId),
+        ]);
         setCaseInfo(data);
+        setEvents(timeline);
       } catch (err) {
         console.error(err);
       } finally {
@@ -149,6 +157,14 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <Text style={[styles.description, { color: colors.text, fontFamily: typography.fontFamily.regular }]}>
             {caseInfo.description}
           </Text>
+        </View>
+
+        {/* Case Timeline */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            Timeline
+          </Text>
+          <CaseTimeline events={events} />
         </View>
 
         {/* Meta Details */}
