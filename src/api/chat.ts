@@ -15,6 +15,7 @@ export interface ChatRoom {
     };
   }[];
   latest_message?: ChatMessage;
+  unreadCount?: number;
 }
 
 export interface ChatMessage {

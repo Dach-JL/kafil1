@@ -25,6 +25,7 @@ import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 import FundCaseScreen from '../screens/cases/FundCaseScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import InboxScreen from '../screens/InboxScreen';
+import ChatRoomScreen from '../screens/ChatRoomScreen';
 import NotificationBell from '../components/NotificationBell';
 import SubmitCompletionProofScreen from '../screens/cases/SubmitCompletionProofScreen';
 
@@ -151,6 +152,11 @@ function MainNavigator() {
         name="Notifications" 
         component={NotificationsScreen}
         options={{ headerShown: true, title: 'Notifications' }}
+      />
+      <MainStack.Screen 
+        name="ChatRoom" 
+        component={ChatRoomScreen}
+        options={{ headerShown: true }}
       />
     </MainStack.Navigator>
   );

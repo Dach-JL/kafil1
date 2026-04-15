@@ -71,7 +71,7 @@ export default function InboxScreen({ navigation }: any) {
             >
               {item.latest_message ? item.latest_message.content : 'No messages yet'}
             </Text>
-            {item.unreadCount > 0 && (
+            {(item.unreadCount || 0) > 0 && (
               <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]} />
             )}
           </View>
