@@ -88,7 +88,7 @@ export default function ChatRoomScreen({ route, navigation }: any) {
         { 
           text: 'Report', 
           style: 'destructive',
-          onPress: async (reason) => {
+          onPress: async (reason: string | undefined) => {
             if (!reason) return;
             try {
               await reportChatRoom(roomId, reason);

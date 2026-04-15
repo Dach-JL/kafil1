@@ -1,4 +1,5 @@
 import React from 'react';
+// Navigation configuration for Kafil App
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -7,6 +8,7 @@ import { ActivityIndicator, View } from 'react-native';
 
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../supabase/AuthContext';
+import { useChat } from '../supabase/ChatContext';
 import HomeScreen from '../screens/HomeScreen';
 import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -36,6 +38,7 @@ const AuthStack = createNativeStackNavigator();
 function TabNavigator() {
   const { colors, typography } = useTheme();
   const { profile } = useAuth();
+  const { unreadMessagesCount } = useChat();
 
   return (
     <Tab.Navigator
@@ -88,6 +91,8 @@ function TabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
           title: 'Messages',
+          tabBarBadge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: colors.primary },
         }}
       />
       <Tab.Screen 

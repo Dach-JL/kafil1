@@ -9,11 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
-import { getCaseById } from '../../api/cases';
-import { getCaseTimeline } from '../../api/events';
-import { Case, CATEGORY_LABELS } from '../../types/cases';
-import { EventLog } from '../../types/events';
-import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2 } from 'lucide-react-native';
+import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare } from 'lucide-react-native';
+import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
 import CaseTimeline from '../../components/CaseTimeline';
@@ -26,6 +23,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
   const [caseInfo, setCaseInfo] = useState<Case | null>(null);
   const [events, setEvents] = useState<EventLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [initiatingChat, setInitiatingChat] = useState(false);
 
   useEffect(() => {
     async function loadCase() {
@@ -44,6 +42,27 @@ export default function CaseDetailScreen({ route, navigation }: any) {
     }
     loadCase();
   }, [caseId]);
+
+  const handleMessageOrganizer = async () => {
+    if (!user) {
+      navigation.navigate('Login');
+      return;
+    }
+    if (!caseInfo) return;
+
+    try {
+      setInitiatingChat(true);
+      const roomId = await getOrCreateChatRoom(caseId, caseInfo.owner_id);
+      navigation.navigate('ChatRoom', { 
+        roomId, 
+        recipientName: caseInfo.owner?.name || 'Organizer' 
+      });
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setInitiatingChat(false);
+    }
+  };
 
   if (loading || !caseInfo) {
     return (
@@ -170,12 +189,25 @@ export default function CaseDetailScreen({ route, navigation }: any) {
               <View style={[styles.ownerAvatar, { backgroundColor: colors.primary + '15' }]}>
                 <User color={colors.primary} size={20} />
               </View>
-              <View>
+              <View style={styles.organizerInfo}>
                 <Text style={[styles.ownerName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
                   {caseInfo.owner.name}
                 </Text>
                 <TrustBadge score={caseInfo.owner.trust_score} />
               </View>
+              {user?.id !== caseInfo.owner_id && (
+                <TouchableOpacity 
+                  style={[styles.msgBtn, { backgroundColor: colors.secondary }]}
+                  onPress={handleMessageOrganizer}
+                  disabled={initiatingChat}
+                >
+                  {initiatingChat ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <MessageSquare color={colors.primary} size={18} />
+                  )}
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         )}
@@ -324,7 +356,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,
-    gap: 12,
     marginTop: 8,
   },
   ownerAvatar: {
@@ -333,6 +364,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
+  },
+  organizerInfo: {
+    flex: 1,
+  },
+  msgBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
   },
   ownerName: {
     fontSize: 15,
