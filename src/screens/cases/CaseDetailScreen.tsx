@@ -217,7 +217,12 @@ export default function CaseDetailScreen({ route, navigation }: any) {
                   {initiatingChat ? (
                     <ActivityIndicator size="small" color={colors.primary} />
                   ) : (
-                    <MessageSquare color={colors.primary} size={18} />
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <MessageSquare color={colors.primary} size={18} />
+                      <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.medium, fontSize: 13 }}>
+                        Message
+                      </Text>
+                    </View>
                   )}
                 </TouchableOpacity>
               )}
@@ -383,12 +388,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   msgBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 12,
+    borderWidth: 1,
   },
   ownerName: {
     fontSize: 15,
