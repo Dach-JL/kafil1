@@ -10,7 +10,7 @@ export interface ChatRoom {
   participants: {
     user_id: string;
     profile: {
-      full_name: string;
+      name: string;
       avatar_url: string;
     };
   }[];
@@ -40,7 +40,7 @@ export async function getMyChatRooms(): Promise<ChatRoom[]> {
       *,
       participants:chat_participants(
         user_id,
-        profile:profiles(full_name, avatar_url)
+        profile:profiles(name, avatar_url)
       )
     `)
     .order('last_message_at', { ascending: false });
