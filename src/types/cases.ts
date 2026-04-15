@@ -28,6 +28,8 @@ export interface Case {
   collected_amount: number;
   location?: string;
   completion_proof_url?: string;
+  completion_description?: string;
+  completion_images?: string[];
   beneficiary_name: string;
   beneficiary_age?: number;
   urgency_level: number; // 1–5

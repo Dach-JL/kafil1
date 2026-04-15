@@ -19,6 +19,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
 import CaseTimeline from '../../components/CaseTimeline';
 import TrustBadge from '../../components/TrustBadge';
+import OutcomeShowcase from '../../components/OutcomeShowcase';
 
 export default function CaseDetailScreen({ route, navigation }: any) {
   const { caseId } = route.params;
@@ -101,6 +102,14 @@ export default function CaseDetailScreen({ route, navigation }: any) {
               Verified by CharityTrust
             </Text>
           </View>
+        )}
+
+        {/* Impact Showcase (Phase 25) */}
+        {caseInfo.status === 'COMPLETED' && (
+          <OutcomeShowcase 
+            description={caseInfo.completion_description || ''} 
+            images={caseInfo.completion_images || []} 
+          />
         )}
 
         <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
