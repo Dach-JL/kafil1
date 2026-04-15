@@ -7,6 +7,7 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
@@ -21,26 +22,30 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
   const { user } = useAuth();
   
   const [proofPaths, setProofPaths] = useState<string[]>([]);
+  const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   function handleProofUploaded(path: string) {
     setProofPaths((prev) => [...prev, path]);
   }
 
-  async function handleSubmit() {
     if (proofPaths.length === 0) {
-      Alert.alert('Proof Required', 'Please upload evidence of where the funds were spent (e.g. medical bill receipt, invoice).');
+      Alert.alert('Proof Required', 'Please upload at least one image of where the funds were spent.');
+      return;
+    }
+
+    if (description.trim().length < 20) {
+      Alert.alert('Story is too short', 'Please provide a bit more detail (at least 20 characters) about the outcome to share with your donors.');
       return;
     }
 
     setSubmitting(true);
     try {
-      const proofUrl = proofPaths[0]; // just taking the first one
-      await submitCaseCompletionProof(caseId, proofUrl);
+      await submitCaseCompletionProof(caseId, description, proofPaths);
 
       Alert.alert(
-        'Submission Successful',
-        'Your completion proof has been sent for administrative review. Once verified, the case will be permanently marked as Completed!',
+        'Outcome Shared!',
+        'Your success story and proof have been submitted. Once verified by an admin, this case will be finalized!',
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (err: any) {
@@ -74,13 +79,37 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
         </Text>
 
         <View style={styles.section}>
+          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            The Success Story
+          </Text>
+          <TextInput
+            style={[
+              styles.storyInput, 
+              { 
+                color: colors.text, 
+                borderColor: colors.border, 
+                backgroundColor: colors.card,
+                fontFamily: typography.fontFamily.regular 
+              }
+            ]}
+            placeholder="Tell your donors how this funding changed the beneficiary's life..."
+            placeholderTextColor={colors.mutedForeground}
+            multiline
+            numberOfLines={6}
+            value={description}
+            onChangeText={setDescription}
+            textAlignVertical="top"
+          />
+        </View>
+
+        <View style={styles.section}>
           <FileUpload
             bucket="completion-proofs"
             userId={user?.id || 'unknown'}
             caseId={caseId}
-            label="Upload Receipts/Invoices"
+            label="Upload Proof (Receipts/Invoices)"
             onUploadComplete={handleProofUploaded}
-            disabled={submitting || proofPaths.length >= 1}
+            disabled={submitting || proofPaths.length >= 5}
           />
         </View>
 
@@ -121,7 +150,15 @@ const styles = StyleSheet.create({
   iconWrapper: { alignItems: 'center', marginBottom: 16 },
   title: { fontSize: 24, marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 14, lineHeight: 20, marginBottom: 32, textAlign: 'center' },
-  section: { marginBottom: 32 },
+  section: { marginBottom: 24 },
+  sectionLabel: { fontSize: 16, marginBottom: 8, marginLeft: 4 },
+  storyInput: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    minHeight: 120,
+    fontSize: 16,
+  },
   footer: { padding: 20, borderTopWidth: 1 },
   submitBtn: {
     height: 56,
