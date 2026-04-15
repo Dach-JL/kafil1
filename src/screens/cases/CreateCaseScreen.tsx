@@ -86,25 +86,42 @@ export default function CreateCaseScreen({ navigation }: any) {
 
     // Auto-save draft when moving from step 2 → 3
     if (currentStep === 2 && !savedCaseId) {
+      if (!user) {
+        Alert.alert('Error', 'You must be logged in to create a case.');
+        return;
+      }
+
       try {
         setIsSavingDraft(true);
+        
+        // Prepare clean data for Supabase (avoiding empty strings for numbers/dates)
+        const targetAmount = parseFloat(form.target_amount);
+        const age = form.beneficiary_age ? parseInt(form.beneficiary_age) : null;
+        const deadline = form.deadline.trim() ? form.deadline : null;
+        
         const newCase = await createCase({
-          owner_id: user!.id,
-          title: form.title,
-          description: form.description,
+          owner_id: user.id,
+          title: form.title.trim(),
+          description: form.description.trim(),
           category: form.category,
-          beneficiary_name: form.beneficiary_name,
-          beneficiary_age: form.beneficiary_age ? parseInt(form.beneficiary_age) : undefined,
-          location: form.location || undefined,
-          target_amount: parseFloat(form.target_amount),
+          beneficiary_name: form.beneficiary_name.trim(),
+          beneficiary_age: age || undefined,
+          location: form.location.trim() || undefined,
+          target_amount: targetAmount,
           urgency_level: form.urgency_level,
-          deadline: form.deadline || undefined,
+          deadline: deadline || undefined,
           is_anonymous: form.is_anonymous,
         } as any);
-        setSavedCaseId(newCase.id);
+
+        if (newCase?.id) {
+          setSavedCaseId(newCase.id);
+        } else {
+          throw new Error('No case ID returned from server');
+        }
       } catch (err: any) {
-        Alert.alert('Error', 'Failed to save draft: ' + err.message);
-        return;
+        console.error('Draft Save Error:', err);
+        Alert.alert('Save Failed', err.message || 'Could not save case draft. Please check your connection.');
+        return; // Stop transition if save failed
       } finally {
         setIsSavingDraft(false);
       }
