@@ -18,6 +18,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 // Keep the splash screen visible while we fetch resources
 import { AuthProvider } from './src/supabase/AuthContext';
 import { NotificationsProvider } from './src/supabase/NotificationsContext';
+import { ChatProvider } from './src/supabase/ChatContext';
 
 export default function App() {
   const { isDark } = useTheme();
@@ -43,7 +44,9 @@ export default function App() {
   return (
     <AuthProvider>
       <NotificationsProvider>
-        <RootNavigator />
+        <ChatProvider>
+          <RootNavigator />
+        </ChatProvider>
       </NotificationsProvider>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </AuthProvider>
