@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { submitCaseCompletionProof } from '../../api/cases';
-import { ArrowLeft, CheckCircle } from 'lucide-react-native';
+import { ArrowLeft, CheckCircle, X as XIcon } from 'lucide-react-native';
 import FileUpload from '../../components/FileUpload';
 import { useAuth } from '../../supabase/AuthContext';
 
@@ -29,6 +29,11 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
     setProofPaths((prev) => [...prev, path]);
   }
 
+  function removePhoto(pathToRemove: string) {
+    setProofPaths((prev) => prev.filter(path => path !== pathToRemove));
+  }
+
+  async function handleSubmit() {
     if (proofPaths.length === 0) {
       Alert.alert('Proof Required', 'Please upload at least one image of where the funds were spent.');
       return;
@@ -103,14 +108,45 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
         </View>
 
         <View style={styles.section}>
-          <FileUpload
-            bucket="completion-proofs"
-            userId={user?.id || 'unknown'}
-            caseId={caseId}
-            label="Upload Proof (Receipts/Invoices)"
-            onUploadComplete={handleProofUploaded}
-            disabled={submitting || proofPaths.length >= 5}
-          />
+          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            Impact Photos ({proofPaths.length}/5)
+          </Text>
+          
+          <View style={styles.photoGrid}>
+            {proofPaths.map((path, index) => (
+              <View key={path} style={[styles.photoItem, { borderColor: colors.border }]}>
+                {/* FileUpload can display existing paths if we pass it, but here we just show the results */}
+                <FileUpload
+                  bucket="completion-proofs"
+                  userId={user?.id || 'unknown'}
+                  caseId={caseId}
+                  label=""
+                  existingPath={path}
+                  onUploadComplete={() => {}}
+                  disabled={true}
+                />
+                <TouchableOpacity 
+                  style={[styles.removeBtn, { backgroundColor: colors.destructive }]} 
+                  onPress={() => removePhoto(path)}
+                >
+                  <XIcon color="#fff" size={14} />
+                </TouchableOpacity>
+              </View>
+            ))}
+            
+            {proofPaths.length < 5 && (
+              <View style={styles.photoItem}>
+                <FileUpload
+                  bucket="completion-proofs"
+                  userId={user?.id || 'unknown'}
+                  caseId={caseId}
+                  label=""
+                  onUploadComplete={handleProofUploaded}
+                  disabled={submitting}
+                />
+              </View>
+            )}
+          </View>
         </View>
 
       </ScrollView>
@@ -158,6 +194,32 @@ const styles = StyleSheet.create({
     padding: 16,
     minHeight: 120,
     fontSize: 16,
+    marginBottom: 8,
+  },
+  photoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  photoItem: {
+    width: '48%',
+    position: 'relative',
+  },
+  removeBtn: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
   footer: { padding: 20, borderTopWidth: 1 },
   submitBtn: {
