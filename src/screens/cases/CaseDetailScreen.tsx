@@ -9,6 +9,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
+import { getCaseById } from '../../api/cases';
+import { getCaseTimeline } from '../../api/events';
+import { Case, CATEGORY_LABELS } from '../../types/cases';
+import { EventLog} from '../../types/events';
 import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare } from 'lucide-react-native';
 import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';

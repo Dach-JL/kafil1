@@ -110,11 +110,19 @@ export async function rejectCase(id: string, reason: string): Promise<void> {
   if (error) throw error;
 }
 
-// Case Owner: submit proof of case completion (e.g., medical bill receipt)
-export async function submitCaseCompletionProof(id: string, proofUrl: string): Promise<void> {
+// Case Owner: submit proof of case completion (Outcome Report)
+export async function submitCaseCompletionProof(
+  id: string, 
+  description: string, 
+  images: string[]
+): Promise<void> {
   const { error } = await supabase
     .from('cases')
-    .update({ completion_proof_url: proofUrl })
+    .update({ 
+      completion_description: description,
+      completion_images: images,
+      completion_proof_url: images[0] || null // Keep legacy field updated
+    })
     .eq('id', id)
     .eq('status', 'FUNDED'); // Must be funded first
 
