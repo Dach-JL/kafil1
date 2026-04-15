@@ -26,7 +26,7 @@ export default function InboxScreen({ navigation }: any) {
       (p: any) => p.user_id !== user?.id
     );
 
-    const displayName = otherParticipant?.profile?.full_name || 'Anonymous User';
+    const displayName = otherParticipant?.profile?.name || 'Anonymous User';
     const avatarUrl = otherParticipant?.profile?.avatar_url;
 
     return (
