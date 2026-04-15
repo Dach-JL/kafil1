@@ -5,6 +5,7 @@ import { supabase } from './supabaseClient';
 type Profile = {
   id: string;
   name: string;
+  trust_score: number;
   role: 'admin' | 'owner' | 'contributor';
 };
 

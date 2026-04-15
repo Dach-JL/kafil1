@@ -17,6 +17,7 @@ import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2 } fro
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
 import CaseTimeline from '../../components/CaseTimeline';
+import TrustBadge from '../../components/TrustBadge';
 
 export default function CaseDetailScreen({ route, navigation }: any) {
   const { caseId } = route.params;
@@ -159,6 +160,26 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           </Text>
         </View>
 
+        {/* Organizer Rep */}
+        {caseInfo.owner && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+              The Organizer
+            </Text>
+            <View style={[styles.organizerCard, { borderColor: colors.border }]}>
+              <View style={[styles.ownerAvatar, { backgroundColor: colors.primary + '15' }]}>
+                <User color={colors.primary} size={20} />
+              </View>
+              <View>
+                <Text style={[styles.ownerName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                  {caseInfo.owner.name}
+                </Text>
+                <TrustBadge score={caseInfo.owner.trust_score} />
+              </View>
+            </View>
+          </View>
+        )}
+
         {/* Case Timeline */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
@@ -297,6 +318,26 @@ const styles = StyleSheet.create({
   beneficiaryName: { fontSize: 16, marginBottom: 2 },
   anonymousLabel: { fontSize: 13 },
   description: { fontSize: 16, lineHeight: 26 },
+  organizerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 12,
+    marginTop: 8,
+  },
+  ownerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ownerName: {
+    fontSize: 15,
+    marginBottom: 2,
+  },
   grid: { flexDirection: 'row', paddingVertical: 20, marginBottom: 16 },
   gridItem: { flex: 1, alignItems: 'center', gap: 6 },
   gridLabel: { fontSize: 13 },

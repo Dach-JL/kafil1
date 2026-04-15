@@ -5,7 +5,10 @@ import { Case, CaseCategory, CaseStatus } from '../types/cases';
 export async function getPublicCases(category?: CaseCategory): Promise<Case[]> {
   let query = supabase
     .from('cases')
-    .select('*')
+    .select(`
+      *,
+      owner:profiles!owner_id(name, trust_score, role)
+    `)
     .in('status', ['VERIFIED', 'ACTIVE_FUNDING', 'FUNDED', 'COMPLETED'])
     .order('urgency_level', { ascending: false })
     .order('created_at', { ascending: false });
@@ -47,7 +50,10 @@ export async function getMyCases(userId: string): Promise<Case[]> {
 export async function getCaseById(id: string): Promise<Case | null> {
   const { data, error } = await supabase
     .from('cases')
-    .select('*')
+    .select(`
+      *,
+      owner:profiles!owner_id(name, trust_score, role)
+    `)
     .eq('id', id)
     .single();
 

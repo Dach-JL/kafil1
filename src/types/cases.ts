@@ -37,9 +37,13 @@ export interface Case {
   funded_at?: string;
   completed_at?: string;
   deadline?: string;
-  is_anonymous: boolean;
   created_at: string;
   updated_at: string;
+  owner?: {
+    name: string;
+    trust_score: number;
+    role: string;
+  };
 }
 
 // State machine transitions — used for validation before API calls

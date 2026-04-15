@@ -4,6 +4,7 @@ import { ShieldCheck, Clock, MapPin } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
 import { Case, CATEGORY_LABELS } from '../types/cases';
 import { formatDistanceToNow } from 'date-fns';
+import TrustBadge from './TrustBadge';
 
 interface Props {
   data: Case;
@@ -42,6 +43,15 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
       <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
         {data.title}
       </Text>
+
+      {data.owner && (
+        <View style={styles.ownerRow}>
+          <Text style={[styles.ownerName, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            by {data.owner.name}
+          </Text>
+          <TrustBadge score={data.owner.trust_score} />
+        </View>
+      )}
 
       <View style={styles.metaRow}>
         <View style={styles.metaItem}>
@@ -115,7 +125,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     lineHeight: 24,
+    marginBottom: 8,
+  },
+  ownerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginBottom: 12,
+  },
+  ownerName: {
+    fontSize: 13,
   },
   metaRow: {
     flexDirection: 'row',
