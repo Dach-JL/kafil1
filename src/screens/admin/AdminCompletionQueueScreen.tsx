@@ -6,9 +6,9 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckCircle2, AlertCircle, Clock, ChevronRight } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { getPendingCompletionCases } from '../../api/cases';

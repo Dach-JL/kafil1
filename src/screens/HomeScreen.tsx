@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Sparkles, AlertCircle } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
 import { getPublicCases } from '../api/cases';

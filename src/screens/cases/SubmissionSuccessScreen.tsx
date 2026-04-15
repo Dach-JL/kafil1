@@ -5,8 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckCircle, ArrowRight, Home } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { Case, CATEGORY_LABELS } from '../../types/cases';

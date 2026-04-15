@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
 import { verifyCase, rejectCase } from '../../api/cases';

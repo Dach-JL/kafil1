@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { getCaseById } from '../../api/cases';
 import { getCaseTimeline } from '../../api/events';

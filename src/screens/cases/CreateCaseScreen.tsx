@@ -7,10 +7,10 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, ArrowRight, Send, AlertCircle, RefreshCw } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../supabase/AuthContext';

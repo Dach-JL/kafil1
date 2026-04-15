@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -12,6 +11,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../supabase/AuthContext';
 import { createContribution } from '../../api/contributions';
