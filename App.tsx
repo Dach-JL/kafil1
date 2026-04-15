@@ -17,6 +17,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 
 // Keep the splash screen visible while we fetch resources
 import { AuthProvider } from './src/supabase/AuthContext';
+import { NotificationsProvider } from './src/supabase/NotificationsContext';
 
 export default function App() {
   const { isDark } = useTheme();
@@ -41,7 +42,9 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <RootNavigator />
+      <NotificationsProvider>
+        <RootNavigator />
+      </NotificationsProvider>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </AuthProvider>
   );

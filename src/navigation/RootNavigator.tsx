@@ -23,6 +23,8 @@ import AdminCompletionQueueScreen from '../screens/admin/AdminCompletionQueueScr
 import AdminCaseCompletionDetailScreen from '../screens/admin/AdminCaseCompletionDetailScreen';
 import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 import FundCaseScreen from '../screens/cases/FundCaseScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
+import NotificationBell from '../components/NotificationBell';
 import SubmitCompletionProofScreen from '../screens/cases/SubmitCompletionProofScreen';
 
 const Tab = createBottomTabNavigator();
@@ -49,6 +51,7 @@ function TabNavigator() {
           fontFamily: typography.fontFamily.heading,
           color: colors.text,
         },
+        headerRight: () => <NotificationBell />,
       }}
     >
       <Tab.Screen 
@@ -134,6 +137,11 @@ function MainNavigator() {
         name="SubmitCompletionProof" 
         component={SubmitCompletionProofScreen}
         options={{ presentation: 'modal' }}
+      />
+      <MainStack.Screen 
+        name="Notifications" 
+        component={NotificationsScreen}
+        options={{ headerShown: true, title: 'Notifications' }}
       />
     </MainStack.Navigator>
   );
