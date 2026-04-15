@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Home, FolderHeart, User, ShieldAlert } from 'lucide-react-native';
+import { Home, FolderHeart, User, ShieldAlert, MessageSquare } from 'lucide-react-native';
 import { ActivityIndicator, View } from 'react-native';
 
 import { useTheme } from '../hooks/useTheme';
@@ -24,6 +24,7 @@ import AdminCaseCompletionDetailScreen from '../screens/admin/AdminCaseCompletio
 import CaseDetailScreen from '../screens/cases/CaseDetailScreen';
 import FundCaseScreen from '../screens/cases/FundCaseScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import InboxScreen from '../screens/InboxScreen';
 import NotificationBell from '../components/NotificationBell';
 import SubmitCompletionProofScreen from '../screens/cases/SubmitCompletionProofScreen';
 
@@ -80,6 +81,14 @@ function TabNavigator() {
           }}
         />
       )}
+      <Tab.Screen 
+        name="Inbox" 
+        component={InboxScreen} 
+        options={{
+          tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
+          title: 'Messages',
+        }}
+      />
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen} 
