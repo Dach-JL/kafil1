@@ -193,7 +193,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         </View>
 
         {/* Organizer Rep */}
-        {caseInfo.owner && (
+        {caseInfo.owner_id && (
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
               The Organizer
@@ -204,9 +204,9 @@ export default function CaseDetailScreen({ route, navigation }: any) {
               </View>
               <View style={styles.organizerInfo}>
                 <Text style={[styles.ownerName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                  {caseInfo.owner.name}
+                  {caseInfo.owner?.name || 'Case Organizer'}
                 </Text>
-                <TrustBadge score={caseInfo.owner.trust_score} />
+                {caseInfo.owner && <TrustBadge score={caseInfo.owner.trust_score} />}
               </View>
               {user?.id !== caseInfo.owner_id && (
                 <TouchableOpacity 
