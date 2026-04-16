@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
 import HowItWorks from '../components/landing/HowItWorks';
+import HorizontalCaseList from '../components/landing/HorizontalCaseList';
 
 export default function LandingScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
@@ -16,6 +17,7 @@ export default function LandingScreen({ navigation }: any) {
           onSecondaryAction={() => navigation.navigate('Login')}
         />
         <HowItWorks />
+        <HorizontalCaseList onCasePress={() => navigation.navigate('Login')} />
       </ScrollView>
     </SafeAreaView>
   );
