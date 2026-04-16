@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
+import HowItWorks from '../components/landing/HowItWorks';
 
 export default function LandingScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
@@ -14,6 +15,7 @@ export default function LandingScreen({ navigation }: any) {
           onPrimaryAction={() => navigation.navigate('Login')}
           onSecondaryAction={() => navigation.navigate('Login')}
         />
+        <HowItWorks />
       </ScrollView>
     </SafeAreaView>
   );
