@@ -147,13 +147,16 @@ export async function getPendingCompletionCases(): Promise<Case[]> {
   return data as Case[];
 }
 
-// Admin: Verify the completion proof and finalize the case
-export async function verifyCaseCompletion(id: string): Promise<void> {
+// Admin: Verify the impact report (completion proof) and finalize the case
+export async function verifyCaseCompletion(id: string, verifierId: string): Promise<void> {
   const { error } = await supabase
     .from('cases')
     .update({ 
       status: 'COMPLETED',
-      completed_at: new Date().toISOString()
+      completed_at: new Date().toISOString(),
+      impact_report_status: 'APPROVED',
+      impact_approved_by: verifierId,
+      impact_approved_at: new Date().toISOString()
     })
     .eq('id', id)
     .eq('status', 'FUNDED');

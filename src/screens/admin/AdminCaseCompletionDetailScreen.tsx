@@ -14,34 +14,18 @@ import { useTheme } from '../../hooks/useTheme';
 import { Case } from '../../types/cases';
 import { verifyCaseCompletion } from '../../api/cases';
 import { getSignedUrl } from '../../services/storageService';
+import { useAuth } from '../../supabase/AuthContext';
 import { format } from 'date-fns';
 import { ShieldCheck, ArrowLeft, Image as ImageIcon, ExternalLink, FileText } from 'lucide-react-native';
+import OutcomeShowcase from '../../components/OutcomeShowcase';
 
 export default function AdminCaseCompletionDetailScreen({ route, navigation }: any) {
   const { caseInfo } = route.params as { caseInfo: Case };
   const { colors, typography } = useTheme();
+  const { user } = useAuth();
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [loadingImage, setLoadingImage] = useState(true);
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    async function fetchImage() {
-      if (!caseInfo.completion_proof_url) {
-        setLoadingImage(false);
-        return;
-      }
-      try {
-        const url = await getSignedUrl('completion-proofs', caseInfo.completion_proof_url);
-        setImageUrl(url);
-      } catch (err) {
-        console.error('Failed to get signed URL for completion proof', err);
-      } finally {
-        setLoadingImage(false);
-      }
-    }
-    fetchImage();
-  }, [caseInfo.completion_proof_url]);
 
   const handleApprove = async () => {
     Alert.alert(
@@ -53,10 +37,11 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
           text: 'Verify & Finalize',
           style: 'default',
           onPress: async () => {
+            if (!user) return;
             setProcessing(true);
             try {
-              await verifyCaseCompletion(caseInfo.id);
-              Alert.alert('Success! 🎉', 'The case has been successfully completed.', [
+              await verifyCaseCompletion(caseInfo.id, user.id);
+              Alert.alert('Impact Approved! 🎉', 'The case has been successfully locked and completed.', [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ]);
             } catch (err: any) {
@@ -114,32 +99,16 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
           </Text>
         </View>
 
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Disbursement Proof
-        </Text>
-        
-        {loadingImage ? (
-          <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <ActivityIndicator color={colors.primary} />
-          </View>
-        ) : imageUrl ? (
-          <View style={[styles.imageWrapper, { borderColor: colors.border }]}>
-            <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="contain" />
-            <TouchableOpacity 
-              style={[styles.fullScreenBtn, { backgroundColor: colors.background + 'CC' }]}
-              onPress={() => Alert.alert('Zoom Image', 'Full screen viewing available in future update.')}
-            >
-              <ExternalLink color={colors.text} size={20} />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <ImageIcon color={colors.mutedForeground} size={32} />
-            <Text style={[styles.noImageText, { color: colors.mutedForeground }]}>
-              No proof image found
-            </Text>
-          </View>
-        )}
+        <View style={{ marginTop: 16 }}>
+          <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading, marginLeft: 16 }]}>
+            Impact Report
+          </Text>
+          <OutcomeShowcase 
+            description={caseInfo.completion_description || ''} 
+            images={caseInfo.completion_images || []} 
+            outcomeDate={caseInfo.outcome_date}
+          />
+        </View>
       </ScrollView>
 
       <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
