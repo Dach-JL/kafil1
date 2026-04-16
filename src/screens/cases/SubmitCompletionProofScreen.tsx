@@ -8,11 +8,12 @@ import {
   Alert,
   ActivityIndicator,
   TextInput,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { submitCaseCompletionProof } from '../../api/cases';
-import { ArrowLeft, CheckCircle, X as XIcon } from 'lucide-react-native';
+import { ArrowLeft, CheckCircle, X as XIcon, Calendar } from 'lucide-react-native';
 import FileUpload from '../../components/FileUpload';
 import { useAuth } from '../../supabase/AuthContext';
 
@@ -22,11 +23,14 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
   const { user } = useAuth();
   
   const [proofPaths, setProofPaths] = useState<string[]>([]);
+  const [proofHashes, setProofHashes] = useState<string[]>([]);
   const [description, setDescription] = useState('');
+  const [outcomeDate, setOutcomeDate] = useState(new Date().toISOString().split('T')[0]);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleProofUploaded(path: string) {
+  function handleProofUploaded(path: string, hash?: string) {
     setProofPaths((prev) => [...prev, path]);
+    if (hash) setProofHashes((prev) => [...prev, hash]);
   }
 
   function removePhoto(pathToRemove: string) {
@@ -46,7 +50,13 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
 
     setSubmitting(true);
     try {
-      await submitCaseCompletionProof(caseId, description, proofPaths);
+      await submitCaseCompletionProof(
+        caseId, 
+        description, 
+        proofPaths,
+        new Date(outcomeDate).toISOString(),
+        proofHashes
+      );
 
       Alert.alert(
         'Outcome Shared!',
@@ -77,11 +87,32 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
           <CheckCircle color={colors.primary} size={48} />
         </View>
         <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Upload Completion Proof
+          Submit Impact Report
         </Text>
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Congratulations on reaching your funding goal! To maintain 100% transparency on CharityTrust, please upload official receipts or invoices proving how the funds were disbursed.
+          Provide verified evidence of how the funds were used. This report will be reviewed by an admin and, once approved, becomes a permanent, immutable public record.
         </Text>
+
+        {/* Outcome Date */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            Outcome Date
+          </Text>
+          <View style={[styles.dateInput, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <Calendar color={colors.mutedForeground} size={20} />
+            <TextInput
+              style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.regular }]}
+              placeholder="YYYY-MM-DD"
+              placeholderTextColor={colors.mutedForeground}
+              value={outcomeDate}
+              onChangeText={setOutcomeDate}
+              maxLength={10}
+            />
+          </View>
+          <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 4, marginLeft: 4 }}>
+            The date the positive outcome actually happened.
+          </Text>
+        </View>
 
         <View style={styles.section}>
           <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
@@ -188,6 +219,19 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: 14, lineHeight: 20, marginBottom: 32, textAlign: 'center' },
   section: { marginBottom: 24 },
   sectionLabel: { fontSize: 16, marginBottom: 8, marginLeft: 4 },
+  dateInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 52,
+  },
+  dateText: {
+    flex: 1,
+    fontSize: 16,
+  },
   storyInput: {
     borderWidth: 1,
     borderRadius: 12,
