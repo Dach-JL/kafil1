@@ -64,6 +64,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
       });
     } catch (err: any) {
       console.error(err);
+      alert('Could not start conversation. Please try again later.');
     } finally {
       setInitiatingChat(false);
     }
