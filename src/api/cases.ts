@@ -9,7 +9,7 @@ export async function getPublicCases(category?: CaseCategory): Promise<Case[]> {
       *,
       owner:profiles!owner_id(name, trust_score, role)
     `)
-    .in('status', ['VERIFIED', 'ACTIVE_FUNDING', 'FUNDED', 'COMPLETED'])
+    .in('status', ['VERIFIED', 'ACTIVE_FUNDING'])
     .order('urgency_level', { ascending: false })
     .order('created_at', { ascending: false });
 
