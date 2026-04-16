@@ -17,6 +17,7 @@ import {
   Trash2,
   ChevronRight,
   Inbox,
+  MessageSquare,
 } from 'lucide-react-native';
 import { useNotifications } from '../supabase/NotificationsContext';
 import { useTheme } from '../hooks/useTheme';
@@ -28,6 +29,7 @@ const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
   CASE_REJECTED: { icon: XCircle, color: '#EF4444' },
   DONATION_RECEIVED: { icon: Heart, color: '#EC4899' },
   MILESTONE_REACHED: { icon: Heart, color: '#F59E0B' },
+  MESSAGE_RECEIVED: { icon: MessageSquare, color: '#8B5CF6' },
   SYSTEM: { icon: AlertCircle, color: '#3B82F6' },
 };
 
@@ -47,7 +49,12 @@ export default function NotificationsScreen({ navigation }: any) {
     }
     
     // Navigate based on metadata
-    if (n.metadata?.caseId) {
+    if (n.metadata?.roomId) {
+      navigation.navigate('ChatRoom', { 
+        roomId: n.metadata.roomId,
+        recipientName: n.title.replace('New Message from ', '') // Fallback from title
+      });
+    } else if (n.metadata?.caseId) {
       navigation.navigate('CaseDetail', { caseId: n.metadata.caseId });
     }
   };

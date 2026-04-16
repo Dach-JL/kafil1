@@ -5,6 +5,7 @@ export type NotificationType =
   | 'CASE_REJECTED'
   | 'DONATION_RECEIVED'
   | 'MILESTONE_REACHED'
+  | 'MESSAGE_RECEIVED'
   | 'SYSTEM';
 
 export interface Notification {
