@@ -3,6 +3,7 @@ import { supabase } from '../supabase/supabaseClient';
 export interface ChatRoom {
   id: string;
   case_id?: string;
+  creator_id: string;
   is_reported: boolean;
   created_at: string;
   last_message_at: string;
@@ -126,7 +127,7 @@ export async function getOrCreateChatRoom(caseId: string, otherUserId: string): 
   // 2. Create new room if none exists
   const { data: newRoom, error: roomError } = await supabase
     .from('chat_rooms')
-    .insert({ case_id: caseId })
+    .insert({ case_id: caseId, creator_id: myUserId })
     .select()
     .single();
 
