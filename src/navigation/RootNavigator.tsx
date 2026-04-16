@@ -3,7 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Home, FolderHeart, User, ShieldAlert, MessageSquare } from 'lucide-react-native';
+import { Home, FolderHeart, User, ShieldAlert, MessageSquare, Award } from 'lucide-react-native';
 import { ActivityIndicator, View } from 'react-native';
 
 import { useTheme } from '../hooks/useTheme';
@@ -12,6 +12,7 @@ import { useChat } from '../supabase/ChatContext';
 import HomeScreen from '../screens/HomeScreen';
 import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import CreateCaseScreen from '../screens/cases/CreateCaseScreen';
@@ -73,6 +74,14 @@ function TabNavigator() {
         options={{
           tabBarIcon: ({ color, size }) => <FolderHeart color={color} size={size} />,
           title: 'Cases',
+        }}
+      />
+      <Tab.Screen 
+        name="History" 
+        component={HistoryScreen} 
+        options={{
+          tabBarIcon: ({ color, size }) => <Award color={color} size={size} />,
+          title: 'History',
         }}
       />
       {profile?.role === 'admin' && (
