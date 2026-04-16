@@ -13,7 +13,7 @@ import { getCaseById } from '../../api/cases';
 import { getCaseTimeline } from '../../api/events';
 import { Case, CATEGORY_LABELS } from '../../types/cases';
 import { EventLog} from '../../types/events';
-import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare } from 'lucide-react-native';
+import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare, Heart } from 'lucide-react-native';
 import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
@@ -291,9 +291,21 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         </View>
       )}
 
-      {/* Completion Pending Banner */}
-      {caseInfo.status === 'FUNDED' && caseInfo.completion_proof_url && (
+      {/* Goal Met Celebration (for non-owners or when proof submitted) */}
+      {caseInfo.status === 'FUNDED' && (user?.id !== caseInfo.owner_id || caseInfo.completion_proof_url) && (
         <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+          <View style={[styles.statusBanner, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '40', borderWidth: 1 }]}>
+            <Heart color={colors.primary} size={20} fill={colors.primary} />
+            <Text style={[styles.statusBannerText, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
+              Goal Met! Thanks for your help 💝
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* Completion Pending Banner (Overlay on top of goal met if owner sees it) */}
+      {caseInfo.status === 'FUNDED' && caseInfo.completion_proof_url && user?.id === caseInfo.owner_id && (
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background, marginTop: -96 }]}>
           <View style={[styles.statusBanner, { backgroundColor: colors.secondary }]}>
             <Clock color={colors.mutedForeground} size={20} />
             <Text style={[styles.statusBannerText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
