@@ -5,6 +5,7 @@ import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
 import HowItWorks from '../components/landing/HowItWorks';
 import HorizontalCaseList from '../components/landing/HorizontalCaseList';
+import TrustSection from '../components/landing/TrustSection';
 
 export default function LandingScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
@@ -18,6 +19,7 @@ export default function LandingScreen({ navigation }: any) {
         />
         <HowItWorks />
         <HorizontalCaseList onCasePress={() => navigation.navigate('Login')} />
+        <TrustSection />
       </ScrollView>
     </SafeAreaView>
   );
