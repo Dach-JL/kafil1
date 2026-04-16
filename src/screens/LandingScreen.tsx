@@ -1,37 +1,35 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
-import MicroImpactCarousel from '../components/landing/MicroImpactCarousel';
+import HowItWorks from '../components/landing/HowItWorks';
+import HorizontalCaseList from '../components/landing/HorizontalCaseList';
+import TrustSection from '../components/landing/TrustSection';
+import ImpactPreview from '../components/landing/ImpactPreview';
+import FinalCTA from '../components/landing/FinalCTA';
 
 export default function LandingScreen({ navigation }: any) {
-  const { colors } = useTheme();
+  const { colors, typography } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <LandingHero 
           onPrimaryAction={() => navigation.navigate('Login')}
           onSecondaryAction={() => navigation.navigate('Login')}
         />
-        <View style={styles.footer}>
-          <MicroImpactCarousel />
-        </View>
-      </SafeAreaView>
-    </View>
+        <HowItWorks />
+        <HorizontalCaseList onCasePress={() => navigation.navigate('Login')} />
+        <TrustSection />
+        <ImpactPreview onPressItem={() => navigation.navigate('Login')} />
+        <FinalCTA onPress={() => navigation.navigate('Register')} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-    justifyContent: 'space-between', 
-  },
-  footer: {
-    paddingBottom: 20,
-  }
+  container: { flex: 1 },
+  scroll: { flexGrow: 1, paddingBottom: 60 },
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { getPublicCases } from '../../api/cases';
 import { Case } from '../../types/cases';
 import { useTheme } from '../../hooks/useTheme';
@@ -17,30 +17,39 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
     <TouchableOpacity 
       style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
       onPress={onPress}
-      activeOpacity={0.8}
+      activeOpacity={0.9}
     >
-      <View style={[styles.urgencyBadge, { backgroundColor: colors.destructive + '15' }]}>
-        <ShieldAlert color={colors.destructive} size={12} />
-        <Text style={[styles.urgencyText, { color: colors.destructive, fontFamily: typography.fontFamily.medium }]}>
-          Urgent Need
-        </Text>
-      </View>
-      
-      <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
-        {item.title}
-      </Text>
-      
-      <View style={styles.progressContainer}>
-        <View style={styles.progressTextRow}>
-          <Text style={[styles.progressText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            ${item.collected_amount.toLocaleString()} raised
-          </Text>
-          <Text style={[styles.targetText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            of ${item.target_amount.toLocaleString()}
+      <View style={styles.imageContainer}>
+        <Image 
+          source={{ uri: `https://images.unsplash.com/photo-1593113565214-80afcb4a4771?auto=format&fit=crop&q=80&w=800` }} 
+          style={styles.image} 
+        />
+        <View style={styles.imageOverlay} />
+        <View style={[styles.urgencyBadge, { backgroundColor: colors.destructive }]} >
+          <ShieldAlert color="#fff" size={12} strokeWidth={3} />
+          <Text style={[styles.urgencyText, { color: '#fff', fontFamily: typography.fontFamily.bold }]}>
+            Urgent Info
           </Text>
         </View>
-        <View style={[styles.progressBarBg, { backgroundColor: colors.secondary }]}>
-          <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${progress}%` }]} />
+      </View>
+      
+      <View style={styles.cardContent}>
+        <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
+          {item.title}
+        </Text>
+        
+        <View style={styles.progressContainer}>
+          <View style={styles.progressTextRow}>
+            <Text style={[styles.progressText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+              ${item.collected_amount.toLocaleString()} raised
+            </Text>
+            <Text style={[styles.targetText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+              of ${item.target_amount.toLocaleString()}
+            </Text>
+          </View>
+          <View style={[styles.progressBarBg, { backgroundColor: colors.secondary }]}>
+            <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${progress}%` }]} />
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -137,30 +146,48 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   card: {
-    width: 280,
+    width: 300,
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
+    borderRadius: 24,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  imageContainer: {
+    width: '100%',
+    height: 140,
+    position: 'relative',
+    backgroundColor: '#E2E8F0',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   urgencyBadge: {
+    position: 'absolute',
+    bottom: 12,
+    left: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
     gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: 8,
-    marginBottom: 12,
   },
   urgencyText: {
-    fontSize: 11,
+    fontSize: 10,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  cardContent: {
+    padding: 16,
   },
   cardTitle: {
     fontSize: 18,

@@ -1,9 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { HeartHandshake, FilePlus2, ShieldCheck, Banknote } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { ShieldCheck, HeartHandshake } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
-
-const { width, height } = Dimensions.get('window');
 
 interface LandingHeroProps {
   onPrimaryAction: () => void;
@@ -15,34 +13,28 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
 
   return (
     <View style={styles.container}>
-      {/* Soft Glow Elements */}
-      <View style={[styles.glowTop, { backgroundColor: colors.accent + '15' }]} />
-      <View style={[styles.glowBottom, { backgroundColor: colors.primary + '1A' }]} />
-
+      {/* Decorative Background Blobs for Modern Aesthetic */}
+      <View style={[styles.bgCircle, { backgroundColor: colors.primary + '1A' }]} />
+      <View style={[styles.bgCircleSmall, { backgroundColor: colors.accent + '20' }]} />
+      <View style={[styles.bgCircleTiny, { backgroundColor: colors.primary + '10' }]} />
+      
       <View style={styles.content}>
-        {/* Main Typography */}
+        <View style={[styles.badge, { backgroundColor: colors.background, borderColor: colors.primary + '30' }]}>
+          <ShieldCheck color={colors.primary} size={14} strokeWidth={2.5} />
+          <Text style={[styles.badgeText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+            100% VERIFIED IMPACT
+          </Text>
+        </View>
+
         <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
           Change a life today.{'\n'}
           <Text style={{ color: colors.primary }}>See the impact tomorrow.</Text>
         </Text>
 
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          The world's most transparent giving platform. Zero platform fees, immutable proofs, and complete lifecycle tracking.
+          Join a transparent community where every donation is tracked, verified, and proven to reach exactly who needs it.
         </Text>
 
-        {/* Minimal Conviction Badges */}
-        <View style={styles.badgesWrapper}>
-          <View style={[styles.badge, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <ShieldCheck color={colors.accent} size={14} />
-            <Text style={[styles.badgeText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>100% Verified</Text>
-          </View>
-          <View style={[styles.badge, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Banknote color={colors.primary} size={14} />
-            <Text style={[styles.badgeText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>Zero Fees</Text>
-          </View>
-        </View>
-
-        {/* Hierarchical Buttons */}
         <View style={styles.actionRow}>
           <TouchableOpacity 
             style={[styles.primaryBtn, { backgroundColor: colors.primary }]}
@@ -51,21 +43,18 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
           >
             <HeartHandshake color={colors.primaryForeground} size={20} />
             <Text style={[styles.primaryBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              Browse Cases
+              Start Donating
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[styles.secondaryBtn, { borderColor: colors.border }]}
+            style={[styles.secondaryBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={onSecondaryAction}
-            activeOpacity={0.6}
+            activeOpacity={0.8}
           >
-            <View style={styles.secondaryInner}>
-              <FilePlus2 color={colors.text} size={18} />
-              <Text style={[styles.secondaryBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                Create a Case
-              </Text>
-            </View>
+            <Text style={[styles.secondaryBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+              Submit a Case
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -75,109 +64,103 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
 
 const styles = StyleSheet.create({
   container: {
-    height: height * 0.7, // Takes up roughly top 70% of screen to leave room for Micro-Impact
-    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 80,
+    paddingBottom: 50,
     position: 'relative',
     overflow: 'hidden',
   },
-  glowTop: {
+  bgCircle: {
     position: 'absolute',
-    top: -100,
-    left: -50,
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    transform: [{ scaleX: 1.2 }],
-    opacity: 0.7,
-    filter: 'blur(50px)', // Valid on web, ignored on older RN but soft enough anyway
+    top: -120,
+    right: -80,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
   },
-  glowBottom: {
+  bgCircleSmall: {
     position: 'absolute',
-    bottom: -50,
-    right: -100,
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    transform: [{ scaleY: 1.3 }],
-    opacity: 0.8,
+    bottom: 0,
+    left: -60,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+  },
+  bgCircleTiny: {
+    position: 'absolute',
+    top: 60,
+    left: 40,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
   content: {
     position: 'relative',
     zIndex: 10,
     alignItems: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 40,
-    lineHeight: 48,
-    textAlign: 'center',
-    letterSpacing: -1,
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: 'center',
-    marginBottom: 28,
-    paddingHorizontal: 12,
-  },
-  badgesWrapper: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 40,
   },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
+    marginBottom: 32,
     gap: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 3,
   },
   badgeText: {
-    fontSize: 13,
+    fontSize: 11,
+    letterSpacing: 0.5,
+  },
+  title: {
+    fontSize: 42,
+    lineHeight: 52,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 17,
+    lineHeight: 26,
+    textAlign: 'center',
+    marginBottom: 32,
+    paddingHorizontal: 10,
   },
   actionRow: {
     flexDirection: 'column',
     width: '100%',
-    alignItems: 'center',
-    gap: 16,
+    gap: 12,
   },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 18,
-    borderRadius: 16,
-    gap: 10,
-    width: '100%',
-    shadowColor: '#4F46E5', // Matches primary loosely
+    borderRadius: 20,
+    gap: 8,
+    shadowColor: '#4F46E5',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 6,
   },
   primaryBtnText: {
     fontSize: 18,
+    letterSpacing: -0.3,
   },
   secondaryBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 16,
-  },
-  secondaryInner: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 20,
+    borderWidth: 1.5,
   },
   secondaryBtnText: {
     fontSize: 16,
-    opacity: 0.8,
   },
 });
