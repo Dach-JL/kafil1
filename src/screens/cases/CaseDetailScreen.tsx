@@ -110,6 +110,8 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <OutcomeShowcase 
             description={caseInfo.completion_description || ''} 
             images={caseInfo.completion_images || []} 
+            outcomeDate={caseInfo.outcome_date}
+            isApproved={caseInfo.impact_report_status === 'APPROVED'}
           />
         )}
 

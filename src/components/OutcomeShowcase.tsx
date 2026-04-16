@@ -9,17 +9,26 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
-import { ChevronLeft, ChevronRight, X, Heart } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, X, Heart, FileText, ImageIcon, Calendar, Shield } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
+import { format } from 'date-fns';
 
 const { width } = Dimensions.get('window');
 
 interface OutcomeShowcaseProps {
   description: string;
   images: string[];
+  outcomeDate?: string;
+  isApproved?: boolean;
 }
 
-export default function OutcomeShowcase({ description, images }: OutcomeShowcaseProps) {
+function getFileType(url: string): 'pdf' | 'image' {
+  const lower = url.toLowerCase();
+  if (lower.endsWith('.pdf') || lower.includes('/pdf')) return 'pdf';
+  return 'image';
+}
+
+export default function OutcomeShowcase({ description, images, outcomeDate, isApproved }: OutcomeShowcaseProps) {
   const { colors, typography } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -32,10 +41,30 @@ export default function OutcomeShowcase({ description, images }: OutcomeShowcase
         <View style={[styles.iconCircle, { backgroundColor: colors.primary }]}>
           <Heart color="#ffffff" size={16} fill="#ffffff" />
         </View>
-        <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          The Impact Story
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            Verified Impact Report
+          </Text>
+          {isApproved && (
+            <View style={styles.approvedRow}>
+              <Shield color="#22C55E" size={12} />
+              <Text style={{ color: '#22C55E', fontSize: 11, fontFamily: typography.fontFamily.medium }}>
+                Immutable • Admin Verified
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
+
+      {/* Outcome Date */}
+      {outcomeDate && (
+        <View style={[styles.dateBadge, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
+          <Calendar color={colors.mutedForeground} size={14} />
+          <Text style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            Outcome: {format(new Date(outcomeDate), 'MMMM dd, yyyy')}
+          </Text>
+        </View>
+      )}
 
       {images && images.length > 0 && (
         <View style={styles.imageSection}>
@@ -49,18 +78,42 @@ export default function OutcomeShowcase({ description, images }: OutcomeShowcase
             }}
             scrollEventThrottle={16}
           >
-            {images.map((img, idx) => (
-              <TouchableOpacity
-                key={img}
-                activeOpacity={0.9}
-                onPress={() => setFullscreenImage(img)}
-              >
-                <Image
-                  source={{ uri: img }}
-                  style={[styles.image, { backgroundColor: colors.secondary }]}
-                />
-              </TouchableOpacity>
-            ))}
+            {images.map((img, idx) => {
+              const fileType = getFileType(img);
+              return (
+                <TouchableOpacity
+                  key={img}
+                  activeOpacity={0.9}
+                  onPress={() => fileType === 'image' ? setFullscreenImage(img) : null}
+                >
+                  {fileType === 'image' ? (
+                    <View>
+                      <Image
+                        source={{ uri: img }}
+                        style={[styles.image, { backgroundColor: colors.secondary }]}
+                      />
+                      {/* File type badge */}
+                      <View style={[styles.typeBadge, { backgroundColor: '#3B82F6' }]}>
+                        <ImageIcon color="#fff" size={10} />
+                        <Text style={styles.typeBadgeText}>IMAGE</Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <View style={[styles.image, styles.pdfPlaceholder, { backgroundColor: colors.secondary }]}>
+                      <FileText color={colors.mutedForeground} size={40} />
+                      <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 8 }}>
+                        Document {idx + 1}
+                      </Text>
+                      {/* File type badge */}
+                      <View style={[styles.typeBadge, { backgroundColor: '#EF4444' }]}>
+                        <FileText color="#fff" size={10} />
+                        <Text style={styles.typeBadgeText}>PDF</Text>
+                      </View>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
           
           {images.length > 1 && (
@@ -117,6 +170,12 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 16,
   },
+  approvedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
   iconCircle: {
     width: 32,
     height: 32,
@@ -127,6 +186,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
   },
+  dateBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 16,
+    alignSelf: 'flex-start',
+  },
+  dateText: {
+    fontSize: 13,
+  },
   imageSection: {
     marginBottom: 16,
     position: 'relative',
@@ -135,6 +208,27 @@ const styles = StyleSheet.create({
     width: width - 64, // container width minus padding
     height: 220,
     borderRadius: 16,
+  },
+  pdfPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  typeBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  typeBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   pagination: {
     flexDirection: 'row',
