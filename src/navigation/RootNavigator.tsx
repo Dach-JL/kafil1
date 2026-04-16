@@ -13,6 +13,7 @@ import HomeScreen from '../screens/HomeScreen';
 import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import HistoryScreen from '../screens/HistoryScreen';
+import LandingScreen from '../screens/LandingScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import CreateCaseScreen from '../screens/cases/CreateCaseScreen';
@@ -195,6 +196,7 @@ export default function RootNavigator() {
           <AuthStack.Screen name="Main" component={MainNavigator} />
         ) : (
           <>
+            <AuthStack.Screen name="Landing" component={LandingScreen} />
             <AuthStack.Screen name="Login" component={LoginScreen} />
             <AuthStack.Screen name="Register" component={RegisterScreen} />
           </>
