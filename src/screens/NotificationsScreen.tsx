@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Inbox,
   MessageSquare,
+  Star,
 } from 'lucide-react-native';
 import { useNotifications } from '../supabase/NotificationsContext';
 import { useTheme } from '../hooks/useTheme';
@@ -30,6 +31,7 @@ const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
   DONATION_RECEIVED: { icon: Heart, color: '#EC4899' },
   MILESTONE_REACHED: { icon: Heart, color: '#F59E0B' },
   MESSAGE_RECEIVED: { icon: MessageSquare, color: '#8B5CF6' },
+  IMPACT_ACHIEVED: { icon: Star, color: '#F59E0B' },
   SYSTEM: { icon: AlertCircle, color: '#3B82F6' },
 };
 

@@ -23,6 +23,7 @@ export const Colors = {
     cardForeground: '#0F172A',
     muted: '#F1F5F9',
     mutedForeground: '#64748B',
+    error: '#EF4444',
   },
   dark: {
     text: '#ECEDEE',
@@ -45,5 +46,6 @@ export const Colors = {
     cardForeground: '#F8FAFC',
     muted: '#1E293B',
     mutedForeground: '#94A3B8',
+    error: '#F87171',
   },
 };

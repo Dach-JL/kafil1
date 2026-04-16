@@ -116,7 +116,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
           <AlertCircle color={colors.mutedForeground} size={48} />
-          <Text style={[styles.emptyText, { color: colors.text, fontFamily: typography.fontFamily.bold, marginTop: 16 }]}>
+          <Text style={{ fontSize: 20, color: colors.text, fontFamily: typography.fontFamily.bold, marginTop: 16 }}>
             Not Accepting Donations
           </Text>
           <Text style={{ textAlign: 'center', color: colors.mutedForeground, marginTop: 8 }}>
