@@ -1,35 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
-import HowItWorks from '../components/landing/HowItWorks';
-import HorizontalCaseList from '../components/landing/HorizontalCaseList';
-import TrustSection from '../components/landing/TrustSection';
-import ImpactPreview from '../components/landing/ImpactPreview';
-import FinalCTA from '../components/landing/FinalCTA';
 
 export default function LandingScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={styles.safeArea}>
         <LandingHero 
           onPrimaryAction={() => navigation.navigate('Login')}
           onSecondaryAction={() => navigation.navigate('Login')}
         />
-        <HowItWorks />
-        <HorizontalCaseList onCasePress={() => navigation.navigate('Login')} />
-        <TrustSection />
-        <ImpactPreview onPressItem={() => navigation.navigate('Login')} />
-        <FinalCTA onPress={() => navigation.navigate('Register')} />
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  scroll: { flexGrow: 1, paddingBottom: 60 },
+  container: { 
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+    justifyContent: 'center', // Centers the hero vertically
+  },
 });
