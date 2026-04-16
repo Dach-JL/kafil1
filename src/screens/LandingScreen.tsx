@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import LandingHero from '../components/landing/LandingHero';
+import MicroImpactCarousel from '../components/landing/MicroImpactCarousel';
 
 export default function LandingScreen({ navigation }: any) {
   const { colors } = useTheme();
@@ -14,6 +15,9 @@ export default function LandingScreen({ navigation }: any) {
           onPrimaryAction={() => navigation.navigate('Login')}
           onSecondaryAction={() => navigation.navigate('Login')}
         />
+        <View style={styles.footer}>
+          <MicroImpactCarousel />
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -25,6 +29,9 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    justifyContent: 'center', // Centers the hero vertically
+    justifyContent: 'space-between', 
   },
+  footer: {
+    paddingBottom: 20,
+  }
 });
