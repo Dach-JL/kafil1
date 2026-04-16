@@ -15,7 +15,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../supabase/AuthContext';
 import { createContribution } from '../../api/contributions';
-import { ArrowLeft, Send } from 'lucide-react-native';
+import { getCaseById } from '../../api/cases';
+import { Case } from '../../types/cases';
+import { ArrowLeft, Send, AlertCircle } from 'lucide-react-native';
 import FileUpload from '../../components/FileUpload';
 
 export default function FundCaseScreen({ route, navigation }: any) {
@@ -27,6 +29,25 @@ export default function FundCaseScreen({ route, navigation }: any) {
   const [proofPaths, setProofPaths] = useState<string[]>([]);
   const [proofHashes, setProofHashes] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [caseInfo, setCaseInfo] = React.useState<Case | null>(null);
+  const [fetching, setFetching] = React.useState(true);
+
+  React.useEffect(() => {
+    async function loadCase() {
+      try {
+        const data = await getCaseById(caseId);
+        setCaseInfo(data);
+      } catch (err) {
+        console.error('Failed to load case:', err);
+      } finally {
+        setFetching(false);
+      }
+    }
+    loadCase();
+  }, [caseId]);
+
+  const remaining = caseInfo ? (caseInfo.target_amount - (caseInfo.collected_amount || 0)) : 0;
+  const isOverAmount = parseFloat(amountStr) > remaining;
 
   function handleProofUploaded(path: string, hash?: string) {
     setProofPaths((prev) => [...prev, path]);
@@ -43,6 +64,11 @@ export default function FundCaseScreen({ route, navigation }: any) {
     
     if (proofPaths.length === 0) {
       Alert.alert('Proof Required', 'Please upload a screenshot of your bank transfer or receipt.');
+      return;
+    }
+
+    if (isOverAmount) {
+      Alert.alert('Too Much 💝', `You are trying to give more than what's needed. The maximum remaining is $${remaining.toFixed(2)}.`);
       return;
     }
 
@@ -72,6 +98,35 @@ export default function FundCaseScreen({ route, navigation }: any) {
     }
   }
 
+  if (fetching) {
+    return (
+      <View style={[styles.safe, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator color={colors.primary} size="large" />
+      </View>
+    );
+  }
+
+  if (!caseInfo || caseInfo.status !== 'ACTIVE_FUNDING') {
+    return (
+      <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <ArrowLeft color={colors.text} size={24} />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
+          <AlertCircle color={colors.mutedForeground} size={48} />
+          <Text style={[styles.emptyText, { color: colors.text, fontFamily: typography.fontFamily.bold, marginTop: 16 }]}>
+            Not Accepting Donations
+          </Text>
+          <Text style={{ textAlign: 'center', color: colors.mutedForeground, marginTop: 8 }}>
+            This case is either fully funded or not yet verified for active funding.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
@@ -93,10 +148,13 @@ export default function FundCaseScreen({ route, navigation }: any) {
             Please enter the exact amount you transferred so we can verify the funds correctly.
           </Text>
 
-          <View style={[styles.inputWrapper, { borderColor: colors.border, backgroundColor: colors.card }]}>
+          <View style={[
+            styles.inputWrapper, 
+            { borderColor: isOverAmount ? colors.error : colors.border, backgroundColor: colors.card }
+          ]}>
             <Text style={[styles.currency, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>$</Text>
             <TextInput
-              style={[styles.input, { color: colors.text, fontFamily: typography.fontFamily.bold }]}
+              style={[styles.input, { color: isOverAmount ? colors.error : colors.text, fontFamily: typography.fontFamily.bold }]}
               placeholder="0.00"
               placeholderTextColor={colors.mutedForeground}
               keyboardType="decimal-pad"
@@ -105,6 +163,18 @@ export default function FundCaseScreen({ route, navigation }: any) {
               editable={!submitting}
             />
           </View>
+
+          {isOverAmount && (
+            <Text style={{ color: colors.error, marginTop: -24, marginBottom: 24, fontSize: 13 }}>
+              Maximum remaining: ${remaining.toFixed(2)}
+            </Text>
+          )}
+
+          {!isOverAmount && (
+            <Text style={{ color: colors.mutedForeground, marginTop: -24, marginBottom: 24, fontSize: 13 }}>
+              Remaining target: ${remaining.toFixed(2)}
+            </Text>
+          )}
 
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
@@ -133,9 +203,13 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
         <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
           <TouchableOpacity
-            style={[styles.submitBtn, { backgroundColor: colors.primary }, submitting && { opacity: 0.7 }]}
+            style={[
+              styles.submitBtn, 
+              { backgroundColor: colors.primary }, 
+              (submitting || isOverAmount) && { opacity: 0.5 }
+            ]}
             onPress={handleSubmit}
-            disabled={submitting}
+            disabled={submitting || isOverAmount}
             activeOpacity={0.8}
           >
             {submitting ? (
