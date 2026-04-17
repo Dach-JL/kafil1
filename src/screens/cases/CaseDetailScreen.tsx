@@ -11,7 +11,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
 import { getCaseById } from '../../api/cases';
 import { getCaseTimeline } from '../../api/events';
-import { Case, CATEGORY_LABELS } from '../../types/cases';
+import { Case } from '../../types/cases';
+import { useTranslation } from 'react-i18next';
 import { EventLog} from '../../types/events';
 import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare, Heart } from 'lucide-react-native';
 import { getOrCreateChatRoom } from '../../api/chat';
@@ -24,6 +25,7 @@ import OutcomeShowcase from '../../components/OutcomeShowcase';
 export default function CaseDetailScreen({ route, navigation }: any) {
   const { caseId } = route.params;
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [caseInfo, setCaseInfo] = useState<Case | null>(null);
   const [events, setEvents] = useState<EventLog[]>([]);
@@ -64,7 +66,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
       });
     } catch (err: any) {
       console.error(err);
-      alert('Could not start conversation. Please try again later.');
+      alert(t('errors.failedRequest'));
     } finally {
       setInitiatingChat(false);
     }
@@ -89,7 +91,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Case Details
+          {t('cases.myCases')} {/* Optional generic header text mapping or leaving blank */} 
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -100,7 +102,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <View style={[styles.verifiedBanner, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '30' }]}>
             <ShieldCheck color={colors.primary} size={20} />
             <Text style={[styles.verifiedText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              Verified by CharityTrust
+              {t('landing.verified')}
             </Text>
           </View>
         )}
@@ -117,7 +119,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
         <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
           <Text style={[styles.categoryText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            {CATEGORY_LABELS[caseInfo.category]}
+            {t(`categories.${caseInfo.category}`)}
           </Text>
         </View>
 
@@ -144,7 +146,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         <View style={[styles.statsCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.fundingHeader}>
             <Text style={[styles.raisedLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Amount Raised
+              {t('caseDetail.fundingProgress')}
             </Text>
             <Text style={[styles.percentage, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
               {Math.round(progress)}%
@@ -154,7 +156,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <Text style={[styles.raisedAmount, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
             ${caseInfo.collected_amount.toLocaleString()}
             <Text style={[styles.targetAmount, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {' '}of ${caseInfo.target_amount.toLocaleString()}
+              {' '}{t('common.of')} ${caseInfo.target_amount.toLocaleString()}
             </Text>
           </Text>
 
@@ -166,7 +168,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Beneficiary Info */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Who needs help?
+            {t('caseDetail.beneficiary')}
           </Text>
           <View style={[styles.beneficiaryCard, { backgroundColor: colors.secondary }]}>
             <View style={[styles.avatarPlaceholder, { backgroundColor: colors.border }]}>
@@ -174,11 +176,11 @@ export default function CaseDetailScreen({ route, navigation }: any) {
             </View>
             <View>
               <Text style={[styles.beneficiaryName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                {caseInfo.beneficiary_name} {caseInfo.beneficiary_age ? `(${caseInfo.beneficiary_age} yrs)` : ''}
+                {caseInfo.beneficiary_name} {caseInfo.beneficiary_age ? `(${caseInfo.beneficiary_age} ${t('common.yrs')})` : ''}
               </Text>
               {caseInfo.is_anonymous && (
                 <Text style={[styles.anonymousLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-                  Submitted Anonymously
+                  {t('donation.anonymous')}
                 </Text>
               )}
             </View>
@@ -188,7 +190,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Description */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            The Story
+            {t('caseDetail.description')}
           </Text>
           <Text style={[styles.description, { color: colors.text, fontFamily: typography.fontFamily.regular }]}>
             {caseInfo.description}
@@ -199,7 +201,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {caseInfo.owner_id && (
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              The Organizer
+              {t('caseDetail.organizer')}
             </Text>
             <View style={[styles.organizerCard, { borderColor: colors.border }]}>
               <View style={[styles.ownerAvatar, { backgroundColor: colors.primary + '15' }]}>
@@ -207,7 +209,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
               </View>
               <View style={styles.organizerInfo}>
                 <Text style={[styles.ownerName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                  {caseInfo.owner?.name || 'Case Organizer'}
+                  {caseInfo.owner?.name || t('caseDetail.organizer')}
                 </Text>
                 {caseInfo.owner && <TrustBadge score={caseInfo.owner.trust_score} />}
               </View>
@@ -236,7 +238,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Case Timeline */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Timeline
+            {t('caseDetail.timeline')}
           </Text>
           <CaseTimeline events={events} />
         </View>
@@ -269,7 +271,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
             onPress={() => navigation.navigate('FundCase', { caseId })}
           >
             <Text style={[styles.donateBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              Fund this Case
+              {t('donation.fundCase')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -286,7 +288,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <CheckCircle2 color={colors.primaryForeground} size={20} />
               <Text style={[styles.donateBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                Submit Completion Proof
+                {t('caseDetail.submitImpactReport')}
               </Text>
             </View>
           </TouchableOpacity>

@@ -22,8 +22,7 @@ import Step1BasicInfo from './steps/Step1BasicInfo';
 import Step2Financial from './steps/Step2Financial';
 import Step3Evidence from './steps/Step3Evidence';
 import Step4Review from './steps/Step4Review';
-
-const STEPS = ['Details', 'Funding', 'Evidence', 'Review'];
+import { useTranslation } from 'react-i18next';
 
 const INITIAL_FORM = {
   title: '',
@@ -42,9 +41,12 @@ const INITIAL_FORM = {
 export default function CreateCaseScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [savedCaseId, setSavedCaseId] = useState<string | null>(null);
+
+  const STEPS = (t('createCase.steps', { returnObjects: true }) as string[]) || ['Details', 'Funding', 'Evidence', 'Review'];
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const { submit, state: submitState, error: submitError, submittedCase, retry } = useSubmitCase();
 
@@ -157,7 +159,7 @@ export default function CreateCaseScreen({ navigation }: any) {
           <ArrowLeft color={colors.text} size={22} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Create a Case
+          {t('cases.newCase')}
         </Text>
         <Text style={[styles.stepCount, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
           {currentStep}/4
@@ -214,7 +216,7 @@ export default function CreateCaseScreen({ navigation }: any) {
               ) : (
                 <>
                   <Text style={[styles.nextButtonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                    {currentStep === 2 ? 'Save & Continue' : 'Next'}
+                    {currentStep === 2 ? t('buttons.continue') : t('buttons.next')}
                   </Text>
                   <ArrowRight color={colors.primaryForeground} size={18} />
                 </>
@@ -232,7 +234,7 @@ export default function CreateCaseScreen({ navigation }: any) {
               ) : (
                 <>
                   <Text style={[styles.nextButtonText, { color: colors.accentForeground, fontFamily: typography.fontFamily.medium }]}>
-                    Submit for Review
+                    {t('createCase.submitForReview')}
                   </Text>
                   <Send color={colors.accentForeground} size={18} />
                 </>
