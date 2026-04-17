@@ -24,6 +24,7 @@ import { useNotifications } from '../supabase/NotificationsContext';
 import { useTheme } from '../hooks/useTheme';
 import { formatDistanceToNow } from 'date-fns';
 import { NotificationType } from '../api/notifications';
+import { useTranslation } from 'react-i18next';
 
 const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
   CASE_APPROVED: { icon: CheckCircle2, color: '#22C55E' },
@@ -37,6 +38,7 @@ const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
 
 export default function NotificationsScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const { 
     notifications, 
     loading, 
@@ -113,11 +115,11 @@ export default function NotificationsScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.headerActions, { borderBottomColor: colors.border }]}>
         <Text style={[styles.countText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {notifications.length} Total Notifications
+          {t('notifications.total', { count: notifications.length, defaultValue: `${notifications.length} Total Notifications` })}
         </Text>
         <TouchableOpacity onPress={markAllAsRead}>
           <Text style={[styles.markReadBtn, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            Mark all read
+            {t('notifications.markAllRead')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -136,10 +138,10 @@ export default function NotificationsScreen({ navigation }: any) {
               <Inbox color={colors.mutedForeground} size={40} />
             </View>
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
-              All Caught Up!
+              {t('notifications.empty')}
             </Text>
             <Text style={[styles.emptySub, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              You have no new notifications at the moment.
+              {t('notifications.emptyDesc')}
             </Text>
           </View>
         }

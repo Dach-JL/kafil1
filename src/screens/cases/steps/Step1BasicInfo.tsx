@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
 import { CaseCategory, CATEGORY_LABELS } from '../../../types/cases';
 
@@ -26,6 +27,7 @@ const CATEGORIES = Object.keys(CATEGORY_LABELS) as CaseCategory[];
 
 export default function Step1BasicInfo({ data, onChange }: Step1Props) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   const inputStyle = [
     styles.input,
@@ -45,11 +47,11 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
-        Case Details
+        {t('createCase.caseDetails', { defaultValue: 'Case Details' })}
       </Text>
 
       {/* Category Selector */}
-      <Text style={labelStyle}>Category *</Text>
+      <Text style={labelStyle}>{t('createCase.categoryLabel', { defaultValue: 'Category *' })}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow}>
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
@@ -74,17 +76,17 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
                 },
               ]}
             >
-              {CATEGORY_LABELS[cat]}
+              {t(`categories.${cat}`)}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
       {/* Title */}
-      <Text style={labelStyle}>Case Title *</Text>
+      <Text style={labelStyle}>{t('createCase.caseTitleLabel', { defaultValue: 'Case Title *' })}</Text>
       <TextInput
         style={inputStyle}
-        placeholder="e.g. Emergency surgery for Ahmed, 7"
+        placeholder={t('createCase.caseTitlePlaceholder', { defaultValue: 'e.g. Emergency surgery for Ahmed, 7' })}
         placeholderTextColor={colors.mutedForeground}
         value={data.title}
         onChangeText={(v) => onChange('title', v)}
@@ -92,10 +94,10 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
       />
 
       {/* Description */}
-      <Text style={labelStyle}>Full Description *</Text>
+      <Text style={labelStyle}>{t('createCase.fullDescriptionLabel', { defaultValue: 'Full Description *' })}</Text>
       <TextInput
         style={[inputStyle, styles.textarea]}
-        placeholder="Describe the situation in detail — what happened, why help is needed, and how funds will be used..."
+        placeholder={t('createCase.descriptionPlaceholder', { defaultValue: 'Describe the situation in detail — what happened, why help is needed, and how funds will be used...' })}
         placeholderTextColor={colors.mutedForeground}
         value={data.description}
         onChangeText={(v) => onChange('description', v)}
@@ -105,10 +107,10 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
       />
 
       {/* Beneficiary */}
-      <Text style={labelStyle}>Beneficiary Name *</Text>
+      <Text style={labelStyle}>{t('createCase.beneficiaryNameLabel', { defaultValue: 'Beneficiary Name *' })}</Text>
       <TextInput
         style={inputStyle}
-        placeholder="Full name of the person being helped"
+        placeholder={t('createCase.beneficiaryPlaceholder', { defaultValue: 'Full name of the person being helped' })}
         placeholderTextColor={colors.mutedForeground}
         value={data.beneficiary_name}
         onChangeText={(v) => onChange('beneficiary_name', v)}
@@ -116,10 +118,10 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
 
       <View style={styles.row}>
         <View style={styles.halfField}>
-          <Text style={labelStyle}>Age</Text>
+          <Text style={labelStyle}>{t('common.age', { defaultValue: 'Age' })}</Text>
           <TextInput
             style={inputStyle}
-            placeholder="Age"
+            placeholder={t('common.age', { defaultValue: 'Age' })}
             placeholderTextColor={colors.mutedForeground}
             value={data.beneficiary_age}
             onChangeText={(v) => onChange('beneficiary_age', v)}
@@ -128,10 +130,10 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
           />
         </View>
         <View style={styles.halfField}>
-          <Text style={labelStyle}>Location</Text>
+          <Text style={labelStyle}>{t('common.location', { defaultValue: 'Location' })}</Text>
           <TextInput
             style={inputStyle}
-            placeholder="City, Country"
+            placeholder={t('createCase.locationPlaceholder', { defaultValue: 'City, Country' })}
             placeholderTextColor={colors.mutedForeground}
             value={data.location}
             onChangeText={(v) => onChange('location', v)}

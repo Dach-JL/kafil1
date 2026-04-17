@@ -14,9 +14,11 @@ import { useTheme } from '../../hooks/useTheme';
 import { getPendingCompletionCases } from '../../api/cases';
 import { Case } from '../../types/cases';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -30,7 +32,7 @@ function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void
             {item.title}
           </Text>
           <Text style={[styles.timeText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Target: ${item.target_amount.toLocaleString()}
+            {t('admin.targetAmount', { amount: item.target_amount.toLocaleString(), defaultValue: `Target: $${item.target_amount.toLocaleString()}` })}
           </Text>
         </View>
         <CheckCircle2 color={colors.primary} size={24} />
@@ -38,7 +40,7 @@ function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void
 
       <View style={styles.detailsRow}>
         <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Proof submitted {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
+          {t('admin.proofSubmittedInfo', { time: formatDistanceToNow(new Date(item.updated_at), { addSuffix: true }), defaultValue: `Proof submitted ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}` })}
         </Text>
         <ChevronRight color={colors.mutedForeground} size={20} />
       </View>
@@ -48,6 +50,7 @@ function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void
 
 export default function AdminCompletionQueueScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -85,7 +88,7 @@ export default function AdminCompletionQueueScreen({ navigation }: any) {
         <View style={styles.titleRow}>
           <CheckCircle2 color={colors.primary} size={28} />
           <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Completion Queue
+            {t('admin.completionQueue', { defaultValue: 'Completion Queue' })}
           </Text>
         </View>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '20' }]}>
@@ -112,10 +115,10 @@ export default function AdminCompletionQueueScreen({ navigation }: any) {
           <View style={styles.empty}>
             <AlertCircle color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              No pending completions
+              {t('admin.noPendingCompletions', { defaultValue: 'No pending completions' })}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              There are no funded cases awaiting final review.
+              {t('admin.noCompletionsDesc', { defaultValue: 'There are no funded cases awaiting final review.' })}
             </Text>
           </View>
         }

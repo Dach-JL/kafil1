@@ -17,11 +17,13 @@ import { useAuth } from '../supabase/AuthContext';
 import { getChatMessages, sendMessage, reportChatRoom, ChatMessage } from '../api/chat';
 import { supabase } from '../supabase/supabaseClient';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 export default function ChatRoomScreen({ route, navigation }: any) {
   const { roomId, recipientName } = route.params;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState('');
@@ -73,7 +75,7 @@ export default function ChatRoomScreen({ route, navigation }: any) {
       await sendMessage(roomId, user.id, content);
       setContent('');
     } catch (err: any) {
-      Alert.alert('Error', 'Failed to send message: ' + err.message);
+      Alert.alert(t('common.error'), t('chat.sendError', { defaultValue: 'Failed to send message: ' }) + err.message);
     } finally {
       setSending(false);
     }
@@ -81,20 +83,20 @@ export default function ChatRoomScreen({ route, navigation }: any) {
 
   const handleReport = () => {
     Alert.prompt(
-      'Report Conversation',
-      'Please describe why you are reporting this chat. This will allow admins to review the messages for safety.',
+      t('chat.reportConversation', { defaultValue: 'Report Conversation' }),
+      t('chat.reportPrompt', { defaultValue: 'Please describe why you are reporting this chat. This will allow admins to review the messages for safety.' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         { 
-          text: 'Report', 
+          text: t('chat.report', { defaultValue: 'Report' }), 
           style: 'destructive',
           onPress: async (reason: string | undefined) => {
             if (!reason) return;
             try {
               await reportChatRoom(roomId, reason);
-              Alert.alert('Reported', 'The conversation has been reported to admins for review.');
+              Alert.alert(t('chat.reported', { defaultValue: 'Reported' }), t('chat.reportedMessage', { defaultValue: 'The conversation has been reported to admins for review.' }));
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('common.error'), err.message);
             }
           }
         }
@@ -138,7 +140,7 @@ export default function ChatRoomScreen({ route, navigation }: any) {
         <View style={styles.infoLeft}>
           <Info size={14} color={colors.mutedForeground} />
           <Text style={[styles.infoText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Privacy: Encryption at rest active
+            {t('chat.privacy', { defaultValue: 'Privacy: Encryption at rest active' })}
           </Text>
         </View>
         <TouchableOpacity onPress={handleReport}>
@@ -165,7 +167,7 @@ export default function ChatRoomScreen({ route, navigation }: any) {
       <View style={[styles.inputContainer, { borderTopColor: colors.border, backgroundColor: colors.card }]}>
         <TextInput
           style={[styles.input, { color: colors.text, fontFamily: typography.fontFamily.regular }]}
-          placeholder="Type a message..."
+          placeholder={t('chat.typeMessage', { defaultValue: 'Type a message...' })}
           placeholderTextColor={colors.mutedForeground}
           value={content}
           onChangeText={setContent}

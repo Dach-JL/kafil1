@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
 
 interface Step2Props {
@@ -29,6 +30,7 @@ const URGENCY_LEVELS = [
 
 export default function Step2Financial({ data, onChange }: Step2Props) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   const inputStyle = [
     styles.input,
@@ -48,11 +50,11 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
-        Funding Details
+        {t('createCase.fundingDetails', { defaultValue: 'Funding Details' })}
       </Text>
 
       {/* Target Amount */}
-      <Text style={labelStyle}>Funding Goal (USD) *</Text>
+      <Text style={labelStyle}>{t('createCase.fundingGoalLabel', { defaultValue: 'Funding Goal (USD) *' })}</Text>
       <View style={[styles.amountRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Text style={[styles.currency, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
           $
@@ -68,7 +70,7 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
       </View>
 
       {/* Urgency Level */}
-      <Text style={labelStyle}>Urgency Level *</Text>
+      <Text style={labelStyle}>{t('createCase.urgencyLabel', { defaultValue: 'Urgency Level *' })}</Text>
       <View style={styles.urgencyRow}>
         {URGENCY_LEVELS.map(({ level, label, color }) => (
           <TouchableOpacity
@@ -85,17 +87,17 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
             onPress={() => onChange('urgency_level', level)}
           >
             <Text style={[styles.urgencyText, { color: data.urgency_level === level ? color : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-              {label}
+              {t(`urgency.${label.toLowerCase()}`, { defaultValue: label })}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
       {/* Deadline */}
-      <Text style={labelStyle}>Deadline (optional)</Text>
+      <Text style={labelStyle}>{t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}</Text>
       <TextInput
         style={inputStyle}
-        placeholder="YYYY-MM-DD (e.g. 2026-06-01)"
+        placeholder={t('createCase.deadlinePlaceholder', { defaultValue: 'YYYY-MM-DD (e.g. 2026-06-01)' })}
         placeholderTextColor={colors.mutedForeground}
         value={data.deadline}
         onChangeText={(v) => onChange('deadline', v)}
@@ -104,14 +106,14 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
       />
 
       {/* Anonymous Toggle */}
-      <Text style={labelStyle}>Anonymity</Text>
+      <Text style={labelStyle}>{t('createCase.anonymityLabel', { defaultValue: 'Anonymity' })}</Text>
       <View style={[styles.toggleRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={styles.toggleInfo}>
           <Text style={[styles.toggleTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Post Anonymously
+            {t('createCase.postAnonymously', { defaultValue: 'Post Anonymously' })}
           </Text>
           <Text style={[styles.toggleDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Your name will be hidden from the public feed
+            {t('createCase.anonymousDesc', { defaultValue: 'Your name will be hidden from the public feed' })}
           </Text>
         </View>
         <TouchableOpacity

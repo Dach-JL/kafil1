@@ -17,11 +17,13 @@ import { verifyContribution, rejectContribution } from '../../api/contributions'
 import { getSignedUrl } from '../../services/storageService';
 import { format } from 'date-fns';
 import { ShieldAlert, ArrowLeft, Image as ImageIcon, Fingerprint, ExternalLink } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminContributionDetailScreen({ route, navigation }: any) {
   const { contribution } = route.params as { contribution: Contribution };
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(true);
@@ -45,22 +47,22 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
     if (!user) return;
     
     Alert.alert(
-      'Verify Payment',
-      `Are you sure you want to approve this $${contribution.amount} contribution? This will irreversibly add the funds to the target case.`,
+      t('admin.verifyPaymentTitle', { defaultValue: 'Verify Payment' }),
+      t('admin.verifyPaymentPrompt', { amount: contribution.amount.toLocaleString(), defaultValue: `Are you sure you want to approve this $${contribution.amount.toLocaleString()} contribution? This will irreversibly add the funds to the target case.` }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         {
-          text: 'Verify & Add Funds',
+          text: t('buttons.verifyAddFunds', { defaultValue: 'Verify & Add Funds' }),
           style: 'default',
           onPress: async () => {
             setProcessing(true);
             try {
               await verifyContribution(contribution.id, user.id);
-              Alert.alert('Verified! 🎉', 'The funds have been added to the case.', [
+              Alert.alert(t('common.success', { defaultValue: 'Verified! 🎉' }), t('admin.fundsAdded', { defaultValue: 'The funds have been added to the case.' }), [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ]);
             } catch (err: any) {
-              Alert.alert('Error', err.message || 'Failed to verify contribution.');
+              Alert.alert(t('common.error'), err.message || 'Failed to verify contribution.');
             } finally {
               setProcessing(false);
             }
@@ -72,26 +74,26 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
 
   const handleReject = async () => {
     Alert.prompt(
-      'Reject Contribution',
-      'Please provide a reason for rejecting this payment proof:',
+      t('admin.rejectContributionTitle', { defaultValue: 'Reject Contribution' }),
+      t('admin.rejectContributionPrompt', { defaultValue: 'Please provide a reason for rejecting this payment proof:' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         {
-          text: 'Reject',
+          text: t('buttons.reject', { defaultValue: 'Reject' }),
           style: 'destructive',
           onPress: async (reason: string | undefined) => {
             if (!reason?.trim()) {
-              Alert.alert('Required', 'You must provide a rejection reason.');
+              Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
               return;
             }
             setProcessing(true);
             try {
               await rejectContribution(contribution.id, reason);
-              Alert.alert('Rejected', 'The contribution was rejected.', [
+              Alert.alert(t('common.success', { defaultValue: 'Rejected' }), t('admin.contributionRejected', { defaultValue: 'The contribution was rejected.' }), [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ]);
             } catch (err: any) {
-              Alert.alert('Error', err.message || 'Failed to reject contribution.');
+              Alert.alert(t('common.error'), err.message || 'Failed to reject contribution.');
             } finally {
               setProcessing(false);
             }
@@ -109,7 +111,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Review Payment
+          {t('admin.reviewPayment', { defaultValue: 'Review Payment' })}
         </Text>
         <ShieldAlert color={colors.primary} size={24} />
       </View>
@@ -118,7 +120,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
         {/* Donation Metadata */}
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Amount
+            {t('common.amount', { defaultValue: 'Amount' })}
           </Text>
           <Text style={[styles.amount, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
             ${contribution.amount.toLocaleString()}
@@ -127,25 +129,25 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           <View style={styles.divider} />
 
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Target Case
+            {t('common.targetCase', { defaultValue: 'Target Case' })}
           </Text>
           <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            {contribution.cases?.title || 'Unknown Case'}
+            {contribution.cases?.title || t('common.unknownCase', { defaultValue: 'Unknown Case' })}
           </Text>
 
           <View style={styles.divider} />
 
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Donor
+            {t('common.donor', { defaultValue: 'Donor' })}
           </Text>
           <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            {contribution.donor?.name || 'Anonymous Guest'}
+            {contribution.donor?.name || t('donation.anonymousGuest', { defaultValue: 'Anonymous Guest' })}
           </Text>
 
           <View style={styles.divider} />
 
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Submitted At
+            {t('admin.submittedAt', { defaultValue: 'Submitted At' })}
           </Text>
           <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.regular }]}>
             {format(new Date(contribution.created_at), 'MMM dd, yyyy - hh:mm a')}
@@ -157,17 +159,17 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           <View style={styles.fingerprintHeader}>
             <Fingerprint color={colors.text} size={18} />
             <Text style={[styles.boxTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              SHA-256 Integrity Hash
+              {t('admin.sha256Hash', { defaultValue: 'SHA-256 Integrity Hash' })}
             </Text>
           </View>
           <Text style={[styles.hashText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            {contribution.payment_proof_hash || 'No hash provided (Legacy Upload)'}
+            {contribution.payment_proof_hash || t('admin.noHashProvided', { defaultValue: 'No hash provided (Legacy Upload)' })}
           </Text>
         </View>
 
         {/* Payment Proof Image */}
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Payment Proof
+          {t('admin.paymentProof', { defaultValue: 'Payment Proof' })}
         </Text>
         {loadingImage ? (
           <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -187,7 +189,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <ImageIcon color={colors.mutedForeground} size={32} />
             <Text style={[styles.noImageText, { color: colors.mutedForeground }]}>
-              Failed to load receipt image
+              {t('admin.loadReceiptFailed', { defaultValue: 'Failed to load receipt image' })}
             </Text>
           </View>
         )}
@@ -201,7 +203,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           disabled={processing}
         >
           <Text style={[styles.btnTextReject, { color: colors.destructive, fontFamily: typography.fontFamily.medium }]}>
-            Reject
+            {t('buttons.reject', { defaultValue: 'Reject' })}
           </Text>
         </TouchableOpacity>
 
@@ -214,7 +216,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
             <ActivityIndicator color={colors.primaryForeground} />
           ) : (
             <Text style={[styles.btnTextApprove, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              Verify & Add Funds
+              {t('buttons.verifyAddFunds', { defaultValue: 'Verify & Add Funds' })}
             </Text>
           )}
         </TouchableOpacity>

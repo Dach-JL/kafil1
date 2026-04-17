@@ -12,11 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShieldAlert, AlertCircle, Clock, Banknote, CheckCircle2 } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { getPendingCases } from '../../api/cases';
-import { Case, CATEGORY_LABELS } from '../../types/cases';
+import { Case } from '../../types/cases';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -27,7 +29,7 @@ function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void })
       <View style={styles.cardHeader}>
         <View style={[styles.categoryBadge, { backgroundColor: colors.primary + '15' }]}>
           <Text style={[styles.categoryText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            {CATEGORY_LABELS[item.category]}
+            {t(`categories.${item.category}`)}
           </Text>
         </View>
         <View style={styles.timeBadge}>
@@ -56,6 +58,7 @@ function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void })
 
 export default function AdminQueueScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -94,7 +97,7 @@ export default function AdminQueueScreen({ navigation }: any) {
         <View style={styles.titleRow}>
           <ShieldAlert color={colors.primary} size={28} />
           <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Verification Queue
+            {t('admin.verificationQueue', { defaultValue: 'Verification Queue' })}
           </Text>
         </View>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '20' }]}>
@@ -111,7 +114,7 @@ export default function AdminQueueScreen({ navigation }: any) {
       >
         <Banknote color={colors.text} size={20} />
         <Text style={[styles.paymentBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-          View Pending Payments
+          {t('admin.viewPendingPayments', { defaultValue: 'View Pending Payments' })}
         </Text>
       </TouchableOpacity>
 
@@ -122,7 +125,7 @@ export default function AdminQueueScreen({ navigation }: any) {
       >
         <CheckCircle2 color={colors.text} size={20} />
         <Text style={[styles.paymentBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-          View Case Completions
+          {t('admin.viewCaseCompletions', { defaultValue: 'View Case Completions' })}
         </Text>
       </TouchableOpacity>
 
@@ -143,10 +146,10 @@ export default function AdminQueueScreen({ navigation }: any) {
           <View style={styles.empty}>
             <AlertCircle color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              All caught up!
+              {t('admin.allCaughtUp', { defaultValue: 'All caught up!' })}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              There are no pending cases requiring review.
+              {t('admin.noPendingCases', { defaultValue: 'There are no pending cases requiring review.' })}
             </Text>
           </View>
         }

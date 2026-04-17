@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Upload, X, FileText, CheckCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { uploadFile, validateFile, computeFileSHA256, StorageBucket } from '../services/storageService';
 
@@ -33,6 +34,7 @@ export default function FileUpload({
   disabled,
 }: FileUploadProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(!!existingPath);
   const [preview, setPreview] = useState<string | null>(null);
@@ -40,7 +42,7 @@ export default function FileUpload({
   async function pickAndUpload() {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('Permission Required', 'Please allow access to your photo library.');
+      Alert.alert(t('common.permissionRequired', { defaultValue: 'Permission Required' }), t('common.allowPhotoAccess', { defaultValue: 'Please allow access to your photo library.' }));
       return;
     }
 
@@ -60,7 +62,7 @@ export default function FileUpload({
     // Validate file before uploading
     const validation = validateFile(contentType, fileSizeBytes);
     if (!validation.valid) {
-      Alert.alert('Invalid File', validation.error);
+      Alert.alert(t('common.invalidFile', { defaultValue: 'Invalid File' }), validation.error);
       return;
     }
 
@@ -78,11 +80,11 @@ export default function FileUpload({
     } catch (err: any) {
       const msg = err?.message ?? '';
       if (msg.includes('Bucket not found')) {
-        Alert.alert('Upload Failed', 'Storage bucket is not configured. Please contact support.');
+        Alert.alert(t('common.uploadFailed', { defaultValue: 'Upload Failed' }), t('common.bucketNotConfigured', { defaultValue: 'Storage bucket is not configured. Please contact support.' }));
       } else if (msg.includes('new row violates') || msg.includes('policy')) {
-        Alert.alert('Upload Failed', 'You do not have permission to upload to this bucket. Please ensure your account profile is set up correctly.');
+        Alert.alert(t('common.uploadFailed', { defaultValue: 'Upload Failed' }), t('common.noUploadPermission', { defaultValue: 'You do not have permission to upload to this bucket. Please ensure your account profile is set up correctly.' }));
       } else {
-        Alert.alert('Upload Failed', msg || 'An error occurred during upload. Please try again.');
+        Alert.alert(t('common.uploadFailed', { defaultValue: 'Upload Failed' }), msg || t('common.uploadError', { defaultValue: 'An error occurred during upload. Please try again.' }));
       }
     } finally {
       setUploading(false);
@@ -118,17 +120,17 @@ export default function FileUpload({
           <View style={styles.uploadedState}>
             <FileText color={colors.accent} size={24} />
             <Text style={[styles.uploadedText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
-              File Uploaded ✓
+              {t('common.fileUploaded', { defaultValue: 'File Uploaded ✓' })}
             </Text>
           </View>
         ) : (
           <View style={styles.uploadState}>
             <Upload color={colors.mutedForeground} size={24} />
             <Text style={[styles.uploadText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Tap to upload
+              {t('common.tapToUpload', { defaultValue: 'Tap to upload' })}
             </Text>
             <Text style={[styles.uploadHint, { color: colors.mutedForeground }]}>
-              JPEG, PNG, PDF · Max 10MB
+              {t('common.uploadHint', { defaultValue: 'JPEG, PNG, PDF · Max 10MB' })}
             </Text>
           </View>
         )}

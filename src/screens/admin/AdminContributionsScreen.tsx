@@ -14,9 +14,11 @@ import { useTheme } from '../../hooks/useTheme';
 import { getPendingContributions } from '../../api/contributions';
 import { Contribution } from '../../types/contributions';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 function ContributionCard({ item, onPress }: { item: Contribution; onPress: () => void }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -27,7 +29,7 @@ function ContributionCard({ item, onPress }: { item: Contribution; onPress: () =
       <View style={styles.cardHeader}>
         <View style={styles.donorInfo}>
           <Text style={[styles.donorName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            {item.donor?.name || 'Anonymous Donor'}
+            {item.donor?.name || t('donation.anonymousDonor', { defaultValue: 'Anonymous Donor' })}
           </Text>
           <Text style={[styles.timeText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
@@ -40,7 +42,7 @@ function ContributionCard({ item, onPress }: { item: Contribution; onPress: () =
 
       <View style={styles.detailsRow}>
         <Text style={[styles.caseTitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]} numberOfLines={1}>
-          For: {item.cases?.title || 'Unknown Case'}
+          {t('admin.forCase', { title: item.cases?.title || t('common.unknownCase', { defaultValue: 'Unknown Case' }), defaultValue: `For: ${item.cases?.title || 'Unknown Case'}` })}
         </Text>
         <ChevronRight color={colors.mutedForeground} size={20} />
       </View>
@@ -50,6 +52,7 @@ function ContributionCard({ item, onPress }: { item: Contribution; onPress: () =
 
 export default function AdminContributionsScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -87,7 +90,7 @@ export default function AdminContributionsScreen({ navigation }: any) {
         <View style={styles.titleRow}>
           <Banknote color={colors.primary} size={28} />
           <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Payment Queue
+            {t('admin.paymentQueue', { defaultValue: 'Payment Queue' })}
           </Text>
         </View>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '20' }]}>
@@ -114,10 +117,10 @@ export default function AdminContributionsScreen({ navigation }: any) {
           <View style={styles.empty}>
             <AlertCircle color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              No pending payments
+              {t('admin.noPendingPayments', { defaultValue: 'No pending payments' })}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              All incoming contributions have been verified.
+              {t('admin.noPaymentsDesc', { defaultValue: 'All incoming contributions have been verified.' })}
             </Text>
           </View>
         }

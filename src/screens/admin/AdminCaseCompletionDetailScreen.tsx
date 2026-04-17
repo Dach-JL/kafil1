@@ -18,34 +18,36 @@ import { useAuth } from '../../supabase/AuthContext';
 import { format } from 'date-fns';
 import { ShieldCheck, ArrowLeft, Image as ImageIcon, ExternalLink, FileText } from 'lucide-react-native';
 import OutcomeShowcase from '../../components/OutcomeShowcase';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminCaseCompletionDetailScreen({ route, navigation }: any) {
   const { caseInfo } = route.params as { caseInfo: Case };
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [processing, setProcessing] = useState(false);
 
 
   const handleApprove = async () => {
     Alert.alert(
-      'Verify Completion',
-      'By approving this, you are confirming that the funds have been disbursed as reported. The case will be marked as COMPLETED.',
+      t('admin.verifyCompletionTitle', { defaultValue: 'Verify Completion' }),
+      t('admin.verifyCompletionPrompt', { defaultValue: 'By approving this, you are confirming that the funds have been disbursed as reported. The case will be marked as COMPLETED.' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         {
-          text: 'Verify & Finalize',
+          text: t('buttons.verifyFinalize', { defaultValue: 'Verify & Finalize' }),
           style: 'default',
           onPress: async () => {
             if (!user) return;
             setProcessing(true);
             try {
               await verifyCaseCompletion(caseInfo.id, user.id);
-              Alert.alert('Impact Approved! 🎉', 'The case has been successfully locked and completed.', [
+              Alert.alert(t('admin.impactApproved', { defaultValue: 'Impact Approved! 🎉' }), t('admin.impactApprovedDesc', { defaultValue: 'The case has been successfully locked and completed.' }), [
                 { text: 'OK', onPress: () => navigation.goBack() },
               ]);
             } catch (err: any) {
-              Alert.alert('Error', err.message || 'Failed to verify completion.');
+              Alert.alert(t('common.error'), err.message || 'Failed to verify completion.');
             } finally {
               setProcessing(false);
             }
@@ -62,7 +64,7 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Review Completion
+          {t('admin.reviewCompletion', { defaultValue: 'Review Completion' })}
         </Text>
         <ShieldCheck color={colors.primary} size={24} />
       </View>
@@ -70,7 +72,7 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Case Title
+            {t('common.caseTitle', { defaultValue: 'Case Title' })}
           </Text>
           <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
             {caseInfo.title}
@@ -80,11 +82,11 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>Target</Text>
+              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.target', { defaultValue: 'Target' })}</Text>
               <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>${caseInfo.target_amount.toLocaleString()}</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>Collected</Text>
+              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.collected', { defaultValue: 'Collected' })}</Text>
               <Text style={[styles.value, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>${caseInfo.collected_amount.toLocaleString()}</Text>
             </View>
           </View>
@@ -92,7 +94,7 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
           <View style={styles.divider} />
 
           <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Beneficiary
+            {t('common.beneficiary', { defaultValue: 'Beneficiary' })}
           </Text>
           <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
             {caseInfo.beneficiary_name}
@@ -101,7 +103,7 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
 
         <View style={{ marginTop: 16 }}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading, marginLeft: 16 }]}>
-            Impact Report
+            {t('case.impactReport', { defaultValue: 'Impact Report' })}
           </Text>
           <OutcomeShowcase 
             description={caseInfo.completion_description || ''} 
@@ -121,7 +123,7 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
             <ActivityIndicator color={colors.primaryForeground} />
           ) : (
             <Text style={[styles.btnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              Approve Completion
+              {t('buttons.approveCompletion', { defaultValue: 'Approve Completion' })}
             </Text>
           )}
         </TouchableOpacity>

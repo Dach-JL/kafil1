@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 import { ShieldCheck, Clock, MapPin } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
-import { Case, CATEGORY_LABELS } from '../types/cases';
+import { Case } from '../types/cases';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import TrustBadge from './TrustBadge';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 export default function PublicCaseCard({ data, onPress, style }: Props) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   const progress = Math.min((data.collected_amount / data.target_amount) * 100, 100);
 
@@ -26,7 +28,7 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
       <View style={styles.header}>
         <View style={[styles.categoryBadge, { backgroundColor: colors.primary + '15' }]}>
           <Text style={[styles.categoryText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            {CATEGORY_LABELS[data.category]}
+            {t(`categories.${data.category}`)}
           </Text>
         </View>
         
@@ -34,7 +36,7 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
           <View style={[styles.statusBadge, { backgroundColor: colors.primary + '15' }]}>
             <ShieldCheck color={colors.primary} size={14} />
             <Text style={[styles.statusText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              Verified
+              {t('statuses.VERIFIED')}
             </Text>
           </View>
         ) : null}
@@ -47,7 +49,7 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
       {data.owner && (
         <View style={styles.ownerRow}>
           <Text style={[styles.ownerName, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            by {data.owner.name}
+            {t('common.by', { defaultValue: 'by' })} {data.owner.name}
           </Text>
           <TrustBadge score={data.owner.trust_score} />
         </View>
@@ -75,7 +77,7 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
 
       <View style={styles.fundingRow}>
         <Text style={[styles.fundingRaised, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
-          ${data.collected_amount.toLocaleString()} <Text style={[styles.fundingGoal, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>raised of ${data.target_amount.toLocaleString()}</Text>
+          ${data.collected_amount.toLocaleString()} <Text style={[styles.fundingGoal, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.raised')} {t('common.of')} ${data.target_amount.toLocaleString()}</Text>
         </Text>
         <Text style={[styles.fundingPercent, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
           {Math.round(progress)}%

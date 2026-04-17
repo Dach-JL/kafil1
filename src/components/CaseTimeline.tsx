@@ -11,6 +11,7 @@ import {
   RefreshCw,
 } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { EventLog } from '../types/events';
 
@@ -21,17 +22,17 @@ interface TimelineEvent {
   color: string;
 }
 
-function getEventDisplay(event: EventLog, colors: any): TimelineEvent {
+function getEventDisplay(event: EventLog, colors: any, t: any): TimelineEvent {
   const { action, metadata, actor } = event;
-  const actorName = actor?.name || 'CharityTrust';
+  const actorName = actor?.name || t('common.appName', { defaultValue: 'CharityTrust' });
   const isAdmin = actor?.role === 'admin';
 
   switch (action) {
     case 'CASE_CREATED':
       return {
         icon: <PlusCircle color={colors.primary} size={18} />,
-        label: 'Case Created',
-        sublabel: `Submitted by ${actorName}`,
+        label: t('timeline.caseCreated', { defaultValue: 'Case Created' }),
+        sublabel: t('timeline.submittedBy', { name: actorName, defaultValue: `Submitted by ${actorName}` }),
         color: colors.primary,
       };
 
@@ -39,37 +40,37 @@ function getEventDisplay(event: EventLog, colors: any): TimelineEvent {
       const to = metadata?.new_status;
       if (to === 'PENDING_REVIEW') return {
         icon: <RefreshCw color={colors.mutedForeground} size={18} />,
-        label: 'Submitted for Review',
-        sublabel: `Waiting for admin verification`,
+        label: t('timeline.submittedForReview', { defaultValue: 'Submitted for Review' }),
+        sublabel: t('timeline.waitingVerification', { defaultValue: 'Waiting for admin verification' }),
         color: colors.mutedForeground,
       };
       if (to === 'ACTIVE_FUNDING' || to === 'VERIFIED') return {
         icon: <ShieldCheck color={colors.primary} size={18} />,
-        label: 'Verified by CharityTrust',
-        sublabel: `Approved by ${actorName}`,
+        label: t('timeline.verifiedBy', { defaultValue: 'Verified by CharityTrust' }),
+        sublabel: t('timeline.approvedBy', { name: actorName, defaultValue: `Approved by ${actorName}` }),
         color: colors.primary,
       };
       if (to === 'FUNDED') return {
         icon: <CheckCircle2 color="#22c55e" size={18} />,
-        label: '🎉 Fully Funded!',
-        sublabel: 'The target goal has been reached',
+        label: t('timeline.fullyFunded', { defaultValue: '🎉 Fully Funded!' }),
+        sublabel: t('timeline.goalReached', { defaultValue: 'The target goal has been reached' }),
         color: '#22c55e',
       };
       if (to === 'COMPLETED') return {
         icon: <CheckCircle2 color="#22c55e" size={18} />,
-        label: '✅ Case Completed',
-        sublabel: 'Funds disbursed and verified',
+        label: t('timeline.caseCompleted', { defaultValue: '✅ Case Completed' }),
+        sublabel: t('timeline.fundsDisbursed', { defaultValue: 'Funds disbursed and verified' }),
         color: '#22c55e',
       };
       if (to === 'REJECTED') return {
         icon: <XCircle color={colors.destructive} size={18} />,
-        label: 'Case Rejected',
-        sublabel: metadata?.reason || 'Did not meet verification criteria',
+        label: t('timeline.caseRejected', { defaultValue: 'Case Rejected' }),
+        sublabel: metadata?.reason || t('timeline.didNotMeetCriteria', { defaultValue: 'Did not meet verification criteria' }),
         color: colors.destructive,
       };
       return {
         icon: <FileText color={colors.mutedForeground} size={18} />,
-        label: `Status: ${to}`,
+        label: t('timeline.statusIs', { status: to, defaultValue: `Status: ${to}` }),
         color: colors.mutedForeground,
       };
     }
@@ -79,19 +80,19 @@ function getEventDisplay(event: EventLog, colors: any): TimelineEvent {
       const amount = metadata?.amount;
       if (to === 'VERIFIED') return {
         icon: <DollarSign color="#22c55e" size={18} />,
-        label: `$${amount?.toLocaleString() || '??'} Donation Confirmed`,
-        sublabel: `Verified by ${actorName}`,
+        label: t('timeline.donationConfirmed', { amount: amount?.toLocaleString() || '??', defaultValue: `$${amount?.toLocaleString() || '??'} Donation Confirmed` }),
+        sublabel: t('timeline.verifiedByAdmin', { name: actorName, defaultValue: `Verified by ${actorName}` }),
         color: '#22c55e',
       };
       if (to === 'REJECTED') return {
         icon: <AlertCircle color={colors.destructive} size={18} />,
-        label: 'Donation Proof Rejected',
-        sublabel: 'Payment could not be verified',
+        label: t('timeline.donationRejected', { defaultValue: 'Donation Proof Rejected' }),
+        sublabel: t('timeline.paymentNotVerified', { defaultValue: 'Payment could not be verified' }),
         color: colors.destructive,
       };
       return {
         icon: <DollarSign color={colors.mutedForeground} size={18} />,
-        label: `Contribution: ${to}`,
+        label: t('timeline.contributionIs', { status: to, defaultValue: `Contribution: ${to}` }),
         color: colors.mutedForeground,
       };
     }
@@ -107,11 +108,12 @@ function getEventDisplay(event: EventLog, colors: any): TimelineEvent {
 
 export default function CaseTimeline({ events }: { events: EventLog[] }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   if (events.length === 0) {
     return (
       <Text style={[styles.empty, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        No timeline events yet.
+        {t('timeline.noEvents', { defaultValue: 'No timeline events yet.' })}
       </Text>
     );
   }
@@ -119,7 +121,7 @@ export default function CaseTimeline({ events }: { events: EventLog[] }) {
   return (
     <View style={styles.container}>
       {events.map((event, index) => {
-        const { icon, label, sublabel, color } = getEventDisplay(event, colors);
+        const { icon, label, sublabel, color } = getEventDisplay(event, colors, t);
         const isLast = index === events.length - 1;
 
         return (

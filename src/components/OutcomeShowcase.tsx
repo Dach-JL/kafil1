@@ -12,6 +12,7 @@ import {
 import { ChevronLeft, ChevronRight, X, Heart, FileText, ImageIcon, Calendar, Shield } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -30,6 +31,7 @@ function getFileType(url: string): 'pdf' | 'image' {
 
 export default function OutcomeShowcase({ description, images, outcomeDate, isApproved }: OutcomeShowcaseProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
@@ -43,13 +45,13 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
         </View>
         <View style={{ flex: 1 }}>
           <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Verified Impact Report
+            {t('caseDetail.impactReport', { defaultValue: 'Impact Report' })}
           </Text>
           {isApproved && (
             <View style={styles.approvedRow}>
               <Shield color="#22C55E" size={12} />
               <Text style={{ color: '#22C55E', fontSize: 11, fontFamily: typography.fontFamily.medium }}>
-                Immutable • Admin Verified
+                {t('landing.immutableProof', { defaultValue: 'Immutable Proof' })} • {t('landing.adminVetted', { defaultValue: 'Admin Vetted' })}
               </Text>
             </View>
           )}
@@ -61,7 +63,7 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
         <View style={[styles.dateBadge, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
           <Calendar color={colors.mutedForeground} size={14} />
           <Text style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Outcome: {format(new Date(outcomeDate), 'MMMM dd, yyyy')}
+            {t('caseDetail.outcomeDate', { defaultValue: 'Outcome Date' })}: {format(new Date(outcomeDate), 'MMMM dd, yyyy')}
           </Text>
         </View>
       )}
@@ -102,7 +104,7 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
                     <View style={[styles.image, styles.pdfPlaceholder, { backgroundColor: colors.secondary }]}>
                       <FileText color={colors.mutedForeground} size={40} />
                       <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 8 }}>
-                        Document {idx + 1}
+                        {t('common.document', { defaultValue: 'Document' })} {idx + 1}
                       </Text>
                       {/* File type badge */}
                       <View style={[styles.typeBadge, { backgroundColor: '#EF4444' }]}>

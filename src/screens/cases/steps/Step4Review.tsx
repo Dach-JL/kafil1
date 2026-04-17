@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
 import { CaseCategory, CATEGORY_LABELS } from '../../../types/cases';
+import { useTranslation } from 'react-i18next';
 
 interface Step4Props {
   data: {
@@ -23,6 +24,9 @@ const URGENCY_LABELS = ['', 'Low', 'Medium', 'High', 'Critical', 'Emergency'];
 
 export default function Step4Review({ data }: Step4Props) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
+
+  const URGENCY_LABELS = ['', t('urgency.low', {defaultValue:'Low'}), t('urgency.medium', {defaultValue:'Medium'}), t('urgency.high', {defaultValue:'High'}), t('urgency.critical', {defaultValue:'Critical'}), t('urgency.emergency', {defaultValue:'Emergency'})];
 
   const rowStyle = {
     borderBottomColor: colors.border,
@@ -31,10 +35,10 @@ export default function Step4Review({ data }: Step4Props) {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
-        Review Your Case
+        {t('createCase.reviewTitle', { defaultValue: 'Review Your Case' })}
       </Text>
       <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        Please review everything before submitting. Once sent for review, you cannot edit the case.
+        {t('createCase.reviewDesc', { defaultValue: 'Please review everything before submitting. Once sent for review, you cannot edit the case.' })}
       </Text>
 
       {/* Case Info Card */}
@@ -44,7 +48,7 @@ export default function Step4Review({ data }: Step4Props) {
         </Text>
         <View style={[styles.badge, { backgroundColor: colors.primary + '20' }]}>
           <Text style={[styles.badgeText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            {CATEGORY_LABELS[data.category]}
+            {t(`categories.${data.category}`)}
           </Text>
         </View>
         <Text style={[styles.desc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]} numberOfLines={3}>
@@ -55,13 +59,13 @@ export default function Step4Review({ data }: Step4Props) {
       {/* Details Grid */}
       <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
-          { label: 'Beneficiary', value: `${data.beneficiary_name}${data.beneficiary_age ? `, ${data.beneficiary_age} yrs` : ''}` },
-          { label: 'Location', value: data.location || 'Not specified' },
-          { label: 'Funding Goal', value: data.target_amount ? `$${parseFloat(data.target_amount).toLocaleString()}` : '—' },
-          { label: 'Urgency', value: URGENCY_LABELS[data.urgency_level] || '—' },
-          { label: 'Deadline', value: data.deadline || 'None' },
-          { label: 'Anonymous', value: data.is_anonymous ? 'Yes' : 'No' },
-          { label: 'Evidence Files', value: `${data.evidencePaths.length} file(s) uploaded` },
+          { label: t('common.beneficiary', { defaultValue: 'Beneficiary' }), value: `${data.beneficiary_name}${data.beneficiary_age ? `, ${t('common.yrs', { age: data.beneficiary_age, defaultValue: `${data.beneficiary_age} yrs` })}` : ''}` },
+          { label: t('common.location', { defaultValue: 'Location' }), value: data.location || t('common.notSpecified', { defaultValue: 'Not specified' }) },
+          { label: t('createCase.fundingGoal', { defaultValue: 'Funding Goal' }), value: data.target_amount ? `$${parseFloat(data.target_amount).toLocaleString()}` : '—' },
+          { label: t('createCase.urgency', { defaultValue: 'Urgency' }), value: URGENCY_LABELS[data.urgency_level] || '—' },
+          { label: t('createCase.deadline', { defaultValue: 'Deadline' }), value: data.deadline || t('common.none', { defaultValue: 'None' }) },
+          { label: t('createCase.anonymous', { defaultValue: 'Anonymous' }), value: data.is_anonymous ? t('common.yes', { defaultValue: 'Yes' }) : t('common.no', { defaultValue: 'No' }) },
+          { label: t('createCase.evidenceFiles', { defaultValue: 'Evidence Files' }), value: t('createCase.filesUploaded', { count: data.evidencePaths.length, defaultValue: `${data.evidencePaths.length} file(s) uploaded` }) },
         ].map(({ label, value }, i) => (
           <View key={i} style={[styles.detailRow, rowStyle, i > 0 && { borderTopWidth: 1 }]}>
             <Text style={[styles.detailLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
@@ -76,10 +80,10 @@ export default function Step4Review({ data }: Step4Props) {
 
       <View style={[styles.warningBox, { backgroundColor: colors.primary + '10', borderColor: colors.primary + '40' }]}>
         <Text style={[styles.warningText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-          🔍 Admin Review Process
+          {t('createCase.adminReview', { defaultValue: '🔍 Admin Review Process' })}
         </Text>
         <Text style={[styles.warningDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Your case will be reviewed by a CharityTrust verifier. This usually takes 1–3 business days. You'll be notified once a decision is made.
+          {t('createCase.adminReviewDesc', { defaultValue: "Your case will be reviewed by a CharityTrust verifier. This usually takes 1–3 business days. You'll be notified once a decision is made." })}
         </Text>
       </View>
     </ScrollView>

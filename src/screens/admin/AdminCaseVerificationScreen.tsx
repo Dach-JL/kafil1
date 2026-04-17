@@ -17,6 +17,7 @@ import { useAuth } from '../../supabase/AuthContext';
 import { listFiles, getSignedUrl } from '../../services/storageService';
 import { Check, X, FileText, Download, ArrowLeft } from 'lucide-react-native';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   route: any;
@@ -27,6 +28,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
   const caseInfo = route.params.caseInfo as Case;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   
   const [evidenceFiles, setEvidenceFiles] = useState<{ name: string; url: string }[]>([]);
   const [loadingEvidence, setLoadingEvidence] = useState(true);
@@ -55,21 +57,21 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
 
   async function handleApprove() {
     Alert.alert(
-      'Approve Case',
-      'Are you sure you want to approve this case? It will be publicly visible and start accepting contributions.',
+      t('admin.approveCaseTitle', { defaultValue: 'Approve Case' }),
+      t('admin.approveCasePrompt', { defaultValue: 'Are you sure you want to approve this case? It will be publicly visible and start accepting contributions.' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         { 
-          text: 'Approve', 
+          text: t('buttons.approve', { defaultValue: 'Approve' }), 
           style: 'default',
           onPress: async () => {
             setSubmitting(true);
             try {
               await verifyCase(caseInfo.id, user!.id);
-              Alert.alert('Success', 'Case has been verified and is now live!');
+              Alert.alert(t('common.success'), t('admin.caseVerifiedLive', { defaultValue: 'Case has been verified and is now live!' }));
               navigation.goBack();
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('common.error'), err.message);
             } finally {
               setSubmitting(false);
             }
@@ -81,25 +83,25 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
 
   async function handleReject() {
     Alert.prompt(
-      'Reject Case',
-      'Please provide a reason for rejection. This will be visible to the case owner.',
+      t('admin.rejectCaseTitle', { defaultValue: 'Reject Case' }),
+      t('admin.rejectCasePrompt', { defaultValue: 'Please provide a reason for rejection. This will be visible to the case owner.' }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('buttons.cancel'), style: 'cancel' },
         {
-          text: 'Reject',
+          text: t('buttons.reject', { defaultValue: 'Reject' }),
           style: 'destructive',
           onPress: async (reason: string | undefined) => {
             if (!reason?.trim()) {
-              Alert.alert('Required', 'You must provide a rejection reason.');
+              Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
               return;
             }
             setSubmitting(true);
             try {
               await rejectCase(caseInfo.id, reason.trim());
-              Alert.alert('Case Rejected', 'The case owner will be notified to make corrections.');
+              Alert.alert(t('admin.caseRejectedTitle', { defaultValue: 'Case Rejected' }), t('admin.caseRejectedMsg', { defaultValue: 'The case owner will be notified to make corrections.' }));
               navigation.goBack();
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('common.error'), err.message);
             } finally {
               setSubmitting(false);
             }
@@ -109,7 +111,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
     );
   }
 
-  const URGENCY_LABELS = ['', 'Low', 'Medium', 'High', 'Critical', 'Emergency'];
+  const URGENCY_LABELS = ['', t('urgency.low', {defaultValue:'Low'}), t('urgency.medium', {defaultValue:'Medium'}), t('urgency.high', {defaultValue:'High'}), t('urgency.critical', {defaultValue:'Critical'}), t('urgency.emergency', {defaultValue:'Emergency'})];
   const rowStyle = { borderBottomColor: colors.border };
 
   return (
@@ -119,7 +121,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Verify Case
+          {t('admin.verifyCase', { defaultValue: 'Verify Case' })}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -132,7 +134,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
           </Text>
           <View style={[styles.badge, { backgroundColor: colors.primary + '20' }]}>
             <Text style={[styles.badgeText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              {CATEGORY_LABELS[caseInfo.category]}
+              {t(`categories.${caseInfo.category}`)}
             </Text>
           </View>
           <Text style={[styles.desc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
@@ -143,13 +145,13 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
         {/* Details Data */}
         <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           {[
-            { label: 'Beneficiary', value: `${caseInfo.beneficiary_name} ${caseInfo.beneficiary_age ? `(${caseInfo.beneficiary_age} yrs)` : ''}` },
-            { label: 'Location', value: caseInfo.location || 'Not specified' },
-            { label: 'Target Amount', value: `$${caseInfo.target_amount.toLocaleString()}` },
-            { label: 'Urgency', value: URGENCY_LABELS[caseInfo.urgency_level] },
-            { label: 'Deadline', value: caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : 'No deadline' },
-            { label: 'Anonymous Submission', value: caseInfo.is_anonymous ? 'Yes' : 'No' },
-            { label: 'Submitted Date', value: format(new Date(caseInfo.updated_at), 'MMM dd, yyyy HH:mm') },
+            { label: t('common.beneficiary', { defaultValue: 'Beneficiary' }), value: `${caseInfo.beneficiary_name} ${caseInfo.beneficiary_age ? `(${t('common.yrs', { age: caseInfo.beneficiary_age, defaultValue: `${caseInfo.beneficiary_age} yrs` })})` : ''}` },
+            { label: t('common.location', { defaultValue: 'Location' }), value: caseInfo.location || t('common.notSpecified', { defaultValue: 'Not specified' }) },
+            { label: t('createCase.fundingGoal', { defaultValue: 'Target Amount' }), value: `$${caseInfo.target_amount.toLocaleString()}` },
+            { label: t('createCase.urgency', { defaultValue: 'Urgency' }), value: URGENCY_LABELS[caseInfo.urgency_level] },
+            { label: t('createCase.deadline', { defaultValue: 'Deadline' }), value: caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : t('common.none', { defaultValue: 'No deadline' }) },
+            { label: t('admin.anonymousSubmission', { defaultValue: 'Anonymous Submission' }), value: caseInfo.is_anonymous ? t('common.yes') : t('common.no') },
+            { label: t('admin.submittedDate', { defaultValue: 'Submitted Date' }), value: format(new Date(caseInfo.updated_at), 'MMM dd, yyyy HH:mm') },
           ].map(({ label, value }, i) => (
             <View key={i} style={[styles.detailRow, rowStyle, i > 0 && { borderTopWidth: 1 }]}>
               <Text style={[styles.detailLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{label}</Text>
@@ -160,7 +162,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
 
         {/* Evidence Section */}
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Supporting Evidence
+          {t('createCase.evidenceTitle', { defaultValue: 'Supporting Evidence' })}
         </Text>
         
         <View style={[styles.evidenceCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -168,7 +170,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
             <ActivityIndicator color={colors.primary} style={{ margin: 20 }} />
           ) : evidenceFiles.length === 0 ? (
             <Text style={[styles.noEvidence, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              No evidence files attached.
+              {t('admin.noEvidenceAttached', { defaultValue: 'No evidence files attached.' })}
             </Text>
           ) : (
             evidenceFiles.map((file, idx) => (
@@ -200,7 +202,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
         >
           <X color={colors.destructive} size={20} />
           <Text style={[styles.actionBtnText, { color: colors.destructive, fontFamily: typography.fontFamily.medium }]}>
-            Reject
+            {t('buttons.reject', { defaultValue: 'Reject' })}
           </Text>
         </TouchableOpacity>
 
@@ -215,7 +217,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
             <>
               <Check color={colors.primaryForeground} size={20} />
               <Text style={[styles.actionBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                Approve & Publish
+                {t('buttons.approvePublish', { defaultValue: 'Approve & Publish' })}
               </Text>
             </>
           )}

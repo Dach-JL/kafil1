@@ -14,10 +14,12 @@ import { useChat } from '../supabase/ChatContext';
 import { useTheme } from '../hooks/useTheme';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../supabase/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function InboxScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { rooms, loading, refreshRooms } = useChat();
 
   const renderItem = ({ item }: { item: any }) => {
@@ -26,7 +28,7 @@ export default function InboxScreen({ navigation }: any) {
       (p: any) => p.user_id !== user?.id
     );
 
-    const displayName = otherParticipant?.profile?.name || 'Anonymous User';
+    const displayName = otherParticipant?.profile?.name || t('chat.anonymousUser', { defaultValue: 'Anonymous User' });
     const avatarUrl = otherParticipant?.profile?.avatar_url;
 
     return (
@@ -69,7 +71,7 @@ export default function InboxScreen({ navigation }: any) {
               ]} 
               numberOfLines={1}
             >
-              {item.latest_message ? item.latest_message.content : 'No messages yet'}
+              {item.latest_message ? item.latest_message.content : t('chat.noMessagesYet', { defaultValue: 'No messages yet' })}
             </Text>
             {(item.unreadCount || 0) > 0 && (
               <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]} />
@@ -106,10 +108,10 @@ export default function InboxScreen({ navigation }: any) {
               <InboxIcon color={colors.mutedForeground} size={40} />
             </View>
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
-              No Messages
+              {t('chat.noMessages', { defaultValue: 'No Messages' })}
             </Text>
             <Text style={[styles.emptySub, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Direct messages with donors or beneficiaries will appear here.
+              {t('chat.inboxEmpty', { defaultValue: 'Direct messages with donors or beneficiaries will appear here.' })}
             </Text>
           </View>
         }

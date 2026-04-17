@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ShieldCheck, ShieldAlert, Award, Diamond } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 
 interface TrustBadgeProps {
@@ -10,25 +11,26 @@ interface TrustBadgeProps {
 
 export default function TrustBadge({ score, showText = true }: TrustBadgeProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   let TierIcon = ShieldCheck;
   let tierColor = colors.mutedForeground;
-  let tierLabel = 'New Member';
+  let tierLabel = t('trust.newMember', { defaultValue: 'New Member' });
 
   if (score >= 500) {
     TierIcon = Diamond;
     tierColor = '#C084FC'; // Purple/Diamond
-    tierLabel = 'Elite Pillar';
+    tierLabel = t('trust.elitePillar', { defaultValue: 'Elite Pillar' });
   } else if (score >= 200) {
     TierIcon = Award;
     tierColor = '#F59E0B'; // Gold
-    tierLabel = 'Top Rated';
+    tierLabel = t('trust.topRated', { defaultValue: 'Top Rated' });
   } else if (score >= 50) {
     TierIcon = ShieldCheck;
     tierColor = '#3B82F6'; // Blue/Silver
-    tierLabel = 'Verified Trust';
+    tierLabel = t('trust.verifiedTrust', { defaultValue: 'Verified Trust' });
   } else if (score > 0) {
-    tierLabel = 'Building Trust';
+    tierLabel = t('trust.buildingTrust', { defaultValue: 'Building Trust' });
   }
 
   return (
