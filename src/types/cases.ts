@@ -27,6 +27,9 @@ export interface Case {
   target_amount: number;
   collected_amount: number;
   location?: string;
+  bank_name?: string;
+  bank_account_number?: string;
+  bank_account_name?: string;
   completion_proof_url?: string;
   completion_description?: string;
   completion_images?: string[];
