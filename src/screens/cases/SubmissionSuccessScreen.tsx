@@ -78,21 +78,21 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
                 <Text style={[styles.statValue, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
                   ${submittedCase.target_amount.toLocaleString()}
                 </Text>
-                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Goal</Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>{t('common.goal', { defaultValue: 'Goal' })}</Text>
               </View>
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.stat}>
                 <Text style={[styles.statValue, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-                  1–3 days
+                  {t('common.reviewTimeValue', { defaultValue: '1–3 days' })}
                 </Text>
-                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Review time</Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>{t('common.reviewTime', { defaultValue: 'Review time' })}</Text>
               </View>
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.stat}>
                 <Text style={[styles.statValue, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
                   {t('statuses.PENDING_REVIEW')}
                 </Text>
-                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Status</Text>
+                <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>{t('common.status', { defaultValue: 'Status' })}</Text>
               </View>
             </View>
           </View>
@@ -100,13 +100,13 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
           {/* What happens next */}
           <View style={[styles.stepsCard, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
             <Text style={[styles.nextTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              What happens next?
+              {t('caseDetail.whatHappensNext', { defaultValue: 'What happens next?' })}
             </Text>
             {[
-              '🔍  Admin reviews your case & evidence',
-              '📧  You receive a notification with the decision',
-              '✅  If approved, your case goes live for contributions',
-              '💰  Contributors can fund and upload payment proof',
+              t('caseDetail.nextStep1', { defaultValue: '🔍  Admin reviews your case & evidence' }),
+              t('caseDetail.nextStep2', { defaultValue: '📧  You receive a notification with the decision' }),
+              t('caseDetail.nextStep3', { defaultValue: '✅  If approved, your case goes live for contributions' }),
+              t('caseDetail.nextStep4', { defaultValue: '💰  Contributors can fund and upload payment proof' }),
             ].map((step, i) => (
               <Text
                 key={i}

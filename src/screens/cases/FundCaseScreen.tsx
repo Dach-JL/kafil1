@@ -60,17 +60,26 @@ export default function FundCaseScreen({ route, navigation }: any) {
     const amount = parseFloat(amountStr);
     
     if (isNaN(amount) || amount <= 0) {
-      Alert.alert('Invalid Amount', 'Please enter a valid contribution amount.');
+      Alert.alert(
+        t('common.invalidAmount', { defaultValue: 'Invalid Amount' }), 
+        t('donation.invalidAmountDesc', { defaultValue: 'Please enter a valid contribution amount.' })
+      );
       return;
     }
     
     if (proofPaths.length === 0) {
-      Alert.alert('Proof Required', 'Please upload a screenshot of your bank transfer or receipt.');
+      Alert.alert(
+        t('common.proofRequired', { defaultValue: 'Proof Required' }), 
+        t('donation.uploadProofDesc', { defaultValue: 'Please upload a screenshot of your bank transfer or receipt.' })
+      );
       return;
     }
 
     if (isOverAmount) {
-      Alert.alert('Too Much 💝', `You are trying to give more than what's needed. The maximum remaining is $${remaining.toFixed(2)}.`);
+      Alert.alert(
+        t('donation.tooMuch', { defaultValue: 'Too Much 💝' }), 
+        t('donation.tooMuchDesc', { max: remaining.toFixed(2), defaultValue: `You are trying to give more than what's needed. The maximum remaining is $${remaining.toFixed(2)}.` })
+      );
       return;
     }
 
@@ -89,12 +98,12 @@ export default function FundCaseScreen({ route, navigation }: any) {
       });
 
       Alert.alert(
-        'Thank You! 💖',
-        'Your contribution is pending verification. Once an admin verifies your payment proof, it will be added to the case.',
-        [{ text: 'Return to Case', onPress: () => navigation.goBack() }]
+        t('donation.thankYou', { defaultValue: 'Thank You! 💖' }),
+        t('donation.contributionPendingDesc', { defaultValue: 'Your contribution is pending verification. Once an admin verifies your payment proof, it will be added to the case.' }),
+        [{ text: t('buttons.returnToCase', { defaultValue: 'Return to Case' }), onPress: () => navigation.goBack() }]
       );
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Failed to submit contribution.');
+      Alert.alert(t('common.error'), err.message || 'Failed to submit contribution.');
     } finally {
       setSubmitting(false);
     }
@@ -119,10 +128,10 @@ export default function FundCaseScreen({ route, navigation }: any) {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
           <AlertCircle color={colors.mutedForeground} size={48} />
           <Text style={{ fontSize: 20, color: colors.text, fontFamily: typography.fontFamily.bold, marginTop: 16 }}>
-            Not Accepting Donations
+            {t('caseDetail.notAcceptingDonations', { defaultValue: 'Not Accepting Donations' })}
           </Text>
           <Text style={{ textAlign: 'center', color: colors.mutedForeground, marginTop: 8 }}>
-            This case is either fully funded or not yet verified for active funding.
+            {t('caseDetail.notAcceptingDonationsDesc', { defaultValue: 'This case is either fully funded or not yet verified for active funding.' })}
           </Text>
         </View>
       </SafeAreaView>
@@ -136,7 +145,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Contribute
+          {t('donation.contribute', { defaultValue: 'Contribute' })}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -174,7 +183,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
           {!isOverAmount && (
             <Text style={{ color: colors.mutedForeground, marginTop: -24, marginBottom: 24, fontSize: 13 }}>
-              Remaining target: ${remaining.toFixed(2)}
+              {t('donation.remainingTarget', { amount: remaining.toFixed(2), defaultValue: `Remaining target: $${remaining.toFixed(2)}` })}
             </Text>
           )}
 

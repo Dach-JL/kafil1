@@ -41,12 +41,18 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
 
   async function handleSubmit() {
     if (proofPaths.length === 0) {
-      Alert.alert('Proof Required', 'Please upload at least one image of where the funds were spent.');
+      Alert.alert(
+        t('common.proofRequired', { defaultValue: 'Proof Required' }), 
+        t('donation.uploadImpactProofDesc', { defaultValue: 'Please upload at least one image of where the funds were spent.' })
+      );
       return;
     }
 
     if (description.trim().length < 20) {
-      Alert.alert('Story is too short', 'Please provide a bit more detail (at least 20 characters) about the outcome to share with your donors.');
+      Alert.alert(
+        t('common.storyTooShort', { defaultValue: 'Story is too short' }), 
+        t('donation.storyTooShortDesc', { defaultValue: 'Please provide a bit more detail (at least 20 characters) about the outcome to share with your donors.' })
+      );
       return;
     }
 
@@ -61,8 +67,8 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
       );
 
       Alert.alert(
-        'Outcome Shared!',
-        'Your success story and proof have been submitted. Once verified by an admin, this case will be finalized!',
+        t('caseDetail.outcomeShared', { defaultValue: 'Outcome Shared!' }),
+        t('caseDetail.outcomeSharedDesc', { defaultValue: 'Your success story and proof have been submitted. Once verified by an admin, this case will be finalized!' }),
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (err: any) {
@@ -79,7 +85,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
           <ArrowLeft color={colors.text} size={24} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Finalize Funding
+          {t('caseDetail.finalizeFunding', { defaultValue: 'Finalize Funding' })}
         </Text>
         <View style={{ width: 24 }} />
       </View>
@@ -92,7 +98,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
           {t('caseDetail.submitImpactReport')}
         </Text>
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Provide verified evidence of how the funds were used. This report will be reviewed by an admin and, once approved, becomes a permanent, immutable public record.
+          {t('caseDetail.submitImpactDesc', { defaultValue: 'Provide verified evidence of how the funds were used. This report will be reviewed by an admin and, once approved, becomes a permanent, immutable public record.' })}
         </Text>
 
         {/* Outcome Date */}
@@ -104,7 +110,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
             <Calendar color={colors.mutedForeground} size={20} />
             <TextInput
               style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.regular }]}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('common.datePlaceholder', { defaultValue: 'YYYY-MM-DD' })}
               placeholderTextColor={colors.mutedForeground}
               value={outcomeDate}
               onChangeText={setOutcomeDate}
@@ -112,7 +118,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
             />
           </View>
           <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 4, marginLeft: 4 }}>
-            The date the positive outcome actually happened.
+            {t('caseDetail.outcomeDateDesc', { defaultValue: 'The date the positive outcome actually happened.' })}
           </Text>
         </View>
 
@@ -142,7 +148,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
 
         <View style={styles.section}>
           <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Impact Photos ({proofPaths.length}/5)
+            {t('caseDetail.impactPhotosCount', { count: proofPaths.length, defaultValue: `Impact Photos (${proofPaths.length}/5)` })}
           </Text>
           
           <View style={styles.photoGrid}>
