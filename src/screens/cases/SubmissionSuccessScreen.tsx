@@ -9,7 +9,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckCircle, ArrowRight, Home } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
-import { Case, CATEGORY_LABELS } from '../../types/cases';
+import { useTranslation } from 'react-i18next';
+import { Case } from '../../types/cases';
 
 interface Props {
   route: any;
@@ -19,6 +20,7 @@ interface Props {
 export default function SubmissionSuccessScreen({ route, navigation }: Props) {
   const submittedCase = route.params.submittedCase as Case;
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -51,24 +53,24 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
 
         <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
           <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Case Submitted!
+            {t('common.success')}!
           </Text>
           <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Your case is now under review by the CharityTrust team.
+            {t('statuses.PENDING_REVIEW')}
           </Text>
 
           {/* Case Summary Card */}
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={[styles.categoryBadge, { backgroundColor: colors.primary + '15' }]}>
               <Text style={[styles.categoryText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-                {CATEGORY_LABELS[submittedCase.category]}
+                {t(`categories.${submittedCase.category}`)}
               </Text>
             </View>
             <Text style={[styles.caseTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
               {submittedCase.title}
             </Text>
             <Text style={[styles.caseFor, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              For: {submittedCase.beneficiary_name}
+              {t('common.for')}: {submittedCase.beneficiary_name}
             </Text>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <View style={styles.statsRow}>
@@ -88,7 +90,7 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
               <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
               <View style={styles.stat}>
                 <Text style={[styles.statValue, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
-                  Pending
+                  {t('statuses.PENDING_REVIEW')}
                 </Text>
                 <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Status</Text>
               </View>
@@ -123,7 +125,7 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
               activeOpacity={0.85}
             >
               <Text style={[styles.primaryBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                View My Cases
+                {t('cases.myCases')}
               </Text>
               <ArrowRight color={colors.primaryForeground} size={18} />
             </TouchableOpacity>
@@ -135,7 +137,7 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
             >
               <Home color={colors.mutedForeground} size={16} />
               <Text style={[styles.secondaryBtnText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-                Back to Home
+                {t('tabs.explore')}
               </Text>
             </TouchableOpacity>
           </View>

@@ -16,11 +16,13 @@ import { submitCaseCompletionProof } from '../../api/cases';
 import { ArrowLeft, CheckCircle, X as XIcon, Calendar } from 'lucide-react-native';
 import FileUpload from '../../components/FileUpload';
 import { useAuth } from '../../supabase/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function SubmitCompletionProofScreen({ route, navigation }: any) {
   const { caseId } = route.params;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   
   const [proofPaths, setProofPaths] = useState<string[]>([]);
   const [proofHashes, setProofHashes] = useState<string[]>([]);
@@ -87,7 +89,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
           <CheckCircle color={colors.primary} size={48} />
         </View>
         <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Submit Impact Report
+          {t('caseDetail.submitImpactReport')}
         </Text>
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
           Provide verified evidence of how the funds were used. This report will be reviewed by an admin and, once approved, becomes a permanent, immutable public record.
@@ -96,7 +98,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
         {/* Outcome Date */}
         <View style={styles.section}>
           <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Outcome Date
+            {t('caseDetail.outcomeDate')}
           </Text>
           <View style={[styles.dateInput, { borderColor: colors.border, backgroundColor: colors.card }]}>
             <Calendar color={colors.mutedForeground} size={20} />
@@ -116,7 +118,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
 
         <View style={styles.section}>
           <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            The Success Story
+            {t('caseDetail.successStory')}
           </Text>
           <TextInput
             style={[
@@ -128,7 +130,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
                 fontFamily: typography.fontFamily.regular 
               }
             ]}
-            placeholder="Tell your donors how this funding changed the beneficiary's life..."
+            placeholder={t('caseDetail.storyPlaceholder')}
             placeholderTextColor={colors.mutedForeground}
             multiline
             numberOfLines={6}

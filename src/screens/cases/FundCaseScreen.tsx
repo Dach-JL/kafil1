@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../supabase/AuthContext';
 import { createContribution } from '../../api/contributions';
@@ -24,6 +25,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
   const { caseId } = route.params;
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   
   const [amountStr, setAmountStr] = useState('');
   const [proofPaths, setProofPaths] = useState<string[]>([]);
@@ -142,10 +144,10 @@ export default function FundCaseScreen({ route, navigation }: any) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            How much are you giving?
+            {t('donation.enterAmount', { defaultValue: 'How much are you giving?' })}
           </Text>
           <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Please enter the exact amount you transferred so we can verify the funds correctly.
+            {t('donation.amountDesc', { defaultValue: 'Please enter the exact amount you transferred so we can verify the funds correctly.' })}
           </Text>
 
           <View style={[
@@ -166,7 +168,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
           {isOverAmount && (
             <Text style={{ color: colors.error, marginTop: -24, marginBottom: 24, fontSize: 13 }}>
-              Maximum remaining: ${remaining.toFixed(2)}
+              {t('donation.maxRemaining', { amount: remaining.toFixed(2) })}
             </Text>
           )}
 
@@ -178,23 +180,23 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              Proof of Payment
+              {t('donation.paymentMethod', { defaultValue: 'Proof of Payment' })}
             </Text>
             <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Upload a screenshot of your bank transfer, PayPal receipt, or any official proof.
+              {t('donation.proofDesc', { defaultValue: 'Upload a screenshot of your bank transfer, PayPal receipt, or any official proof.' })}
             </Text>
             
             <FileUpload
               bucket="proof-of-payment"
               userId={user ? user.id : `guest_${Date.now()}`}
               caseId={caseId}
-              label="Upload Receipt"
+              label={t('common.upload', { defaultValue: 'Upload Receipt' })}
               onUploadComplete={handleProofUploaded}
               disabled={submitting || proofPaths.length >= 1}
             />
             {proofPaths.length > 0 && (
               <Text style={{ color: colors.primary, marginTop: 8, fontSize: 13 }}>
-                ✓ Proof uploaded successfully
+                ✓ {t('common.success', { defaultValue: 'Proof uploaded successfully' })}
               </Text>
             )}
           </View>
@@ -217,7 +219,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
             ) : (
               <>
                 <Text style={[styles.submitBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                  Submit Contribution
+                  {t('donation.confirmDonation')}
                 </Text>
                 <Send color={colors.primaryForeground} size={18} />
               </>
