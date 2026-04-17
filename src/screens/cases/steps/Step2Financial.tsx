@@ -16,6 +16,9 @@ interface Step2Props {
     urgency_level: number;
     deadline: string;
     is_anonymous: boolean;
+    bank_name: string;
+    bank_account_number: string;
+    bank_account_name: string;
   };
   onChange: (field: string, value: string | number | boolean) => void;
 }
@@ -26,6 +29,12 @@ const URGENCY_LEVELS = [
   { level: 3, label: 'High', color: '#F97316' },
   { level: 4, label: 'Critical', color: '#EF4444' },
   { level: 5, label: 'Emergency', color: '#7F1D1D' },
+];
+
+const BANK_OPTIONS = [
+  { id: 'CBE', translationKey: 'banks.cbe' },
+  { id: 'Telebirr', translationKey: 'banks.telebirr' },
+  { id: 'Ebirr', translationKey: 'banks.ebirr' }
 ];
 
 export default function Step2Financial({ data, onChange }: Step2Props) {
@@ -92,6 +101,54 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
           </TouchableOpacity>
         ))}
       </View>
+
+      <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading, marginTop: 16 }]}>
+        {t('createCase.bankInfoTitle', { defaultValue: 'Bank Details' })}
+      </Text>
+
+      {/* Bank Name */}
+      <Text style={labelStyle}>{t('createCase.bankName', { defaultValue: 'Bank Name *' })}</Text>
+      <View style={styles.urgencyRow}>
+        {BANK_OPTIONS.map(({ id, translationKey }) => (
+          <TouchableOpacity
+            key={id}
+            style={[
+              styles.urgencyChip,
+              {
+                backgroundColor: data.bank_name === id ? colors.primary + '20' : colors.card,
+                borderColor: data.bank_name === id ? colors.primary : colors.border,
+              },
+            ]}
+            onPress={() => onChange('bank_name', id)}
+          >
+            <Text style={[styles.urgencyText, { color: data.bank_name === id ? colors.primary : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+              {t(translationKey, { defaultValue: id })}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Account Number */}
+      <Text style={labelStyle}>{t('createCase.accountNumber', { defaultValue: 'Account Number *' })}</Text>
+      <TextInput
+        style={inputStyle}
+        placeholder="1000..."
+        placeholderTextColor={colors.mutedForeground}
+        value={data.bank_account_number}
+        onChangeText={(v) => onChange('bank_account_number', v)}
+        keyboardType="number-pad"
+      />
+
+      {/* Account Name */}
+      <Text style={labelStyle}>{t('createCase.accountName', { defaultValue: 'Account Holder Name *' })}</Text>
+      <TextInput
+        style={inputStyle}
+        placeholder="Abebe Kebede..."
+        placeholderTextColor={colors.mutedForeground}
+        value={data.bank_account_name}
+        onChangeText={(v) => onChange('bank_account_name', v)}
+        autoCapitalize="words"
+      />
 
       {/* Deadline */}
       <Text style={labelStyle}>{t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}</Text>
