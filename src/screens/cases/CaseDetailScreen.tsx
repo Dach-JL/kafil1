@@ -62,7 +62,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
       const roomId = await getOrCreateChatRoom(caseId, caseInfo.owner_id);
       navigation.navigate('ChatRoom', { 
         roomId, 
-        recipientName: caseInfo.owner?.name || 'Organizer' 
+        recipientName: caseInfo.owner?.name || t('caseDetail.organizer', { defaultValue: 'Organizer' }) 
       });
     } catch (err: any) {
       console.error(err);
@@ -131,13 +131,13 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <View style={styles.metaItem}>
             <MapPin color={colors.mutedForeground} size={14} />
             <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {caseInfo.location || 'Local'}
+              {caseInfo.location || t('common.local', { defaultValue: 'Local' })}
             </Text>
           </View>
           <View style={styles.metaItem}>
             <Clock color={colors.mutedForeground} size={14} />
             <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Posted {formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true })}
+              {t('common.postedDate', { date: formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true }), defaultValue: `Posted ${formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true })}` })}
             </Text>
           </View>
         </View>
@@ -225,7 +225,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                       <MessageSquare color={colors.primary} size={18} />
                       <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.medium, fontSize: 13 }}>
-                        Message
+                        {t('common.message', { defaultValue: 'Message' })}
                       </Text>
                     </View>
                   )}
@@ -247,16 +247,16 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         <View style={[styles.grid, { borderColor: colors.border, borderTopWidth: 1, borderBottomWidth: 1 }]}>
           <View style={[styles.gridItem, { borderRightWidth: 1, borderColor: colors.border }]}>
             <Target color={colors.primary} size={20} />
-            <Text style={[styles.gridLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>Urgency</Text>
+            <Text style={[styles.gridLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.urgency', { defaultValue: 'Urgency' })}</Text>
             <Text style={[styles.gridValue, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              Level {caseInfo.urgency_level}/5
+              {t('caseDetail.urgencyLevel', { level: caseInfo.urgency_level, defaultValue: `Level ${caseInfo.urgency_level}/5` })}
             </Text>
           </View>
           <View style={styles.gridItem}>
             <Clock color={colors.primary} size={20} />
-            <Text style={[styles.gridLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>Deadline</Text>
+            <Text style={[styles.gridLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.deadline', { defaultValue: 'Deadline' })}</Text>
             <Text style={[styles.gridValue, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              {caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : 'None'}
+              {caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : t('common.none', { defaultValue: 'None' })}
             </Text>
           </View>
         </View>
@@ -301,7 +301,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <View style={[styles.statusBanner, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '40', borderWidth: 1 }]}>
             <Heart color={colors.primary} size={20} fill={colors.primary} />
             <Text style={[styles.statusBannerText, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
-              Goal Met! Thanks for your help 💝
+              {t('caseDetail.goalMet', { defaultValue: 'Goal Met! Thanks for your help 💝' })}
             </Text>
           </View>
         </View>
@@ -313,7 +313,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <View style={[styles.statusBanner, { backgroundColor: colors.secondary }]}>
             <Clock color={colors.mutedForeground} size={20} />
             <Text style={[styles.statusBannerText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-              Completion Proof Pending Review
+              {t('caseDetail.completionPending', { defaultValue: 'Completion Proof Pending Review' })}
             </Text>
           </View>
         </View>
@@ -325,7 +325,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <View style={[styles.statusBanner, { backgroundColor: colors.primary + '20' }]}>
             <CheckCircle2 color={colors.primary} size={20} />
             <Text style={[styles.statusBannerText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              Case Successfully Completed
+              {t('caseDetail.caseCompleted', { defaultValue: 'Case Successfully Completed' })}
             </Text>
           </View>
         </View>
