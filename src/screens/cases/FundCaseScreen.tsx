@@ -188,6 +188,35 @@ export default function FundCaseScreen({ route, navigation }: any) {
           )}
 
           <View style={styles.section}>
+            {caseInfo.bank_account_number && (
+              <View style={[styles.bankCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '30', borderWidth: 1, borderRadius: 12, padding: 16, marginBottom: 24 }]}>
+                <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.medium, marginBottom: 12 }}>
+                  {t('donation.sendFundsTo', { defaultValue: 'Please transfer your donation to the following account before uploading proof:' })}
+                </Text>
+                
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                  {t('createCase.bankName', { defaultValue: 'Bank Name *' }).replace(' *', '')}
+                </Text>
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16, marginBottom: 8 }}>
+                  {t(`banks.${caseInfo.bank_name?.toLowerCase()}`, { defaultValue: caseInfo.bank_name })}
+                </Text>
+
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                  {t('createCase.accountNumber', { defaultValue: 'Account Number *' }).replace(' *', '')}
+                </Text>
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 18, marginBottom: 8 }}>
+                  {caseInfo.bank_account_number}
+                </Text>
+
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                  {t('createCase.accountName', { defaultValue: 'Account Holder Name *' }).replace(' *', '')}
+                </Text>
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16 }}>
+                  {caseInfo.bank_account_name}
+                </Text>
+              </View>
+            )}
+
             <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
               {t('donation.paymentMethod', { defaultValue: 'Proof of Payment' })}
             </Text>
@@ -267,6 +296,9 @@ const styles = StyleSheet.create({
   input: { flex: 1, fontSize: 32, height: '100%' },
   section: { marginBottom: 32 },
   sectionTitle: { fontSize: 18, marginBottom: 8 },
+  bankCard: {
+    // Styles handled mostly inline but preserving key just in case
+  },
   footer: { padding: 20, borderTopWidth: 1 },
   submitBtn: {
     height: 56,
