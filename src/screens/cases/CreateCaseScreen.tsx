@@ -35,6 +35,9 @@ const INITIAL_FORM = {
   urgency_level: 3,
   deadline: '',
   is_anonymous: false,
+  bank_name: 'CBE', // Default bank
+  bank_account_number: '',
+  bank_account_name: '',
   evidencePaths: [] as string[],
 };
 
@@ -72,7 +75,12 @@ export default function CreateCaseScreen({ navigation }: any) {
     if (currentStep === 2) {
       const amount = parseFloat(form.target_amount);
       if (!form.target_amount || isNaN(amount) || amount <= 0) {
-        Alert.alert('Required', 'Please enter a valid funding goal.'); return false;
+        Alert.alert(t('common.error'), t('errors.requiredField', { defaultValue: 'Please enter a valid funding goal.' })); 
+        return false;
+      }
+      if (!form.bank_account_number.trim() || !form.bank_account_name.trim()) {
+        Alert.alert(t('common.error'), t('errors.requiredField', { defaultValue: 'Please provide complete bank account details.' }));
+        return false;
       }
     }
     if (currentStep === 3) {
@@ -113,6 +121,9 @@ export default function CreateCaseScreen({ navigation }: any) {
           urgency_level: form.urgency_level,
           deadline: deadline || undefined,
           is_anonymous: form.is_anonymous,
+          bank_name: form.bank_name,
+          bank_account_number: form.bank_account_number.trim(),
+          bank_account_name: form.bank_account_name.trim(),
         } as any);
 
         if (newCase?.id) {
