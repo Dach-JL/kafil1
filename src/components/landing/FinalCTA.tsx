@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LogIn } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 
 interface FinalCTAProps {
@@ -9,15 +10,16 @@ interface FinalCTAProps {
 
 export default function FinalCTA({ onPress }: FinalCTAProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={[styles.card, { backgroundColor: colors.primary }]}>
         <Text style={[styles.title, { color: colors.primaryForeground, fontFamily: typography.fontFamily.heading }]}>
-          Ready to make a difference?
+          {t('landing.ctaTitle')}
         </Text>
         <Text style={[styles.subtitle, { color: colors.primaryForeground, fontFamily: typography.fontFamily.regular }]}>
-          Join thousands of donors who are changing lives transparently.
+          {t('landing.ctaSubtitle')}
         </Text>
         
         <TouchableOpacity 
@@ -26,7 +28,7 @@ export default function FinalCTA({ onPress }: FinalCTAProps) {
           activeOpacity={0.9}
         >
           <Text style={[styles.btnText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            Create Free Account
+            {t('landing.ctaButton')}
           </Text>
           <LogIn color={colors.primary} size={18} />
         </TouchableOpacity>

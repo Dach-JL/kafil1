@@ -5,6 +5,7 @@ import { Case } from '../../types/cases';
 import { useTheme } from '../../hooks/useTheme';
 import { ShieldCheck, Award, ArrowRight } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 interface ImpactPreviewProps {
   onPressItem: () => void;
@@ -12,6 +13,7 @@ interface ImpactPreviewProps {
 
 function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   
   // Use completion_images if available, else a placeholder
   const imageUrl = item.completion_images?.[0] || 'https://via.placeholder.com/300x200?text=Impact+Achieved';
@@ -26,7 +28,7 @@ function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) 
         <Image source={{ uri: imageUrl }} style={styles.image} />
         <View style={[styles.verifiedBadge, { backgroundColor: '#22C55E' }]}>
           <ShieldCheck color="#fff" size={14} />
-          <Text style={styles.verifiedText}>Verified</Text>
+          <Text style={styles.verifiedText}>{t('landing.verified')}</Text>
         </View>
       </View>
 
@@ -39,11 +41,11 @@ function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) 
           <View style={styles.dateRow}>
             <Award color={colors.primary} size={14} />
             <Text style={[styles.dateText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {item.completed_at ? formatDistanceToNow(new Date(item.completed_at), { addSuffix: true }) : 'Recently'}
+              {item.completed_at ? formatDistanceToNow(new Date(item.completed_at), { addSuffix: true }) : t('common.recently')}
             </Text>
           </View>
           <Text style={[styles.amountText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            ${item.target_amount.toLocaleString()} raised
+            ${item.target_amount.toLocaleString()} {t('common.raised')}
           </Text>
         </View>
       </View>
@@ -53,6 +55,7 @@ function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) 
 
 export default function ImpactPreview({ onPressItem }: ImpactPreviewProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,11 +94,11 @@ export default function ImpactPreview({ onPressItem }: ImpactPreviewProps) {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Proven Impact
+          {t('landing.provenImpact')}
         </Text>
         <TouchableOpacity style={styles.seeAllBtn} onPress={onPressItem}>
           <Text style={[styles.seeAllText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            Stories
+            {t('landing.stories')}
           </Text>
           <ArrowRight color={colors.primary} size={16} />
         </TouchableOpacity>

@@ -1,18 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Shield, Fingerprint, Lock } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 
 export default function TrustSection() {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.primary + '0A' }]}>
       <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-        Trust & Transparency
+        {t('landing.trustTitle')}
       </Text>
       <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        We take fraud prevention seriously. Every case must pass rigorous verification before it is funded.
+        {t('landing.trustSubtitle')}
       </Text>
 
       <View style={styles.grid}>
@@ -21,10 +23,10 @@ export default function TrustSection() {
             <Shield color={colors.primary} size={24} />
           </View>
           <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Admin Vetted
+            {t('landing.adminVetted')}
           </Text>
           <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            All documents, IDs, and financial needs are verified by our team.
+            {t('landing.adminVettedDesc')}
           </Text>
         </View>
 
@@ -33,10 +35,10 @@ export default function TrustSection() {
             <Fingerprint color={colors.accent} size={24} />
           </View>
           <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Immutable Proof
+            {t('landing.immutableProof')}
           </Text>
           <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Impact reports are cryptographically hashed and locked to prevent alteration.
+            {t('landing.immutableProofDesc')}
           </Text>
         </View>
 
@@ -45,10 +47,10 @@ export default function TrustSection() {
             <Lock color={colors.primary} size={24} />
           </View>
           <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            Zero Hidden Fees
+            {t('landing.zeroFees')}
           </Text>
           <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            100% of your donation is delivered. We do not extract platform fees from causes.
+            {t('landing.zeroFeesDesc')}
           </Text>
         </View>
       </View>

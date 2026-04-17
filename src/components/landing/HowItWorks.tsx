@@ -1,33 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Search, Banknote, ShieldCheck } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
-
-const STEPS = [
-  {
-    icon: Search,
-    title: 'Find a Case',
-    description: 'Browse cases verified by our expert admin team.',
-  },
-  {
-    icon: Banknote,
-    title: 'Fund Directly',
-    description: '100% of your donation goes straight to the beneficiary cause.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Verified Impact',
-    description: 'Receive immutable proof when the outcome is achieved.',
-  },
-];
 
 export default function HowItWorks() {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
+
+  const STEPS = [
+    {
+      icon: Search,
+      title: t('landing.step1Title'),
+      description: t('landing.step1Desc'),
+    },
+    {
+      icon: Banknote,
+      title: t('landing.step2Title'),
+      description: t('landing.step2Desc'),
+    },
+    {
+      icon: ShieldCheck,
+      title: t('landing.step3Title'),
+      description: t('landing.step3Desc'),
+    },
+  ];
 
   return (
     <View style={styles.container}>
       <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-        How CharityTrust Works
+        {t('landing.howItWorksTitle')}
       </Text>
       
       <View style={styles.stepsContainer}>

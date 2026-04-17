@@ -4,6 +4,7 @@ import { getPublicCases } from '../../api/cases';
 import { Case } from '../../types/cases';
 import { useTheme } from '../../hooks/useTheme';
 import { ShieldAlert, ArrowRight } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 
 interface HorizontalCaseListProps {
   onCasePress: () => void;
@@ -11,6 +12,7 @@ interface HorizontalCaseListProps {
 
 function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const progress = Math.min((item.collected_amount / item.target_amount) * 100, 100);
 
   return (
@@ -28,7 +30,7 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
         <View style={[styles.urgencyBadge, { backgroundColor: colors.destructive }]} >
           <ShieldAlert color="#fff" size={12} strokeWidth={3} />
           <Text style={[styles.urgencyText, { color: '#fff', fontFamily: typography.fontFamily.bold }]}>
-            Urgent Info
+            {t('landing.urgentInfo')}
           </Text>
         </View>
       </View>
@@ -41,10 +43,10 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
         <View style={styles.progressContainer}>
           <View style={styles.progressTextRow}>
             <Text style={[styles.progressText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              ${item.collected_amount.toLocaleString()} raised
+              ${item.collected_amount.toLocaleString()} {t('common.raised')}
             </Text>
             <Text style={[styles.targetText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              of ${item.target_amount.toLocaleString()}
+              {t('common.of')} ${item.target_amount.toLocaleString()}
             </Text>
           </View>
           <View style={[styles.progressBarBg, { backgroundColor: colors.secondary }]}>
@@ -58,6 +60,7 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
 
 export default function HorizontalCaseList({ onCasePress }: HorizontalCaseListProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -89,11 +92,11 @@ export default function HorizontalCaseList({ onCasePress }: HorizontalCaseListPr
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Urgent Cases
+          {t('landing.urgentCases')}
         </Text>
         <TouchableOpacity style={styles.seeAllBtn} onPress={onCasePress}>
           <Text style={[styles.seeAllText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            See All
+            {t('landing.seeAll')}
           </Text>
           <ArrowRight color={colors.primary} size={16} />
         </TouchableOpacity>

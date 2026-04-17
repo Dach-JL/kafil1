@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { ShieldCheck, HeartHandshake } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 
 interface LandingHeroProps {
@@ -10,6 +11,7 @@ interface LandingHeroProps {
 
 export default function LandingHero({ onPrimaryAction, onSecondaryAction }: LandingHeroProps) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
@@ -22,17 +24,17 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
         <View style={[styles.badge, { backgroundColor: colors.background, borderColor: colors.primary + '30' }]}>
           <ShieldCheck color={colors.primary} size={14} strokeWidth={2.5} />
           <Text style={[styles.badgeText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-            100% VERIFIED IMPACT
+            {t('landing.badge')}
           </Text>
         </View>
 
         <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          Change a life today.{'\n'}
-          <Text style={{ color: colors.primary }}>See the impact tomorrow.</Text>
+          {t('landing.heroTitle')}{'\n'}
+          <Text style={{ color: colors.primary }}>{t('landing.heroHighlight')}</Text>
         </Text>
 
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Join a transparent community where every donation is tracked, verified, and proven to reach exactly who needs it.
+          {t('landing.heroSubtitle')}
         </Text>
 
         <View style={styles.actionRow}>
@@ -43,7 +45,7 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
           >
             <HeartHandshake color={colors.primaryForeground} size={20} />
             <Text style={[styles.primaryBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              Start Donating
+              {t('landing.startDonating')}
             </Text>
           </TouchableOpacity>
 
@@ -53,7 +55,7 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
             activeOpacity={0.8}
           >
             <Text style={[styles.secondaryBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              Submit a Case
+              {t('landing.submitCase')}
             </Text>
           </TouchableOpacity>
         </View>
