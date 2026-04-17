@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Home, FolderHeart, User, ShieldAlert, MessageSquare, Award } from 'lucide-react-native';
 import { ActivityIndicator, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../supabase/AuthContext';
@@ -40,6 +41,7 @@ const AuthStack = createNativeStackNavigator();
 function TabNavigator() {
   const { colors, typography } = useTheme();
   const { profile } = useAuth();
+  const { t } = useTranslation();
   const { unreadMessagesCount } = useChat();
 
   return (
@@ -66,7 +68,7 @@ function TabNavigator() {
         component={HomeScreen} 
         options={{
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
-          title: 'Explore',
+          title: t('tabs.explore'),
         }}
       />
       <Tab.Screen 
@@ -74,7 +76,7 @@ function TabNavigator() {
         component={CasesScreen} 
         options={{
           tabBarIcon: ({ color, size }) => <FolderHeart color={color} size={size} />,
-          title: 'Cases',
+          title: t('tabs.cases'),
         }}
       />
       <Tab.Screen 
@@ -82,7 +84,7 @@ function TabNavigator() {
         component={HistoryScreen} 
         options={{
           tabBarIcon: ({ color, size }) => <Award color={color} size={size} />,
-          title: 'History',
+          title: t('tabs.history'),
         }}
       />
       {profile?.role === 'admin' && (
@@ -91,7 +93,7 @@ function TabNavigator() {
           component={AdminQueueScreen} 
           options={{
             tabBarIcon: ({ color, size }) => <ShieldAlert color={color} size={size} />,
-            title: 'Verify',
+            title: t('tabs.verify'),
           }}
         />
       )}
@@ -100,7 +102,7 @@ function TabNavigator() {
         component={InboxScreen} 
         options={{
           tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
-          title: 'Messages',
+          title: t('tabs.messages'),
           tabBarBadge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined,
           tabBarBadgeStyle: { backgroundColor: colors.primary },
         }}
@@ -110,6 +112,7 @@ function TabNavigator() {
         component={ProfileScreen} 
         options={{
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+          title: t('tabs.profile'),
         }}
       />
     </Tab.Navigator>

@@ -11,13 +11,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Sparkles, AlertCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { getPublicCases } from '../api/cases';
-import { Case, CaseCategory, CATEGORY_LABELS } from '../types/cases';
+import { Case, CaseCategory } from '../types/cases';
 import PublicCaseCard from '../components/PublicCaseCard';
 
 export default function HomeScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,10 +27,10 @@ export default function HomeScreen({ navigation }: any) {
   const [selectedCategory, setSelectedCategory] = useState<CaseCategory | null>(null);
 
   const categories: { label: string; value: CaseCategory | null }[] = [
-    { label: 'All Cases', value: null },
-    ...Object.entries(CATEGORY_LABELS).map(([value, label]) => ({
-      label,
-      value: value as CaseCategory,
+    { label: t('home.allCases'), value: null },
+    ...(['MEDICAL', 'EDUCATION', 'EMERGENCY', 'HOUSING', 'FOOD', 'OTHER'] as CaseCategory[]).map(cat => ({
+      label: t(`categories.${cat}`),
+      value: cat,
     })),
   ];
 
@@ -63,11 +65,11 @@ export default function HomeScreen({ navigation }: any) {
         <View style={styles.titleRow}>
           <Sparkles color={colors.primary} size={24} />
           <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Discover Cases
+            {t('home.title')}
           </Text>
         </View>
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Support verified humanitarian causes today.
+          {t('home.subtitle')}
         </Text>
       </View>
 
@@ -126,10 +128,10 @@ export default function HomeScreen({ navigation }: any) {
           <View style={styles.empty}>
             <AlertCircle color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              No Cases Found
+              {t('home.noCasesTitle')}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              There are currently no active cases {selectedCategory ? 'in this category' : ''}.
+              {t('home.noCasesDesc')} {selectedCategory ? t('home.noCasesInCategory') : ''}
             </Text>
           </View>
         }
