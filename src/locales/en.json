@@ -13,6 +13,11 @@
     "recently": "Recently",
     "ago": "ago"
   },
+  "banks": {
+    "cbe": "Commercial Bank of Ethiopia (CBE)",
+    "telebirr": "Telebirr",
+    "ebirr": "Ebirr"
+  },
   "tabs": {
     "explore": "Explore",
     "cases": "Cases",
@@ -111,7 +116,9 @@
     "anonymous": "Anonymous",
     "recentContributions": "Recent Contributions",
     "noContributions": "No contributions yet",
-    "fullyFunded": "Fully Funded"
+    "fullyFunded": "Fully Funded",
+    "sendFundsTo": "Please transfer your donation to the following account before uploading proof:",
+    "bankDetailsLabel": "Bank Details"
   },
   "caseDetail": {
     "fundNow": "Fund Now",
@@ -141,6 +148,11 @@
     "targetAmount": "Target Amount",
     "urgencyLevel": "Urgency Level",
     "deadline": "Deadline",
+    "bankInfoTitle": "Bank Details",
+    "bankName": "Bank Name *",
+    "accountNumber": "Account Number *",
+    "accountName": "Account Holder Name *",
+    "selectBank": "Select Bank",
     "submitForReview": "Submit for Review",
     "saveDraft": "Save Draft"
   },

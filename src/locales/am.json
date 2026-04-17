@@ -13,6 +13,11 @@
     "recently": "በቅርብ",
     "ago": "በፊት"
   },
+  "banks": {
+    "cbe": "የኢትዮጵያ ንግድ ባንክ (CBE)",
+    "telebirr": "ቴሌብር",
+    "ebirr": "ኢብር"
+  },
   "tabs": {
     "explore": "አስስ",
     "cases": "ጉዳዮች",
@@ -111,7 +116,9 @@
     "anonymous": "ስም-አልባ",
     "recentContributions": "የቅርብ ጊዜ መዋጮዎች",
     "noContributions": "እስካሁን መዋጮ የለም",
-    "fullyFunded": "ሙሉ በሙሉ ተደግፏል"
+    "fullyFunded": "ሙሉ በሙሉ ተደግፏል",
+    "sendFundsTo": "እባክዎ የማስረጃ ቅጂዎን ከመጫንዎ በፊት ልገሳዎን ወደሚከተለው ሂሳብ ያስተላልፉ:",
+    "bankDetailsLabel": "የባንክ መረጃ"
   },
   "caseDetail": {
     "fundNow": "አሁን ደግፍ",
@@ -141,6 +148,11 @@
     "targetAmount": "የሚያስፈልገው መጠን",
     "urgencyLevel": "የአስቸኳይነት ደረጃ",
     "deadline": "የመጨረሻ ቀን",
+    "bankInfoTitle": "የባንክ መረጃ",
+    "bankName": "የባንክ ስም *",
+    "accountNumber": "የሂሳብ ቁጥር *",
+    "accountName": "የሂሳብ ባለአደራ ስም *",
+    "selectBank": "ባንክ ይምረጡ",
     "submitForReview": "ለግምገማ ያስገቡ",
     "saveDraft": "ረቂቅ ያስቀምጡ"
   },

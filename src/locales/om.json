@@ -13,6 +13,11 @@
     "recently": "Dhiyeenya",
     "ago": "dura"
   },
+  "banks": {
+    "cbe": "Baankii Daldala Itoophiyaa (CBE)",
+    "telebirr": "Telebirr",
+    "ebirr": "Ebirr"
+  },
   "tabs": {
     "explore": "Sakatta'i",
     "cases": "Dhimmoota",
@@ -111,7 +116,9 @@
     "anonymous": "Maqaa Malee",
     "recentContributions": "Gargaarsa Dhiyeenya",
     "noContributions": "Hanga ammaatti gargaarsi hin jiru",
-    "fullyFunded": "Guutummaatti Gargaarame"
+    "fullyFunded": "Guutummaatti Gargaarame",
+    "sendFundsTo": "Maaloo gargaarsa keessan herrega armaan gadiitti dabarsa osoo ragaa hin fe'in dura:",
+    "bankDetailsLabel": "Odeeffannoo Baankii"
   },
   "caseDetail": {
     "fundNow": "Amma Gargaari",
@@ -141,6 +148,11 @@
     "targetAmount": "Hanga Barbaadamu",
     "urgencyLevel": "Sadarkaa Ariifachiisummaa",
     "deadline": "Guyyaa Xumuraa",
+    "bankInfoTitle": "Odeeffannoo Baankii",
+    "bankName": "Maqaa Baankii *",
+    "accountNumber": "Lakkoofsa Herregaa *",
+    "accountName": "Maqaa Abbaa Herregaa *",
+    "selectBank": "Baankii Filadhu",
     "submitForReview": "Ilaaluuf Galmeessi",
     "saveDraft": "Kuusaa Olkaa'i"
   },
