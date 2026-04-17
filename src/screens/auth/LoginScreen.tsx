@@ -11,11 +11,13 @@ import {
   Platform,
   ScrollView
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { supabase } from '../../supabase/supabaseClient';
 
 export default function LoginScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function LoginScreen({ navigation }: any) {
       password: password,
     });
 
-    if (error) Alert.alert('Error', error.message);
+    if (error) Alert.alert(t('common.error'), error.message);
     setLoading(false);
   }
 
@@ -39,16 +41,16 @@ export default function LoginScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={[styles.heading, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
-            CharityTrust
+            {t('auth.loginHeading')}
           </Text>
           <Text style={[styles.subheading, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Sign in to continue your impact
+            {t('auth.loginSubheading')}
           </Text>
         </View>
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Email Address</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('auth.emailLabel')}</Text>
             <TextInput
               style={[styles.input, { 
                 backgroundColor: colors.card, 
@@ -56,7 +58,7 @@ export default function LoginScreen({ navigation }: any) {
                 borderColor: colors.border,
                 fontFamily: typography.fontFamily.regular 
               }]}
-              placeholder="name@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               placeholderTextColor={colors.mutedForeground}
               onChangeText={(text) => setEmail(text)}
               value={email}
@@ -66,7 +68,7 @@ export default function LoginScreen({ navigation }: any) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Password</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('auth.passwordLabel')}</Text>
             <TextInput
               style={[styles.input, { 
                 backgroundColor: colors.card, 
@@ -74,7 +76,7 @@ export default function LoginScreen({ navigation }: any) {
                 borderColor: colors.border,
                 fontFamily: typography.fontFamily.regular 
               }]}
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               placeholderTextColor={colors.mutedForeground}
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -93,18 +95,18 @@ export default function LoginScreen({ navigation }: any) {
               <ActivityIndicator color={colors.primaryForeground} />
             ) : (
               <Text style={[styles.buttonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                Sign In
+                {t('auth.signIn')}
               </Text>
             )}
           </TouchableOpacity>
 
           <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.mutedForeground }]}>
-              Don't have an account?{' '}
+              {t('auth.noAccount')}{' '}
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
               <Text style={[styles.link, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-                Create Account
+                {t('auth.signUp')}
               </Text>
             </TouchableOpacity>
           </View>

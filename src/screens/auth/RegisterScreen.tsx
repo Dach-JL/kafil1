@@ -11,11 +11,13 @@ import {
   Platform,
   ScrollView
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { supabase } from '../../supabase/supabaseClient';
 
 export default function RegisterScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -24,7 +26,7 @@ export default function RegisterScreen({ navigation }: any) {
 
   async function signUpWithEmail() {
     if (!name || !email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.error'), t('auth.fillAllFields'));
       return;
     }
 
@@ -41,9 +43,9 @@ export default function RegisterScreen({ navigation }: any) {
     });
 
     if (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert(t('common.error'), error.message);
     } else {
-      Alert.alert('Success', 'Verification email sent! Please check your inbox.');
+      Alert.alert(t('common.success'), t('auth.verificationSent'));
       navigation.navigate('Login');
     }
     setLoading(false);
@@ -57,16 +59,16 @@ export default function RegisterScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={[styles.heading, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
-            Join CharityTrust
+            {t('auth.registerHeading')}
           </Text>
           <Text style={[styles.subheading, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Start your journey of transparency
+            {t('auth.registerSubheading')}
           </Text>
         </View>
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Full Name</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('auth.fullNameLabel')}</Text>
             <TextInput
               style={[styles.input, { 
                 backgroundColor: colors.card, 
@@ -74,7 +76,7 @@ export default function RegisterScreen({ navigation }: any) {
                 borderColor: colors.border,
                 fontFamily: typography.fontFamily.regular 
               }]}
-              placeholder="John Doe"
+              placeholder={t('auth.fullNamePlaceholder')}
               placeholderTextColor={colors.mutedForeground}
               onChangeText={(text) => setName(text)}
               value={name}
@@ -82,7 +84,7 @@ export default function RegisterScreen({ navigation }: any) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Email Address</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('auth.emailLabel')}</Text>
             <TextInput
               style={[styles.input, { 
                 backgroundColor: colors.card, 
@@ -90,7 +92,7 @@ export default function RegisterScreen({ navigation }: any) {
                 borderColor: colors.border,
                 fontFamily: typography.fontFamily.regular 
               }]}
-              placeholder="name@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               placeholderTextColor={colors.mutedForeground}
               onChangeText={(text) => setEmail(text)}
               value={email}
@@ -100,7 +102,7 @@ export default function RegisterScreen({ navigation }: any) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Password</Text>
+            <Text style={[styles.label, { color: colors.text }]}>{t('auth.passwordLabel')}</Text>
             <TextInput
               style={[styles.input, { 
                 backgroundColor: colors.card, 
@@ -108,7 +110,7 @@ export default function RegisterScreen({ navigation }: any) {
                 borderColor: colors.border,
                 fontFamily: typography.fontFamily.regular 
               }]}
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               placeholderTextColor={colors.mutedForeground}
               onChangeText={(text) => setPassword(text)}
               value={password}
@@ -117,7 +119,7 @@ export default function RegisterScreen({ navigation }: any) {
             />
           </View>
 
-          <Text style={[styles.label, { color: colors.text }]}>I want to be a:</Text>
+          <Text style={[styles.label, { color: colors.text }]}>{t('auth.roleLabel')}</Text>
           <View style={styles.roleContainer}>
             <TouchableOpacity 
               style={[
@@ -130,8 +132,8 @@ export default function RegisterScreen({ navigation }: any) {
               <Text style={[
                 styles.roleText, 
                 { color: role === 'contributor' ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }
-              ]}>Contributor</Text>
-              <Text style={[styles.roleDesc, { color: colors.mutedForeground }]}>I want to fund cases</Text>
+              ]}>{t('auth.contributor')}</Text>
+              <Text style={[styles.roleDesc, { color: colors.mutedForeground }]}>{t('auth.contributorDesc')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
@@ -145,8 +147,8 @@ export default function RegisterScreen({ navigation }: any) {
               <Text style={[
                 styles.roleText, 
                 { color: role === 'owner' ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }
-              ]}>Case Owner</Text>
-              <Text style={[styles.roleDesc, { color: colors.mutedForeground }]}>I need funding for a case</Text>
+              ]}>{t('auth.caseOwner')}</Text>
+              <Text style={[styles.roleDesc, { color: colors.mutedForeground }]}>{t('auth.caseOwnerDesc')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -160,18 +162,18 @@ export default function RegisterScreen({ navigation }: any) {
               <ActivityIndicator color={colors.primaryForeground} />
             ) : (
               <Text style={[styles.buttonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                Create Account
+                {t('auth.signUp')}
               </Text>
             )}
           </TouchableOpacity>
 
           <View style={styles.footer}>
             <Text style={[styles.footerText, { color: colors.mutedForeground }]}>
-              Already have an account?{' '}
+              {t('auth.haveAccount')}{' '}
             </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text style={[styles.link, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-                Sign In
+                {t('auth.signIn')}
               </Text>
             </TouchableOpacity>
           </View>
