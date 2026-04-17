@@ -18,17 +18,29 @@ import {
   ChevronRight,
   CreditCard,
   Target,
+  Globe,
+  Check,
 } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../supabase/AuthContext';
 import { getUserStats, UserStats } from '../api/profiles';
 import TrustBadge from '../components/TrustBadge';
+import { changeLanguage, SUPPORTED_LANGS } from '../i18n';
+
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English',
+  om: 'Afaan Oromoo',
+  am: 'አማርኛ',
+};
 
 export default function ProfileScreen() {
   const { colors, typography } = useTheme();
+  const { t, i18n } = useTranslation();
   const { profile, signOut } = useAuth();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
 
   useEffect(() => {
     async function loadStats() {
@@ -46,9 +58,9 @@ export default function ProfileScreen() {
   }, [profile]);
 
   const handleSignOut = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log Out', style: 'destructive', onPress: () => signOut() },
+    Alert.alert(t('auth.signOut'), t('auth.signOutConfirm'), [
+      { text: t('buttons.cancel'), style: 'cancel' },
+      { text: t('buttons.logOut'), style: 'destructive', onPress: () => signOut() },
     ]);
   };
 
@@ -74,7 +86,7 @@ export default function ProfileScreen() {
           {profile?.name}
         </Text>
         <Text style={[styles.role, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {profile?.role.toUpperCase()} • Member since 2026
+          {profile?.role.toUpperCase()} • {t('common.memberSince', { year: '2026' })}
         </Text>
       </View>
 
@@ -83,7 +95,7 @@ export default function ProfileScreen() {
         <View style={styles.trustHeader}>
           <ShieldCheck color={colors.primary} size={24} />
           <Text style={[styles.trustTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Trust Reputation
+            {t('profile.trustReputation')}
           </Text>
         </View>
         <View style={styles.scoreRow}>
@@ -93,7 +105,7 @@ export default function ProfileScreen() {
           <View style={styles.badgeCol}>
             <TrustBadge score={profile?.trust_score || 0} />
             <Text style={[styles.rankLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Platform Rank
+              {t('profile.platformRank')}
             </Text>
           </View>
         </View>
@@ -107,7 +119,7 @@ export default function ProfileScreen() {
             ${stats?.totalDonated.toLocaleString() || 0}
           </Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Total Donated
+            {t('profile.totalDonated')}
           </Text>
         </View>
         <View style={[styles.statBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -116,7 +128,7 @@ export default function ProfileScreen() {
             {stats?.casesCompleted || 0}
           </Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            Cases Completed
+            {t('profile.casesCompleted')}
           </Text>
         </View>
       </View>
@@ -124,7 +136,7 @@ export default function ProfileScreen() {
       {/* Menu Options */}
       <View style={styles.menu}>
         <Text style={[styles.menuTitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-          Account
+          {t('profile.account')}
         </Text>
         
         <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]}>
@@ -133,7 +145,7 @@ export default function ProfileScreen() {
               <Settings color={colors.primary} size={20} />
             </View>
             <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              Account Settings
+              {t('profile.accountSettings')}
             </Text>
           </View>
           <ChevronRight color={colors.mutedForeground} size={20} />
@@ -145,11 +157,59 @@ export default function ProfileScreen() {
               <CreditCard color="#166534" size={20} />
             </View>
             <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-              Payment Methods
+              {t('profile.paymentMethods')}
             </Text>
           </View>
           <ChevronRight color={colors.mutedForeground} size={20} />
         </TouchableOpacity>
+
+        {/* Language Selector */}
+        <TouchableOpacity 
+          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          onPress={() => setShowLanguagePicker(!showLanguagePicker)}
+        >
+          <View style={styles.menuLeft}>
+            <View style={[styles.iconBg, { backgroundColor: '#e0e7ff' }]}>
+              <Globe color="#4F46E5" size={20} />
+            </View>
+            <View>
+              <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                {t('profile.language')}
+              </Text>
+              <Text style={[styles.currentLang, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+                {LANGUAGE_NAMES[i18n.language] || 'English'}
+              </Text>
+            </View>
+          </View>
+          <ChevronRight color={colors.mutedForeground} size={20} />
+        </TouchableOpacity>
+
+        {showLanguagePicker && (
+          <View style={[styles.langPicker, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            {SUPPORTED_LANGS.map((lang) => (
+              <TouchableOpacity
+                key={lang}
+                style={[
+                  styles.langOption,
+                  { borderBottomColor: colors.border },
+                  i18n.language === lang && { backgroundColor: colors.primary + '10' },
+                ]}
+                onPress={() => {
+                  changeLanguage(lang);
+                  setShowLanguagePicker(false);
+                }}
+              >
+                <Text style={[
+                  styles.langText, 
+                  { color: i18n.language === lang ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }
+                ]}>
+                  {LANGUAGE_NAMES[lang]}
+                </Text>
+                {i18n.language === lang && <Check color={colors.primary} size={18} />}
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
         <TouchableOpacity 
           style={styles.menuItem}
@@ -160,7 +220,7 @@ export default function ProfileScreen() {
               <LogOut color="#991b1b" size={20} />
             </View>
             <Text style={[styles.menuLabel, { color: '#991b1b', fontFamily: typography.fontFamily.medium }]}>
-              Sign Out
+              {t('auth.signOut')}
             </Text>
           </View>
           <ChevronRight color="#991b1b" size={20} />
@@ -168,7 +228,7 @@ export default function ProfileScreen() {
       </View>
 
       <Text style={[styles.version, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        CharityTrust v1.0.2 • Open Verification Engine
+        {t('common.version')}
       </Text>
     </ScrollView>
   );
@@ -261,6 +321,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   menuLabel: { fontSize: 16 },
+  currentLang: { fontSize: 12, marginTop: 2 },
+  langPicker: {
+    marginLeft: 52,
+    marginBottom: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+  langOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  langText: { fontSize: 15 },
   version: {
     textAlign: 'center',
     marginTop: 40,
