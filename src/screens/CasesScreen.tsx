@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Plus, FolderHeart } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../supabase/AuthContext';
 import { getMyCases } from '../api/cases';
@@ -27,6 +28,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 function CaseCard({ item }: { item: Case }) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const progress = item.target_amount > 0
     ? Math.min((item.collected_amount / item.target_amount) * 100, 100)
     : 0;
@@ -36,11 +38,11 @@ function CaseCard({ item }: { item: Case }) {
     <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View style={styles.cardHeader}>
         <Text style={[styles.category, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {CATEGORY_LABELS[item.category]}
+          {t(`categories.${item.category}`)}
         </Text>
         <View style={[styles.statusBadge, { backgroundColor: statusColor + '20' }]}>
           <Text style={[styles.statusText, { color: statusColor, fontFamily: typography.fontFamily.medium }]}>
-            {STATUS_LABELS[item.status]}
+            {t(`statuses.${item.status}`)}
           </Text>
         </View>
       </View>
@@ -50,7 +52,7 @@ function CaseCard({ item }: { item: Case }) {
       </Text>
 
       <Text style={[styles.beneficiary, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        For: {item.beneficiary_name}{item.beneficiary_age ? `, ${item.beneficiary_age} yrs` : ''}
+        {t('common.for')}: {item.beneficiary_name}{item.beneficiary_age ? `, ${item.beneficiary_age} ${t('common.yrs')}` : ''}
       </Text>
 
       {/* Progress bar */}
@@ -62,7 +64,7 @@ function CaseCard({ item }: { item: Case }) {
           ${item.collected_amount.toLocaleString()}
         </Text>
         <Text style={[styles.target, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          of ${item.target_amount.toLocaleString()}
+          {t('common.of')} ${item.target_amount.toLocaleString()}
         </Text>
       </View>
     </View>
@@ -72,6 +74,7 @@ function CaseCard({ item }: { item: Case }) {
 export default function CasesScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -104,7 +107,7 @@ export default function CasesScreen({ navigation }: any) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          My Cases
+          {t('cases.myCases')}
         </Text>
         <TouchableOpacity
           style={[styles.createBtn, { backgroundColor: colors.primary }]}
@@ -113,7 +116,7 @@ export default function CasesScreen({ navigation }: any) {
         >
           <Plus color={colors.primaryForeground} size={18} />
           <Text style={[styles.createBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-            New Case
+            {t('cases.newCase')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -128,10 +131,10 @@ export default function CasesScreen({ navigation }: any) {
           <View style={styles.empty}>
             <FolderHeart color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              No cases yet
+              {t('cases.noCasesTitle')}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Create your first case to start receiving contributions
+              {t('cases.noCasesDesc')}
             </Text>
           </View>
         }

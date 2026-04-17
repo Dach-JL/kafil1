@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Award, AlertCircle } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { supabase } from '../supabase/supabaseClient';
 import { Case } from '../types/cases';
@@ -17,6 +18,7 @@ import PublicCaseCard from '../components/PublicCaseCard';
 
 export default function HistoryScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
+  const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,11 +63,11 @@ export default function HistoryScreen({ navigation }: any) {
         <View style={styles.titleRow}>
           <Award color={colors.primary} size={24} />
           <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            Impact History
+            {t('history.title')}
           </Text>
         </View>
         <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Verified outcomes from funded cases.
+          {t('history.subtitle')}
         </Text>
       </View>
 
@@ -91,10 +93,10 @@ export default function HistoryScreen({ navigation }: any) {
           <View style={styles.empty}>
             <AlertCircle color={colors.mutedForeground} size={56} />
             <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              No Completed Cases Yet
+              {t('history.noResultsTitle')}
             </Text>
             <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              Completed cases with verified impact reports will appear here.
+              {t('history.noResultsDesc')}
             </Text>
           </View>
         }
