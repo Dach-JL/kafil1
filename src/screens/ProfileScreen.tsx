@@ -34,6 +34,8 @@ const LANGUAGE_NAMES: Record<string, string> = {
   am: 'አማርኛ',
 };
 
+import { useNavigation } from '@react-navigation/native';
+
 export default function ProfileScreen() {
   const { colors, typography } = useTheme();
   const { t, i18n } = useTranslation();
@@ -41,6 +43,7 @@ export default function ProfileScreen() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     async function loadStats() {
@@ -139,7 +142,10 @@ export default function ProfileScreen() {
           {t('profile.account')}
         </Text>
         
-        <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity 
+          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          onPress={() => navigation.navigate('AccountSettings')}
+        >
           <View style={styles.menuLeft}>
             <View style={[styles.iconBg, { backgroundColor: colors.secondary }]}>
               <Settings color={colors.primary} size={20} />
@@ -151,7 +157,10 @@ export default function ProfileScreen() {
           <ChevronRight color={colors.mutedForeground} size={20} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.menuItem, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity 
+          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          onPress={() => navigation.navigate('PaymentMethods')}
+        >
           <View style={styles.menuLeft}>
             <View style={[styles.iconBg, { backgroundColor: '#dcfce7' }]}>
               <CreditCard color="#166534" size={20} />

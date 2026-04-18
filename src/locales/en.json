@@ -162,7 +162,15 @@
     "accountSettings": "Account Settings",
     "paymentMethods": "Payment Methods",
     "language": "Language",
-    "chooseLanguage": "Choose Language"
+    "chooseLanguage": "Choose Language",
+    "personalInfo": "PERSONAL INFORMATION",
+    "settingsUpdated": "Settings updated successfully!",
+    "deletePaymentMethod": "Delete Payment Method",
+    "deletePaymentMethodConfirm": "Are you sure you want to remove this account?",
+    "noPaymentMethods": "No payment methods",
+    "noPaymentMethodsDesc": "Save your bank details for faster case creation and payouts.",
+    "addPaymentMethodDesc": "Add a bank account or mobile wallet to receive payouts or make donations easier.",
+    "paymentMethodAdded": "Payment method added!"
   },
   "notifications": {
     "title": "Notifications",
@@ -191,7 +199,11 @@
     "close": "Close",
     "delete": "Delete",
     "edit": "Edit",
-    "logOut": "Log Out"
+    "logOut": "Log Out",
+    "saveChanges": "Save Changes",
+    "addNewMethod": "Add New Method",
+    "saveAccount": "Save Account",
+    "setAsDefault": "Set Default"
   },
   "errors": {
     "networkError": "Network error. Please check your connection.",

@@ -33,6 +33,9 @@ import InboxScreen from '../screens/InboxScreen';
 import ChatRoomScreen from '../screens/ChatRoomScreen';
 import NotificationBell from '../components/NotificationBell';
 import SubmitCompletionProofScreen from '../screens/cases/SubmitCompletionProofScreen';
+import AccountSettingsScreen from '../screens/AccountSettingsScreen';
+import PaymentMethodsScreen from '../screens/PaymentMethodsScreen';
+import AddPaymentMethodScreen from '../screens/AddPaymentMethodScreen';
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -175,6 +178,21 @@ function MainNavigator() {
         name="ChatRoom" 
         component={ChatRoomScreen}
         options={{ headerShown: true }}
+      />
+      <MainStack.Screen 
+        name="AccountSettings" 
+        component={AccountSettingsScreen}
+        options={{ headerShown: true, title: 'Account Settings' }}
+      />
+      <MainStack.Screen 
+        name="PaymentMethods" 
+        component={PaymentMethodsScreen}
+        options={{ headerShown: true, title: 'Payment Methods' }}
+      />
+      <MainStack.Screen 
+        name="AddPaymentMethod" 
+        component={AddPaymentMethodScreen}
+        options={{ headerShown: true, title: 'Add Account', presentation: 'modal' }}
       />
     </MainStack.Navigator>
   );
