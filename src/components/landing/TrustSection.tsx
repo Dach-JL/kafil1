@@ -9,13 +9,7 @@ export default function TrustSection() {
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.primary + '0A' }]}>
-      <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-        {t('landing.trustTitle')}
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        {t('landing.trustSubtitle')}
-      </Text>
+    <View style={styles.container}>
 
       <View style={styles.grid}>
         <View style={styles.card}>
@@ -61,52 +55,37 @@ export default function TrustSection() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    paddingVertical: 40,
-    marginTop: 16,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
-  },
-  title: {
-    fontSize: 24,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: 'center',
-    marginBottom: 32,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   grid: {
-    gap: 24,
+    gap: 12,
   },
   card: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 12,
+    gap: 16,
   },
   iconBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
   cardTitle: {
-    fontSize: 18,
-    marginBottom: 8,
+    fontSize: 16,
+    marginBottom: 2,
   },
   cardDesc: {
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: 'center',
+    fontSize: 13,
+    lineHeight: 18,
+    flex: 1,
   },
 });

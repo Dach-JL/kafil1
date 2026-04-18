@@ -28,9 +28,6 @@ export default function HowItWorks() {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-        {t('landing.howItWorksTitle')}
-      </Text>
       
       <View style={styles.stepsContainer}>
         {STEPS.map((step, index) => {
@@ -65,52 +62,45 @@ export default function HowItWorks() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    marginBottom: 32,
-    textAlign: 'center',
+    paddingVertical: 10,
   },
   stepsContainer: {
     flexDirection: 'column',
-    gap: 0,
   },
   stepRow: {
     flexDirection: 'row',
-    marginBottom: 0, 
   },
   iconColumn: {
     alignItems: 'center',
-    width: 48,
-    marginRight: 16,
+    width: 40,
+    marginRight: 12,
   },
   iconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
   },
   connectingLine: {
     width: 2,
-    height: 60,
+    height: 40,
     marginTop: -8,
     marginBottom: -8,
     zIndex: 1,
   },
   textColumn: {
     flex: 1,
-    paddingTop: 4,
-    paddingBottom: 32,
+    paddingTop: 2,
+    paddingBottom: 20,
   },
   stepTitle: {
-    fontSize: 18,
-    marginBottom: 4,
+    fontSize: 16,
+    marginBottom: 2,
   },
   stepDesc: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 18,
   },
 });
