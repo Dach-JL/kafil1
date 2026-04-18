@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, Platform, UIManager, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flame, ShieldCheck, HelpCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +10,22 @@ import HorizontalCaseList from '../components/landing/HorizontalCaseList';
 import TrustSection from '../components/landing/TrustSection';
 import ImpactPreview from '../components/landing/ImpactPreview';
 
+// Enable LayoutAnimation for Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 type TabType = 'EXPLORE' | 'TRUST' | 'ABOUT';
 
 export default function LandingScreen({ navigation }: any) {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('EXPLORE');
+
+  const handleTabChange = (tabId: TabType) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setActiveTab(tabId);
+  };
 
   const TABS = [
     { id: 'EXPLORE' as TabType, label: t('home.allCases'), icon: Flame },
@@ -27,15 +37,26 @@ export default function LandingScreen({ navigation }: any) {
     switch (activeTab) {
       case 'EXPLORE':
         return (
-          <View style={styles.tabContent}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.tabContentScroll}>
             <HorizontalCaseList onCasePress={() => navigation.navigate('Login')} />
             <ImpactPreview onPressItem={() => navigation.navigate('Login')} />
-          </View>
+            <View style={{ height: 40 }} />
+          </ScrollView>
         );
       case 'TRUST':
-        return <TrustSection />;
+        return (
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.tabContentScroll}>
+            <TrustSection />
+            <View style={{ height: 40 }} />
+          </ScrollView>
+        );
       case 'ABOUT':
-        return <HowItWorks />;
+        return (
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.tabContentScroll}>
+            <HowItWorks />
+            <View style={{ height: 40 }} />
+          </ScrollView>
+        );
       default:
         return null;
     }
@@ -57,7 +78,7 @@ export default function LandingScreen({ navigation }: any) {
           return (
             <TouchableOpacity
               key={tab.id}
-              onPress={() => setActiveTab(tab.id)}
+              onPress={() => handleTabChange(tab.id)}
               style={[
                 styles.tabItem,
                 isActive && { backgroundColor: colors.background, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }
@@ -112,7 +133,7 @@ const styles = StyleSheet.create({
   contentArea: {
     flex: 1,
   },
-  tabContent: {
-    flex: 1,
+  tabContentScroll: {
+    paddingBottom: 20,
   },
 });
