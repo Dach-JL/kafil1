@@ -16,11 +16,9 @@ interface Step2Props {
     urgency_level: number;
     deadline: string;
     is_anonymous: boolean;
-    bank_name: string;
-    bank_account_number: string;
-    bank_account_name: string;
+    bank_accounts: { id: string; bank_name: string; account_number: string; account_name: string }[];
   };
-  onChange: (field: string, value: string | number | boolean) => void;
+  onChange: (field: string, value: any) => void;
 }
 
 const URGENCY_LEVELS = [
@@ -40,6 +38,27 @@ const BANK_OPTIONS = [
 export default function Step2Financial({ data, onChange }: Step2Props) {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
+
+  const [tempBankName, setTempBankName] = React.useState('CBE');
+  const [tempAccNum, setTempAccNum] = React.useState('');
+  const [tempAccName, setTempAccName] = React.useState('');
+
+  const addBankAccount = () => {
+    if (!tempAccNum.trim() || !tempAccName.trim()) return;
+    const newAccount = {
+      id: Date.now().toString(),
+      bank_name: tempBankName,
+      account_number: tempAccNum.trim(),
+      account_name: tempAccName.trim()
+    };
+    onChange('bank_accounts', [...(data.bank_accounts || []), newAccount]);
+    setTempAccNum('');
+    setTempAccName('');
+  };
+
+  const removeBankAccount = (id: string) => {
+    onChange('bank_accounts', (data.bank_accounts || []).filter(acc => acc.id !== id));
+  };
 
   const inputStyle = [
     styles.input,
@@ -106,49 +125,83 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
         {t('createCase.bankInfoTitle', { defaultValue: 'Bank Details' })}
       </Text>
 
-      {/* Bank Name */}
-      <Text style={labelStyle}>{t('createCase.bankName', { defaultValue: 'Bank Name *' })}</Text>
-      <View style={styles.urgencyRow}>
-        {BANK_OPTIONS.map(({ id, translationKey }) => (
-          <TouchableOpacity
-            key={id}
-            style={[
-              styles.urgencyChip,
-              {
-                backgroundColor: data.bank_name === id ? colors.primary + '20' : colors.card,
-                borderColor: data.bank_name === id ? colors.primary : colors.border,
-              },
-            ]}
-            onPress={() => onChange('bank_name', id)}
-          >
-            <Text style={[styles.urgencyText, { color: data.bank_name === id ? colors.primary : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-              {t(translationKey, { defaultValue: id })}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      {/* Added Bank Accounts List */}
+      {(data.bank_accounts || []).length > 0 && (
+        <View style={{ marginBottom: 16 }}>
+          {(data.bank_accounts || []).map((acc) => (
+            <View key={acc.id} style={[styles.addedAccountCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.bold }}>{t(`banks.${acc.bank_name.toLowerCase()}`, { defaultValue: acc.bank_name })}</Text>
+                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, marginTop: 4 }}>{acc.account_number}</Text>
+                <Text style={{ color: colors.mutedForeground, fontSize: 13 }}>{acc.account_name}</Text>
+              </View>
+              <TouchableOpacity onPress={() => removeBankAccount(acc.id)} style={{ padding: 8 }}>
+                <Text style={{ color: colors.error, fontFamily: typography.fontFamily.medium }}>{t('buttons.delete', { defaultValue: 'Remove' })}</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Add New Bank Account Form */}
+      <View style={[styles.addAccountContainer, { borderColor: colors.border, backgroundColor: colors.background }]}>
+        <Text style={[labelStyle, { marginBottom: 12 }]}>
+          {(data.bank_accounts || []).length === 0 
+            ? t('createCase.addFirstAccount', { defaultValue: 'Add your first receiving account *' })
+            : t('createCase.addAnotherAccount', { defaultValue: 'Add another account (Optional)' })}
+        </Text>
+
+        <Text style={labelStyle}>{t('createCase.bankName', { defaultValue: 'Bank Name *' })}</Text>
+        <View style={styles.urgencyRow}>
+          {BANK_OPTIONS.map(({ id, translationKey }) => (
+            <TouchableOpacity
+              key={id}
+              style={[
+                styles.urgencyChip,
+                {
+                  backgroundColor: tempBankName === id ? colors.primary + '20' : colors.card,
+                  borderColor: tempBankName === id ? colors.primary : colors.border,
+                },
+              ]}
+              onPress={() => setTempBankName(id)}
+            >
+              <Text style={[styles.urgencyText, { color: tempBankName === id ? colors.primary : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+                {t(translationKey, { defaultValue: id })}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={labelStyle}>{t('createCase.accountNumber', { defaultValue: 'Account Number *' })}</Text>
+        <TextInput
+          style={inputStyle}
+          placeholder="1000..."
+          placeholderTextColor={colors.mutedForeground}
+          value={tempAccNum}
+          onChangeText={setTempAccNum}
+          keyboardType="number-pad"
+        />
+
+        <Text style={labelStyle}>{t('createCase.accountName', { defaultValue: 'Account Holder Name *' })}</Text>
+        <TextInput
+          style={inputStyle}
+          placeholder="Abebe Kebede..."
+          placeholderTextColor={colors.mutedForeground}
+          value={tempAccName}
+          onChangeText={setTempAccName}
+          autoCapitalize="words"
+        />
+
+        <TouchableOpacity 
+          style={[styles.addBtn, { backgroundColor: tempAccNum && tempAccName ? colors.primary : colors.muted }]}
+          disabled={!tempAccNum || !tempAccName}
+          onPress={addBankAccount}
+        >
+          <Text style={{ color: tempAccNum && tempAccName ? colors.primaryForeground : colors.mutedForeground, fontFamily: typography.fontFamily.medium }}>
+            {t('buttons.addAccount', { defaultValue: 'Add Account to List' })}
+          </Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Account Number */}
-      <Text style={labelStyle}>{t('createCase.accountNumber', { defaultValue: 'Account Number *' })}</Text>
-      <TextInput
-        style={inputStyle}
-        placeholder="1000..."
-        placeholderTextColor={colors.mutedForeground}
-        value={data.bank_account_number}
-        onChangeText={(v) => onChange('bank_account_number', v)}
-        keyboardType="number-pad"
-      />
-
-      {/* Account Name */}
-      <Text style={labelStyle}>{t('createCase.accountName', { defaultValue: 'Account Holder Name *' })}</Text>
-      <TextInput
-        style={inputStyle}
-        placeholder="Abebe Kebede..."
-        placeholderTextColor={colors.mutedForeground}
-        value={data.bank_account_name}
-        onChangeText={(v) => onChange('bank_account_name', v)}
-        autoCapitalize="words"
-      />
 
       {/* Deadline */}
       <Text style={labelStyle}>{t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}</Text>
@@ -248,5 +301,26 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
+  },
+  addAccountContainer: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    marginTop: 8,
+  },
+  addedAccountCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
+  },
+  addBtn: {
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 4,
   },
 });

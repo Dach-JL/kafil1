@@ -33,12 +33,16 @@ export default function FundCaseScreen({ route, navigation }: any) {
   const [submitting, setSubmitting] = useState(false);
   const [caseInfo, setCaseInfo] = React.useState<Case | null>(null);
   const [fetching, setFetching] = React.useState(true);
+  const [selectedBankId, setSelectedBankId] = useState<string | null>(null);
 
   React.useEffect(() => {
     async function loadCase() {
       try {
         const data = await getCaseById(caseId);
         setCaseInfo(data);
+        if (data?.bank_accounts && data.bank_accounts.length > 0) {
+          setSelectedBankId(data.bank_accounts[0].id);
+        }
       } catch (err) {
         console.error('Failed to load case:', err);
       } finally {
@@ -188,32 +192,67 @@ export default function FundCaseScreen({ route, navigation }: any) {
           )}
 
           <View style={styles.section}>
-            {caseInfo.bank_account_number && (
+            {(caseInfo.bank_accounts || []).length > 0 && (
               <View style={[styles.bankCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '30', borderWidth: 1, borderRadius: 12, padding: 16, marginBottom: 24 }]}>
-                <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.medium, marginBottom: 12 }}>
+                <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.medium, marginBottom: 16 }}>
                   {t('donation.sendFundsTo', { defaultValue: 'Please transfer your donation to the following account before uploading proof:' })}
                 </Text>
                 
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
-                  {t('createCase.bankName', { defaultValue: 'Bank Name *' }).replace(' *', '')}
-                </Text>
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16, marginBottom: 8 }}>
-                  {t(`banks.${caseInfo.bank_name?.toLowerCase()}`, { defaultValue: caseInfo.bank_name })}
-                </Text>
+                {/* Bank Selector Chips */}
+                {(caseInfo.bank_accounts || []).length > 1 && (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+                    {(caseInfo.bank_accounts || []).map((acc) => (
+                      <TouchableOpacity
+                        key={acc.id}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: 20,
+                          borderWidth: 1,
+                          borderColor: selectedBankId === acc.id ? colors.primary : colors.border,
+                          backgroundColor: selectedBankId === acc.id ? colors.primary + '20' : colors.card,
+                          marginRight: 8
+                        }}
+                        onPress={() => setSelectedBankId(acc.id)}
+                      >
+                        <Text style={{ color: selectedBankId === acc.id ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }}>
+                          {t(`banks.${acc.bank_name.toLowerCase()}`, { defaultValue: acc.bank_name })}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                )}
 
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
-                  {t('createCase.accountNumber', { defaultValue: 'Account Number *' }).replace(' *', '')}
-                </Text>
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 18, marginBottom: 8 }}>
-                  {caseInfo.bank_account_number}
-                </Text>
+                {/* Selected Bank Details */}
+                {(() => {
+                  const selectedAcc = (caseInfo.bank_accounts || []).find((a) => a.id === selectedBankId) || caseInfo.bank_accounts?.[0];
+                  if (!selectedAcc) return null;
+                  return (
+                    <View>
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                        {t('createCase.bankName', { defaultValue: 'Bank Name *' }).replace(' *', '')}
+                      </Text>
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16, marginBottom: 8 }}>
+                        {t(`banks.${selectedAcc.bank_name.toLowerCase()}`, { defaultValue: selectedAcc.bank_name })}
+                      </Text>
 
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
-                  {t('createCase.accountName', { defaultValue: 'Account Holder Name *' }).replace(' *', '')}
-                </Text>
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16 }}>
-                  {caseInfo.bank_account_name}
-                </Text>
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                        {t('createCase.accountNumber', { defaultValue: 'Account Number *' }).replace(' *', '')}
+                      </Text>
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 18, marginBottom: 8 }}>
+                        {selectedAcc.account_number}
+                      </Text>
+
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, fontSize: 13, opacity: 0.7 }}>
+                        {t('createCase.accountName', { defaultValue: 'Account Holder Name *' }).replace(' *', '')}
+                      </Text>
+                      <Text style={{ color: colors.text, fontFamily: typography.fontFamily.bold, fontSize: 16 }}>
+                        {selectedAcc.account_name}
+                      </Text>
+                    </View>
+                  );
+                })()}
+
               </View>
             )}
 
