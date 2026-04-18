@@ -9,24 +9,32 @@ export default function LandingScreen({ navigation }: any) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-          CharityTrust
-        </Text>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          Transparent giving. Real impact.
-        </Text>
-        
-        <Pressable 
-          style={({ pressed }) => [
-            styles.button,
-            { backgroundColor: colors.primary, opacity: pressed ? 0.8 : 1 }
-          ]}
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Text style={[styles.buttonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-            Get Started
+        <View style={styles.headerGroup}>
+          <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            CharityTrust
           </Text>
-        </Pressable>
+          <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            Transparent giving. Real impact.
+          </Text>
+        </View>
+        
+        <View style={styles.actionGroup}>
+          <Pressable 
+            style={({ pressed }) => [
+              styles.button,
+              { 
+                backgroundColor: colors.primary,
+                opacity: pressed ? 0.9 : 1,
+                transform: [{ scale: pressed ? 0.98 : 1 }]
+              }
+            ]}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={[styles.buttonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+              Get Started
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -40,33 +48,41 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: 32,
+  },
+  headerGroup: {
+    alignItems: 'center',
+    marginBottom: 64,
   },
   title: {
-    fontSize: 42,
-    marginBottom: 12,
+    fontSize: 48,
+    letterSpacing: -1,
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 17,
+    letterSpacing: 0.2,
     textAlign: 'center',
-    marginBottom: 48,
+  },
+  actionGroup: {
+    width: '100%',
+    maxWidth: 300,
   },
   button: {
-    paddingVertical: 18,
-    paddingHorizontal: 32,
-    borderRadius: 30,
-    width: '100%',
+    height: 58,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 3,
+    shadowColor: '#4F46E5',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 8,
   },
   buttonText: {
-    fontSize: 18,
-    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
 });
