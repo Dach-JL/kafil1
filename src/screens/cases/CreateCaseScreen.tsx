@@ -17,6 +17,7 @@ import { useAuth } from '../../supabase/AuthContext';
 import { createCase } from '../../api/cases';
 import { useSubmitCase } from '../../hooks/useSubmitCase';
 import { CaseCategory } from '../../types/cases';
+import { getUserPaymentMethods } from '../../api/paymentMethods';
 import StepIndicator from '../../components/StepIndicator';
 import Step1BasicInfo from './steps/Step1BasicInfo';
 import Step2Financial from './steps/Step2Financial';
@@ -51,6 +52,35 @@ export default function CreateCaseScreen({ navigation }: any) {
   function updateField(field: string, value: any) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
+
+  // Effect to fetch and lock primary bank account when reaching Step 2
+  useEffect(() => {
+    async function syncPaymentMethod() {
+      if (currentStep === 2 && user) {
+        try {
+          const methods = await getUserPaymentMethods(user.id);
+          const primary = methods.find(m => m.is_default) || methods[0];
+          
+          if (primary) {
+            setForm(prev => ({
+              ...prev,
+              bank_accounts: [{
+                id: primary.id,
+                bank_name: primary.bank_name,
+                account_number: primary.account_number,
+                account_name: primary.account_name
+              }]
+            }));
+          } else {
+            setForm(prev => ({ ...prev, bank_accounts: [] }));
+          }
+        } catch (err) {
+          console.error('Error syncing payment method:', err);
+        }
+      }
+    }
+    syncPaymentMethod();
+  }, [currentStep, user]);
 
   function handleEvidenceUploaded(path: string) {
     setForm((prev) => ({

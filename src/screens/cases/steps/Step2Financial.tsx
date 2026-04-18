@@ -10,6 +10,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
 
+import { useNavigation } from '@react-navigation/native';
+import { CreditCard, ExternalLink, AlertCircle } from 'lucide-react-native';
+
 interface Step2Props {
   data: {
     target_amount: string;
@@ -29,36 +32,12 @@ const URGENCY_LEVELS = [
   { level: 5, label: 'Emergency', color: '#7F1D1D' },
 ];
 
-const BANK_OPTIONS = [
-  { id: 'CBE', translationKey: 'banks.cbe' },
-  { id: 'Telebirr', translationKey: 'banks.telebirr' },
-  { id: 'Ebirr', translationKey: 'banks.ebirr' }
-];
-
 export default function Step2Financial({ data, onChange }: Step2Props) {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
+  const navigation = useNavigation<any>();
 
-  const [tempBankName, setTempBankName] = React.useState('CBE');
-  const [tempAccNum, setTempAccNum] = React.useState('');
-  const [tempAccName, setTempAccName] = React.useState('');
-
-  const addBankAccount = () => {
-    if (!tempAccNum.trim() || !tempAccName.trim()) return;
-    const newAccount = {
-      id: Date.now().toString(),
-      bank_name: tempBankName,
-      account_number: tempAccNum.trim(),
-      account_name: tempAccName.trim()
-    };
-    onChange('bank_accounts', [...(data.bank_accounts || []), newAccount]);
-    setTempAccNum('');
-    setTempAccName('');
-  };
-
-  const removeBankAccount = (id: string) => {
-    onChange('bank_accounts', (data.bank_accounts || []).filter(acc => acc.id !== id));
-  };
+  const primaryAccount = data.bank_accounts[0];
 
   const inputStyle = [
     styles.input,
@@ -76,7 +55,7 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
   ];
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
       <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
         {t('createCase.fundingDetails', { defaultValue: 'Funding Details' })}
       </Text>
@@ -121,87 +100,59 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
         ))}
       </View>
 
+      {/* Primary Payout Account (Read Only) */}
       <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading, marginTop: 16 }]}>
-        {t('createCase.bankInfoTitle', { defaultValue: 'Bank Details' })}
+        {t('createCase.payoutDestination', { defaultValue: 'Payout Destination' })}
       </Text>
-
-      {/* Added Bank Accounts List */}
-      {(data.bank_accounts || []).length > 0 && (
-        <View style={{ marginBottom: 16 }}>
-          {(data.bank_accounts || []).map((acc) => (
-            <View key={acc.id} style={[styles.addedAccountCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <View style={{ flex: 1 }}>
-                <Text style={{ color: colors.primary, fontFamily: typography.fontFamily.bold }}>{t(`banks.${acc.bank_name.toLowerCase()}`, { defaultValue: acc.bank_name })}</Text>
-                <Text style={{ color: colors.text, fontFamily: typography.fontFamily.medium, marginTop: 4 }}>{acc.account_number}</Text>
-                <Text style={{ color: colors.mutedForeground, fontSize: 13 }}>{acc.account_name}</Text>
-              </View>
-              <TouchableOpacity onPress={() => removeBankAccount(acc.id)} style={{ padding: 8 }}>
-                <Text style={{ color: colors.error, fontFamily: typography.fontFamily.medium }}>{t('buttons.delete', { defaultValue: 'Remove' })}</Text>
-              </TouchableOpacity>
+      
+      {primaryAccount ? (
+        <View style={[styles.payoutCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.iconBox, { backgroundColor: colors.secondary }]}>
+              <CreditCard color={colors.primary} size={20} />
             </View>
-          ))}
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.bankName, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
+                {t(`banks.${primaryAccount.bank_name.toLowerCase()}`, { defaultValue: primaryAccount.bank_name })}
+              </Text>
+              <Text style={[styles.accNum, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                {primaryAccount.account_number}
+              </Text>
+              <Text style={[styles.accName, { color: colors.mutedForeground }]}>
+                {primaryAccount.account_name}
+              </Text>
+            </View>
+          </View>
+          
+          <TouchableOpacity 
+            style={[styles.manageBtn, { borderTopColor: colors.border + '40' }]}
+            onPress={() => navigation.navigate('PaymentMethods')}
+          >
+            <Text style={[styles.manageBtnText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+              {t('profile.changeDefaultInSettings', { defaultValue: 'Change in Account Settings' })}
+            </Text>
+            <ExternalLink color={colors.mutedForeground} size={14} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={[styles.errorCard, { backgroundColor: colors.error + '10', borderColor: colors.error }]}>
+          <AlertCircle color={colors.error} size={24} />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.errorTitle, { color: colors.error, fontFamily: typography.fontFamily.bold }]}>
+              {t('createCase.noPaymentMethod', { defaultValue: 'No Payout Account Found' })}
+            </Text>
+            <Text style={[styles.errorDesc, { color: colors.error }]}>
+              {t('createCase.mustAddPaymentMethod', { defaultValue: 'You must add a payout account to your profile before creating a case.' })}
+            </Text>
+            <TouchableOpacity 
+              style={[styles.addBtn, { backgroundColor: colors.error }]}
+              onPress={() => navigation.navigate('PaymentMethods')}
+            >
+              <Text style={{ color: '#fff', fontWeight: '600' }}>{t('buttons.addNow', { defaultValue: 'Add in Profile' })}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
-
-      {/* Add New Bank Account Form */}
-      <View style={[styles.addAccountContainer, { borderColor: colors.border, backgroundColor: colors.background }]}>
-        <Text style={[labelStyle, { marginBottom: 12 }]}>
-          {(data.bank_accounts || []).length === 0 
-            ? t('createCase.addFirstAccount', { defaultValue: 'Add your first receiving account *' })
-            : t('createCase.addAnotherAccount', { defaultValue: 'Add another account (Optional)' })}
-        </Text>
-
-        <Text style={labelStyle}>{t('createCase.bankName', { defaultValue: 'Bank Name *' })}</Text>
-        <View style={styles.urgencyRow}>
-          {BANK_OPTIONS.map(({ id, translationKey }) => (
-            <TouchableOpacity
-              key={id}
-              style={[
-                styles.urgencyChip,
-                {
-                  backgroundColor: tempBankName === id ? colors.primary + '20' : colors.card,
-                  borderColor: tempBankName === id ? colors.primary : colors.border,
-                },
-              ]}
-              onPress={() => setTempBankName(id)}
-            >
-              <Text style={[styles.urgencyText, { color: tempBankName === id ? colors.primary : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-                {t(translationKey, { defaultValue: id })}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={labelStyle}>{t('createCase.accountNumber', { defaultValue: 'Account Number *' })}</Text>
-        <TextInput
-          style={inputStyle}
-          placeholder="1000..."
-          placeholderTextColor={colors.mutedForeground}
-          value={tempAccNum}
-          onChangeText={setTempAccNum}
-          keyboardType="number-pad"
-        />
-
-        <Text style={labelStyle}>{t('createCase.accountName', { defaultValue: 'Account Holder Name *' })}</Text>
-        <TextInput
-          style={inputStyle}
-          placeholder="Abebe Kebede..."
-          placeholderTextColor={colors.mutedForeground}
-          value={tempAccName}
-          onChangeText={setTempAccName}
-          autoCapitalize="words"
-        />
-
-        <TouchableOpacity 
-          style={[styles.addBtn, { backgroundColor: tempAccNum && tempAccName ? colors.primary : colors.muted }]}
-          disabled={!tempAccNum || !tempAccName}
-          onPress={addBankAccount}
-        >
-          <Text style={{ color: tempAccNum && tempAccName ? colors.primaryForeground : colors.mutedForeground, fontFamily: typography.fontFamily.medium }}>
-            {t('buttons.addAccount', { defaultValue: 'Add Account to List' })}
-          </Text>
-        </TouchableOpacity>
-      </View>
 
       {/* Deadline */}
       <Text style={labelStyle}>{t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}</Text>
@@ -302,25 +253,51 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
   },
-  addAccountContainer: {
+  payoutCard: {
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    marginTop: 8,
+    borderRadius: 16,
+    marginBottom: 24,
+    overflow: 'hidden',
   },
-  addedAccountCard: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 8,
+    padding: 16,
+    gap: 12,
   },
-  addBtn: {
-    paddingVertical: 12,
-    borderRadius: 8,
+  iconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
     alignItems: 'center',
-    marginTop: 4,
+    justifyContent: 'center',
+  },
+  bankName: { fontSize: 16, marginBottom: 2 },
+  accNum: { fontSize: 15 },
+  accName: { fontSize: 13, marginTop: 4 },
+  manageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    gap: 6,
+  },
+  manageBtnText: { fontSize: 12 },
+  errorCard: {
+    flexDirection: 'row',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 12,
+    marginBottom: 24,
+  },
+  errorTitle: { fontSize: 16, marginBottom: 4 },
+  errorDesc: { fontSize: 13, lineHeight: 18, marginBottom: 12 },
+  addBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
 });
