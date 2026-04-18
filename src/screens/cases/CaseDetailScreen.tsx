@@ -14,7 +14,7 @@ import { getCaseTimeline } from '../../api/events';
 import { Case } from '../../types/cases';
 import { useTranslation } from 'react-i18next';
 import { EventLog} from '../../types/events';
-import { ArrowLeft, ShieldCheck, MapPin, Clock, User, Target, CheckCircle2, MessageSquare, Heart } from 'lucide-react-native';
+import { ArrowLeft, ShieldCheck, Clock, User, Target, CheckCircle2, MessageSquare, Heart } from 'lucide-react-native';
 import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
@@ -129,12 +129,6 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <MapPin color={colors.mutedForeground} size={14} />
-            <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {caseInfo.location || t('common.local', { defaultValue: 'Local' })}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
             <Clock color={colors.mutedForeground} size={14} />
             <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
               {t('common.postedDate', { date: formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true }), defaultValue: `Posted ${formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true })}` })}
@@ -165,27 +159,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           </View>
         </View>
 
-        {/* Beneficiary Info */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            {t('caseDetail.beneficiary')}
-          </Text>
-          <View style={[styles.beneficiaryCard, { backgroundColor: colors.secondary }]}>
-            <View style={[styles.avatarPlaceholder, { backgroundColor: colors.border }]}>
-              <User color={colors.mutedForeground} size={24} />
-            </View>
-            <View>
-              <Text style={[styles.beneficiaryName, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                {caseInfo.beneficiary_name} {caseInfo.beneficiary_age ? `(${caseInfo.beneficiary_age} ${t('common.yrs')})` : ''}
-              </Text>
-              {caseInfo.is_anonymous && (
-                <Text style={[styles.anonymousLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-                  {t('donation.anonymous')}
-                </Text>
-              )}
-            </View>
-          </View>
-        </View>
+
 
         {/* Description */}
         <View style={styles.section}>

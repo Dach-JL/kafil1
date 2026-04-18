@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { ShieldCheck, Clock, MapPin } from 'lucide-react-native';
+import { ShieldCheck, Clock } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
 import { Case } from '../types/cases';
 import { formatDistanceToNow } from 'date-fns';
@@ -56,12 +56,6 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
       )}
 
       <View style={styles.metaRow}>
-        <View style={styles.metaItem}>
-          <MapPin color={colors.mutedForeground} size={14} />
-          <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]} numberOfLines={1}>
-            {data.location || 'Local'}
-          </Text>
-        </View>
         <View style={styles.metaItem}>
           <Clock color={colors.mutedForeground} size={14} />
           <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>

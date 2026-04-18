@@ -90,15 +90,6 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
               <Text style={[styles.value, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>${caseInfo.collected_amount.toLocaleString()}</Text>
             </View>
           </View>
-
-          <View style={styles.divider} />
-
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-            {t('common.beneficiary', { defaultValue: 'Beneficiary' })}
-          </Text>
-          <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-            {caseInfo.beneficiary_name}
-          </Text>
         </View>
 
         <View style={{ marginTop: 16 }}>

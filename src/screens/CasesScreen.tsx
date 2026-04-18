@@ -51,10 +51,6 @@ function CaseCard({ item }: { item: Case }) {
         {item.title}
       </Text>
 
-      <Text style={[styles.beneficiary, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        {t('common.for')}: {item.beneficiary_name}{item.beneficiary_age ? `, ${item.beneficiary_age} ${t('common.yrs')}` : ''}
-      </Text>
-
       {/* Progress bar */}
       <View style={[styles.progressBg, { backgroundColor: colors.muted }]}>
         <View style={[styles.progressFill, { width: `${progress}%` as any, backgroundColor: statusColor }]} />

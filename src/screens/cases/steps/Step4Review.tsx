@@ -9,9 +9,6 @@ interface Step4Props {
     title: string;
     description: string;
     category: CaseCategory;
-    beneficiary_name: string;
-    beneficiary_age: string;
-    location: string;
     target_amount: string;
     urgency_level: number;
     deadline: string;
@@ -59,8 +56,6 @@ export default function Step4Review({ data }: Step4Props) {
       {/* Details Grid */}
       <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
-          { label: t('common.beneficiary', { defaultValue: 'Beneficiary' }), value: `${data.beneficiary_name}${data.beneficiary_age ? `, ${t('common.yrs', { age: data.beneficiary_age, defaultValue: `${data.beneficiary_age} yrs` })}` : ''}` },
-          { label: t('common.location', { defaultValue: 'Location' }), value: data.location || t('common.notSpecified', { defaultValue: 'Not specified' }) },
           { label: t('createCase.fundingGoal', { defaultValue: 'Funding Goal' }), value: data.target_amount ? `$${parseFloat(data.target_amount).toLocaleString()}` : '—' },
           { label: t('createCase.urgency', { defaultValue: 'Urgency' }), value: URGENCY_LABELS[data.urgency_level] || '—' },
           { label: t('createCase.deadline', { defaultValue: 'Deadline' }), value: data.deadline || t('common.none', { defaultValue: 'None' }) },

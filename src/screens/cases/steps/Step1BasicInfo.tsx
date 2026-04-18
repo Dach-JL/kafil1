@@ -16,9 +16,6 @@ interface Step1Props {
     title: string;
     description: string;
     category: CaseCategory;
-    beneficiary_name: string;
-    beneficiary_age: string;
-    location: string;
   };
   onChange: (field: string, value: string) => void;
 }
@@ -105,41 +102,6 @@ export default function Step1BasicInfo({ data, onChange }: Step1Props) {
         numberOfLines={5}
         textAlignVertical="top"
       />
-
-      {/* Beneficiary */}
-      <Text style={labelStyle}>{t('createCase.beneficiaryNameLabel', { defaultValue: 'Beneficiary Name *' })}</Text>
-      <TextInput
-        style={inputStyle}
-        placeholder={t('createCase.beneficiaryPlaceholder', { defaultValue: 'Full name of the person being helped' })}
-        placeholderTextColor={colors.mutedForeground}
-        value={data.beneficiary_name}
-        onChangeText={(v) => onChange('beneficiary_name', v)}
-      />
-
-      <View style={styles.row}>
-        <View style={styles.halfField}>
-          <Text style={labelStyle}>{t('common.age', { defaultValue: 'Age' })}</Text>
-          <TextInput
-            style={inputStyle}
-            placeholder={t('common.age', { defaultValue: 'Age' })}
-            placeholderTextColor={colors.mutedForeground}
-            value={data.beneficiary_age}
-            onChangeText={(v) => onChange('beneficiary_age', v)}
-            keyboardType="numeric"
-            maxLength={3}
-          />
-        </View>
-        <View style={styles.halfField}>
-          <Text style={labelStyle}>{t('common.location', { defaultValue: 'Location' })}</Text>
-          <TextInput
-            style={inputStyle}
-            placeholder={t('createCase.locationPlaceholder', { defaultValue: 'City, Country' })}
-            placeholderTextColor={colors.mutedForeground}
-            value={data.location}
-            onChangeText={(v) => onChange('location', v)}
-          />
-        </View>
-      </View>
     </ScrollView>
   );
 }

@@ -28,9 +28,6 @@ const INITIAL_FORM = {
   title: '',
   description: '',
   category: 'MEDICAL' as CaseCategory,
-  beneficiary_name: '',
-  beneficiary_age: '',
-  location: '',
   target_amount: '',
   urgency_level: 3,
   deadline: '',
@@ -65,10 +62,9 @@ export default function CreateCaseScreen({ navigation }: any) {
   function validateStep(): boolean {
     if (currentStep === 1) {
       if (!form.title.trim()) { Alert.alert('Required', 'Please enter a case title.'); return false; }
-      if (!form.description.trim() || form.description.length < 50) {
-        Alert.alert('Required', 'Description must be at least 50 characters.'); return false;
+      if (!form.description.trim() || form.description.length < 5) {
+        Alert.alert('Required', 'Description must be at least 5 characters.'); return false;
       }
-      if (!form.beneficiary_name.trim()) { Alert.alert('Required', 'Please enter the beneficiary name.'); return false; }
     }
     if (currentStep === 2) {
       const amount = parseFloat(form.target_amount);
@@ -102,9 +98,7 @@ export default function CreateCaseScreen({ navigation }: any) {
       try {
         setIsSavingDraft(true);
         
-        // Prepare clean data for Supabase (avoiding empty strings for numbers/dates)
         const targetAmount = parseFloat(form.target_amount);
-        const age = form.beneficiary_age ? parseInt(form.beneficiary_age) : null;
         const deadline = form.deadline.trim() ? form.deadline : null;
         
         const newCase = await createCase({
@@ -112,9 +106,6 @@ export default function CreateCaseScreen({ navigation }: any) {
           title: form.title.trim(),
           description: form.description.trim(),
           category: form.category,
-          beneficiary_name: form.beneficiary_name.trim(),
-          beneficiary_age: age || undefined,
-          location: form.location.trim() || undefined,
           target_amount: targetAmount,
           urgency_level: form.urgency_level,
           deadline: deadline || undefined,

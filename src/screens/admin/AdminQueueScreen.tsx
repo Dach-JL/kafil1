@@ -45,9 +45,6 @@ function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void })
       </Text>
 
       <View style={styles.detailsRow}>
-        <Text style={[styles.beneficiary, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {item.beneficiary_name} {item.beneficiary_age ? `(${item.beneficiary_age})` : ''}
-        </Text>
         <Text style={[styles.target, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
           ${item.target_amount.toLocaleString()}
         </Text>

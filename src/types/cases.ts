@@ -26,7 +26,6 @@ export interface Case {
   status: CaseStatus;
   target_amount: number;
   collected_amount: number;
-  location?: string;
   bank_accounts?: {
     id: string;
     bank_name: string;
@@ -41,8 +40,6 @@ export interface Case {
   impact_evidence_hashes?: string[];
   impact_approved_by?: string;
   impact_approved_at?: string;
-  beneficiary_name: string;
-  beneficiary_age?: number;
   urgency_level: number; // 1–5
   rejection_reason?: string;
   verified_by?: string;

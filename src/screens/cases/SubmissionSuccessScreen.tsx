@@ -69,9 +69,6 @@ export default function SubmissionSuccessScreen({ route, navigation }: Props) {
             <Text style={[styles.caseTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
               {submittedCase.title}
             </Text>
-            <Text style={[styles.caseFor, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {t('common.for')}: {submittedCase.beneficiary_name}
-            </Text>
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
             <View style={styles.statsRow}>
               <View style={styles.stat}>

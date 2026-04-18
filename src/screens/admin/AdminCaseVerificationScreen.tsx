@@ -145,8 +145,6 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
         {/* Details Data */}
         <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           {[
-            { label: t('common.beneficiary', { defaultValue: 'Beneficiary' }), value: `${caseInfo.beneficiary_name} ${caseInfo.beneficiary_age ? `(${t('common.yrs', { age: caseInfo.beneficiary_age, defaultValue: `${caseInfo.beneficiary_age} yrs` })})` : ''}` },
-            { label: t('common.location', { defaultValue: 'Location' }), value: caseInfo.location || t('common.notSpecified', { defaultValue: 'Not specified' }) },
             { label: t('createCase.fundingGoal', { defaultValue: 'Target Amount' }), value: `$${caseInfo.target_amount.toLocaleString()}` },
             { label: t('createCase.urgency', { defaultValue: 'Urgency' }), value: URGENCY_LABELS[caseInfo.urgency_level] },
             { label: t('createCase.deadline', { defaultValue: 'Deadline' }), value: caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : t('common.none', { defaultValue: 'No deadline' }) },
