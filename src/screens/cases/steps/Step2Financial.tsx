@@ -22,6 +22,8 @@ interface Step2Props {
     bank_accounts: { id: string; bank_name: string; account_number: string; account_name: string }[];
   };
   onChange: (field: string, value: any) => void;
+  allProfileMethods: any[];
+  onToggleBank: (bank: any) => void;
 }
 
 const URGENCY_LEVELS = [
@@ -32,12 +34,12 @@ const URGENCY_LEVELS = [
   { level: 5, label: 'Emergency', color: '#7F1D1D' },
 ];
 
-export default function Step2Financial({ data, onChange }: Step2Props) {
+export default function Step2Financial({ data, onChange, allProfileMethods, onToggleBank }: Step2Props) {
   const { colors, typography } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
 
-  const primaryAccount = data.bank_accounts[0];
+  const isSelected = (id: string) => data.bank_accounts.some(acc => acc.id === id);
 
   const inputStyle = [
     styles.input,
@@ -101,35 +103,65 @@ export default function Step2Financial({ data, onChange }: Step2Props) {
       </View>
 
       {/* Primary Payout Account (Read Only) */}
-      <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading, marginTop: 16 }]}>
-        {t('createCase.payoutDestination', { defaultValue: 'Payout Destination' })}
-      </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, marginBottom: 12 }}>
+        <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading, marginBottom: 0 }]}>
+          {t('createCase.payoutDestinations', { defaultValue: 'Payout Accounts' })}
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }}>
+          {data.bank_accounts.length} {t('common.selected', { defaultValue: 'Selected' })}
+        </Text>
+      </View>
       
-      {primaryAccount ? (
-        <View style={[styles.payoutCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.cardHeader}>
-            <View style={[styles.iconBox, { backgroundColor: colors.secondary }]}>
-              <CreditCard color={colors.primary} size={20} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.bankName, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
-                {t(`banks.${primaryAccount.bank_name.toLowerCase()}`, { defaultValue: primaryAccount.bank_name })}
-              </Text>
-              <Text style={[styles.accNum, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                {primaryAccount.account_number}
-              </Text>
-              <Text style={[styles.accName, { color: colors.mutedForeground }]}>
-                {primaryAccount.account_name}
-              </Text>
-            </View>
-          </View>
+      {allProfileMethods.length > 0 ? (
+        <View style={{ gap: 12, marginBottom: 24 }}>
+          {allProfileMethods.map((method) => (
+            <TouchableOpacity 
+              key={method.id}
+              style={[
+                styles.payoutCard, 
+                { 
+                  backgroundColor: colors.card, 
+                  borderColor: isSelected(method.id) ? colors.primary : colors.border,
+                  borderWidth: isSelected(method.id) ? 2 : 1
+                }
+              ]}
+              onPress={() => onToggleBank(method)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.cardHeader}>
+                <View style={[styles.iconBox, { backgroundColor: isSelected(method.id) ? colors.primary + '15' : colors.secondary }]}>
+                  <CreditCard color={isSelected(method.id) ? colors.primary : colors.mutedForeground} size={20} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.bankName, { color: isSelected(method.id) ? colors.primary : colors.text, fontFamily: typography.fontFamily.bold }]}>
+                    {t(`banks.${method.bank_name.toLowerCase()}`, { defaultValue: method.bank_name })}
+                  </Text>
+                  <Text style={[styles.accNum, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                    {method.account_number}
+                  </Text>
+                  <Text style={[styles.accName, { color: colors.mutedForeground }]}>
+                    {method.account_name}
+                  </Text>
+                </View>
+                <View style={[
+                  styles.checkbox, 
+                  { 
+                    backgroundColor: isSelected(method.id) ? colors.primary : 'transparent',
+                    borderColor: isSelected(method.id) ? colors.primary : colors.border
+                  }
+                ]}>
+                  {isSelected(method.id) && <View style={styles.checkInner} />}
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
           
           <TouchableOpacity 
             style={[styles.manageBtn, { borderTopColor: colors.border + '40' }]}
             onPress={() => navigation.navigate('PaymentMethods')}
           >
             <Text style={[styles.manageBtnText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-              {t('profile.changeDefaultInSettings', { defaultValue: 'Change in Account Settings' })}
+              {t('profile.manageInSettings', { defaultValue: 'Manage in Account Settings' })}
             </Text>
             <ExternalLink color={colors.mutedForeground} size={14} />
           </TouchableOpacity>
@@ -275,6 +307,20 @@ const styles = StyleSheet.create({
   bankName: { fontSize: 16, marginBottom: 2 },
   accNum: { fontSize: 15 },
   accName: { fontSize: 13, marginTop: 4 },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 2,
+    backgroundColor: '#fff',
+  },
   manageBtn: {
     flexDirection: 'row',
     alignItems: 'center',

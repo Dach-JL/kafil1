@@ -44,6 +44,7 @@ export default function CreateCaseScreen({ navigation }: any) {
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState(INITIAL_FORM);
   const [savedCaseId, setSavedCaseId] = useState<string | null>(null);
+  const [allProfileMethods, setAllProfileMethods] = useState<any[]>([]);
 
   const STEPS = (t('createCase.steps', { returnObjects: true }) as string[]) || ['Details', 'Funding', 'Evidence', 'Review'];
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -53,34 +54,55 @@ export default function CreateCaseScreen({ navigation }: any) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  // Effect to fetch and lock primary bank account when reaching Step 2
+  // Effect to fetch and sync bank accounts when reaching Step 2
   useEffect(() => {
-    async function syncPaymentMethod() {
+    async function syncPaymentMethods() {
       if (currentStep === 2 && user) {
         try {
           const methods = await getUserPaymentMethods(user.id);
-          const primary = methods.find(m => m.is_default) || methods[0];
+          setAllProfileMethods(methods);
           
-          if (primary) {
+          // Auto-select all if nothing is selected yet
+          if (form.bank_accounts.length === 0 && methods.length > 0) {
             setForm(prev => ({
               ...prev,
-              bank_accounts: [{
-                id: primary.id,
-                bank_name: primary.bank_name,
-                account_number: primary.account_number,
-                account_name: primary.account_name
-              }]
+              bank_accounts: methods.map(m => ({
+                id: m.id,
+                bank_name: m.bank_name,
+                account_number: m.account_number,
+                account_name: m.account_name
+              }))
             }));
-          } else {
-            setForm(prev => ({ ...prev, bank_accounts: [] }));
           }
         } catch (err) {
-          console.error('Error syncing payment method:', err);
+          console.error('Error syncing payment methods:', err);
         }
       }
     }
-    syncPaymentMethod();
+    syncPaymentMethods();
   }, [currentStep, user]);
+
+  const toggleBank = (bank: any) => {
+    setForm(prev => {
+      const exists = prev.bank_accounts.find(a => a.id === bank.id);
+      if (exists) {
+        return {
+          ...prev,
+          bank_accounts: prev.bank_accounts.filter(a => a.id !== bank.id)
+        };
+      } else {
+        return {
+          ...prev,
+          bank_accounts: [...prev.bank_accounts, {
+            id: bank.id,
+            bank_name: bank.bank_name,
+            account_number: bank.account_number,
+            account_name: bank.account_name
+          }]
+        };
+      }
+    });
+  };
 
   function handleEvidenceUploaded(path: string) {
     setForm((prev) => ({
@@ -209,7 +231,12 @@ export default function CreateCaseScreen({ navigation }: any) {
             <Step1BasicInfo data={form} onChange={updateField} />
           )}
           {currentStep === 2 && (
-            <Step2Financial data={form} onChange={updateField} />
+            <Step2Financial 
+              data={form} 
+              onChange={updateField} 
+              allProfileMethods={allProfileMethods}
+              onToggleBank={toggleBank}
+            />
           )}
           {currentStep === 3 && savedCaseId && (
             <Step3Evidence
