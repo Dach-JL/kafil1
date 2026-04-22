@@ -56,6 +56,7 @@
     "heroTitle": "Har'a jireenya jijjiiri.",
     "heroHighlight": "Boru bu'aa isaa argi.",
     "heroSubtitle": "Hawaasa iftoomina qabutti makkalaa'i — arjoominni hunduu hordofama, mirkana'a, nama barbaachisutti ga'uu isaa mirkaneeffama.",
+    "tagline": "Arjooma iftoomaa. Bu'aa dhugaa.",
     "startDonating": "Gargaaruu Jalqabi",
     "submitCase": "Dhimma Galmeessi",
     "howItWorksTitle": "CharityTrust Akkamitti Hojjeta",
@@ -191,7 +192,8 @@
     "close": "Cufi",
     "delete": "Haqi",
     "edit": "Gulaali",
-    "logOut": "Ba'i"
+    "logOut": "Ba'i",
+    "getStarted": "Jalqabi"
   },
   "errors": {
     "networkError": "Dogoggora interneetii. Filannoo keessan mirkaneeffadhaa.",

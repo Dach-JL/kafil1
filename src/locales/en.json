@@ -56,6 +56,7 @@
     "heroTitle": "Change a life today.",
     "heroHighlight": "See the impact tomorrow.",
     "heroSubtitle": "Join a transparent community where every donation is tracked, verified, and proven to reach exactly who needs it.",
+    "tagline": "Transparent giving. Real impact.",
     "startDonating": "Start Donating",
     "submitCase": "Submit a Case",
     "howItWorksTitle": "How CharityTrust Works",
@@ -203,7 +204,8 @@
     "saveChanges": "Save Changes",
     "addNewMethod": "Add New Method",
     "saveAccount": "Save Account",
-    "setAsDefault": "Set Default"
+    "setAsDefault": "Set Default",
+    "getStarted": "Get Started"
   },
   "errors": {
     "networkError": "Network error. Please check your connection.",

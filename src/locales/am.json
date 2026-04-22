@@ -56,6 +56,7 @@
     "heroTitle": "ዛሬ ሕይወት ቀይር።",
     "heroHighlight": "ነገ ተጽዕኖውን ተመልከት።",
     "heroSubtitle": "ግልፅ ማህበረሰብ ይቀላቀሉ — እያንዳንዱ ልገሳ ይከታተላል፣ ይረጋገጣል፣ እና ለሚያስፈልገው ሰው መድረሱ ይረጋገጣል።",
+    "tagline": "ግልፅ ልገሳ። እውነተኛ ተጽዕኖ።",
     "startDonating": "መለገስ ጀምር",
     "submitCase": "ጉዳይ ያስገቡ",
     "howItWorksTitle": "CharityTrust እንዴት ይሰራል",
@@ -191,7 +192,8 @@
     "close": "ዝጋ",
     "delete": "ሰርዝ",
     "edit": "አርትዕ",
-    "logOut": "ውጣ"
+    "logOut": "ውጣ",
+    "getStarted": "ይጀምሩ"
   },
   "errors": {
     "networkError": "የኔትወርክ ስህተት። እባክዎ ግንኙነትዎን ያረጋግጡ።",
