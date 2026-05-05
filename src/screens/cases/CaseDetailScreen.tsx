@@ -19,6 +19,7 @@ import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useAuth } from '../../supabase/AuthContext';
 import CaseTimeline from '../../components/CaseTimeline';
+import CaseContributionList from '../../components/CaseContributionList';
 import TrustBadge from '../../components/TrustBadge';
 import OutcomeShowcase from '../../components/OutcomeShowcase';
 
@@ -209,13 +210,22 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           </View>
         )}
 
-        {/* Case Timeline */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
             {t('caseDetail.timeline')}
           </Text>
           <CaseTimeline events={events} />
         </View>
+
+        {/* Contributions (For Owners) */}
+        {user?.id === caseInfo.owner_id && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+              {t('caseDetail.recentContributions', { defaultValue: 'Recent Contributions' })}
+            </Text>
+            <CaseContributionList caseId={caseId} />
+          </View>
+        )}
 
         {/* Meta Details */}
         <View style={[styles.grid, { borderColor: colors.border, borderTopWidth: 1, borderBottomWidth: 1 }]}>
