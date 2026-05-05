@@ -1,5 +1,14 @@
 import { supabase } from '../supabase/supabaseClient';
-import { Contribution } from '../types/contributions';
+import { Contribution, ContributionSummary } from '../types/contributions';
+
+export async function getCaseContributionSummaries(caseId: string): Promise<ContributionSummary[]> {
+  // Use the RPC function to ensure security definer logic is applied
+  const { data, error } = await supabase
+    .rpc('get_case_contributions_for_owner', { target_case_id: caseId });
+
+  if (error) throw error;
+  return data as ContributionSummary[];
+}
 
 export async function createContribution(payload: {
   case_id: string;

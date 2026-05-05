@@ -22,3 +22,10 @@ export interface Contribution {
     email?: string;
   };
 }
+export interface ContributionSummary {
+  id: string;
+  case_id: string;
+  amount: number;
+  status: ContributionStatus;
+  created_at: string;
+}
