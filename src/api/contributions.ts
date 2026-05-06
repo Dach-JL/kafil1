@@ -2,11 +2,19 @@ import { supabase } from '../supabase/supabaseClient';
 import { Contribution, ContributionSummary } from '../types/contributions';
 
 export async function getCaseContributionSummaries(caseId: string): Promise<ContributionSummary[]> {
+  if (!caseId) {
+    console.warn('getCaseContributionSummaries: caseId is empty');
+    return [];
+  }
+
   // Use the RPC function to ensure security definer logic is applied
   const { data, error } = await supabase
     .rpc('get_case_contributions_for_owner', { target_case_id: caseId });
 
-  if (error) throw error;
+  if (error) {
+    console.error('RPC Error (get_case_contributions_for_owner):', error);
+    throw error;
+  }
   return data as ContributionSummary[];
 }
 
