@@ -18,6 +18,7 @@ import { getSignedUrl } from '../../services/storageService';
 import { format } from 'date-fns';
 import { ShieldAlert, ArrowLeft, Image as ImageIcon, Fingerprint, ExternalLink } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 export default function AdminContributionDetailScreen({ route, navigation }: any) {
   const { contribution } = route.params as { contribution: Contribution };
@@ -108,87 +109,87 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} disabled={processing}>
-          <ArrowLeft color={colors.text} size={24} />
+          <ArrowLeft color={colors.textPrimary} size={24} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('admin.reviewPayment', { defaultValue: 'Review Payment' })}
         </Text>
-        <ShieldAlert color={colors.primary} size={24} />
+        <ShieldAlert color={colors.accent} size={24} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Donation Metadata */}
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('common.amount', { defaultValue: 'Amount' })}
           </Text>
-          <Text style={[styles.amount, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
+          <Text style={[styles.amount, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
             ${contribution.amount.toLocaleString()}
           </Text>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: palette.navy }]} />
 
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('common.targetCase', { defaultValue: 'Target Case' })}
           </Text>
-          <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {contribution.cases?.title || t('common.unknownCase', { defaultValue: 'Unknown Case' })}
           </Text>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: palette.navy }]} />
 
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('common.donor', { defaultValue: 'Donor' })}
           </Text>
-          <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {contribution.donor?.name || t('donation.anonymousGuest', { defaultValue: 'Anonymous Guest' })}
           </Text>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: palette.navy }]} />
 
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('admin.submittedAt', { defaultValue: 'Submitted At' })}
           </Text>
-          <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.regular }]}>
             {format(new Date(contribution.created_at), 'MMM dd, yyyy - hh:mm a')}
           </Text>
         </View>
 
         {/* SHA-256 Digital Fingerprint */}
-        <View style={[styles.fingerprintBox, { backgroundColor: colors.secondary }]}>
+        <View style={[styles.fingerprintBox, { backgroundColor: palette.navyLight }]}>
           <View style={styles.fingerprintHeader}>
-            <Fingerprint color={colors.text} size={18} />
-            <Text style={[styles.boxTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            <Fingerprint color={colors.textPrimary} size={18} />
+            <Text style={[styles.boxTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
               {t('admin.sha256Hash', { defaultValue: 'SHA-256 Integrity Hash' })}
             </Text>
           </View>
-          <Text style={[styles.hashText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.hashText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {contribution.payment_proof_hash || t('admin.noHashProvided', { defaultValue: 'No hash provided (Legacy Upload)' })}
           </Text>
         </View>
 
         {/* Payment Proof Image */}
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('admin.paymentProof', { defaultValue: 'Payment Proof' })}
         </Text>
         {loadingImage ? (
-          <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <ActivityIndicator color={colors.primary} />
+          <View style={[styles.imagePlaceholder, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <ActivityIndicator color={colors.accent} />
           </View>
         ) : imageUrl ? (
           <View style={[styles.imageWrapper, { borderColor: colors.border }]}>
             <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="contain" />
             <TouchableOpacity 
-              style={[styles.fullScreenBtn, { backgroundColor: colors.background + 'CC' }]}
+              style={[styles.fullScreenBtn, { backgroundColor: 'rgba(10, 17, 40, 0.8)' }]}
               onPress={() => Alert.alert('Zoom Image', 'Full screen viewing available in future update.')}
             >
-              <ExternalLink color={colors.text} size={20} />
+              <ExternalLink color={colors.textPrimary} size={20} />
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={[styles.imagePlaceholder, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <ImageIcon color={colors.mutedForeground} size={32} />
-            <Text style={[styles.noImageText, { color: colors.mutedForeground }]}>
+          <View style={[styles.imagePlaceholder, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <ImageIcon color={colors.textSecondary} size={32} />
+            <Text style={[styles.noImageText, { color: colors.textSecondary }]}>
               {t('admin.loadReceiptFailed', { defaultValue: 'Failed to load receipt image' })}
             </Text>
           </View>
@@ -198,11 +199,11 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
       {/* Action Footer */}
       <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
         <TouchableOpacity
-          style={[styles.btn, styles.btnReject, { borderColor: colors.destructive }]}
+          style={[styles.btn, styles.btnReject, { borderColor: colors.error }]}
           onPress={handleReject}
           disabled={processing}
         >
-          <Text style={[styles.btnTextReject, { color: colors.destructive, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.btnTextReject, { color: colors.error, fontFamily: typography.fontFamily.medium }]}>
             {t('buttons.reject', { defaultValue: 'Reject' })}
           </Text>
         </TouchableOpacity>
@@ -213,9 +214,9 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           disabled={processing}
         >
           {processing ? (
-            <ActivityIndicator color={colors.primaryForeground} />
+            <ActivityIndicator color={colors.textOnPrimary} />
           ) : (
-            <Text style={[styles.btnTextApprove, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.btnTextApprove, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.medium }]}>
               {t('buttons.verifyAddFunds', { defaultValue: 'Verify & Add Funds' })}
             </Text>
           )}
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 13, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
   amount: { fontSize: 32 },
   value: { fontSize: 16 },
-  divider: { height: 1, backgroundColor: '#00000010', marginVertical: 16 },
+  divider: { height: 1, marginVertical: 16 },
   fingerprintBox: { padding: 16, borderRadius: 12, marginBottom: 24 },
   fingerprintHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   boxTitle: { fontSize: 16 },

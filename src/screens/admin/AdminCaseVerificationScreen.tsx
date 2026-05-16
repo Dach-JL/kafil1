@@ -18,6 +18,7 @@ import { listFiles, getSignedUrl } from '../../services/storageService';
 import { Check, X, FileText, Download, ArrowLeft } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 interface Props {
   route: any;
@@ -112,15 +113,15 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
   }
 
   const URGENCY_LABELS = ['', t('urgency.low', {defaultValue:'Low'}), t('urgency.medium', {defaultValue:'Medium'}), t('urgency.high', {defaultValue:'High'}), t('urgency.critical', {defaultValue:'Critical'}), t('urgency.emergency', {defaultValue:'Emergency'})];
-  const rowStyle = { borderBottomColor: colors.border };
+  const rowStyle = { borderBottomColor: palette.navy };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.text} size={24} />
+          <ArrowLeft color={colors.textPrimary} size={24} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('admin.verifyCase', { defaultValue: 'Verify Case' })}
         </Text>
         <View style={{ width: 24 }} />
@@ -128,22 +129,22 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
 
       <ScrollView contentContainerStyle={styles.scroll}>
         {/* Case Info */}
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {caseInfo.title}
           </Text>
-          <View style={[styles.badge, { backgroundColor: colors.primary + '20' }]}>
-            <Text style={[styles.badgeText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+          <View style={[styles.badge, { backgroundColor: colors.accent + '20' }]}>
+            <Text style={[styles.badgeText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
               {t(`categories.${caseInfo.category}`)}
             </Text>
           </View>
-          <Text style={[styles.desc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.desc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {caseInfo.description}
           </Text>
         </View>
 
         {/* Details Data */}
-        <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.detailCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {[
             { label: t('createCase.fundingGoal', { defaultValue: 'Target Amount' }), value: `$${caseInfo.target_amount.toLocaleString()}` },
             { label: t('createCase.urgency', { defaultValue: 'Urgency' }), value: URGENCY_LABELS[caseInfo.urgency_level] },
@@ -152,22 +153,22 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
             { label: t('admin.submittedDate', { defaultValue: 'Submitted Date' }), value: format(new Date(caseInfo.updated_at), 'MMM dd, yyyy HH:mm') },
           ].map(({ label, value }, i) => (
             <View key={i} style={[styles.detailRow, rowStyle, i > 0 && { borderTopWidth: 1 }]}>
-              <Text style={[styles.detailLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{label}</Text>
-              <Text style={[styles.detailValue, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>{value}</Text>
+              <Text style={[styles.detailLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>{label}</Text>
+              <Text style={[styles.detailValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>{value}</Text>
             </View>
           ))}
         </View>
 
         {/* Evidence Section */}
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('createCase.evidenceTitle', { defaultValue: 'Supporting Evidence' })}
         </Text>
         
-        <View style={[styles.evidenceCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={[styles.evidenceCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {loadingEvidence ? (
-            <ActivityIndicator color={colors.primary} style={{ margin: 20 }} />
+            <ActivityIndicator color={colors.accent} style={{ margin: 20 }} />
           ) : evidenceFiles.length === 0 ? (
-            <Text style={[styles.noEvidence, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.noEvidence, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('admin.noEvidenceAttached', { defaultValue: 'No evidence files attached.' })}
             </Text>
           ) : (
@@ -178,12 +179,12 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
                 onPress={() => Linking.openURL(file.url)}
               >
                 <View style={styles.fileLeft}>
-                  <FileText color={colors.primary} size={20} />
-                  <Text style={[styles.fileName, { color: colors.text, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
+                  <FileText color={colors.accent} size={20} />
+                  <Text style={[styles.fileName, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
                     {file.name}
                   </Text>
                 </View>
-                <Download color={colors.mutedForeground} size={18} />
+                <Download color={colors.textSecondary} size={18} />
               </TouchableOpacity>
             ))
           )}
@@ -192,14 +193,14 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
       </ScrollView>
 
       {/* Admin Actions */}
-      <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.card }]}>
+      <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
         <TouchableOpacity
-          style={[styles.actionBtn, styles.rejectBtn, { borderColor: colors.destructive }]}
+          style={[styles.actionBtn, styles.rejectBtn, { borderColor: colors.error }]}
           onPress={handleReject}
           disabled={submitting}
         >
-          <X color={colors.destructive} size={20} />
-          <Text style={[styles.actionBtnText, { color: colors.destructive, fontFamily: typography.fontFamily.medium }]}>
+          <X color={colors.error} size={20} />
+          <Text style={[styles.actionBtnText, { color: colors.error, fontFamily: typography.fontFamily.medium }]}>
             {t('buttons.reject', { defaultValue: 'Reject' })}
           </Text>
         </TouchableOpacity>
@@ -210,11 +211,11 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
           disabled={submitting}
         >
           {submitting ? (
-            <ActivityIndicator color={colors.primaryForeground} />
+            <ActivityIndicator color={colors.textOnPrimary} />
           ) : (
             <>
-              <Check color={colors.primaryForeground} size={20} />
-              <Text style={[styles.actionBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+              <Check color={colors.textOnPrimary} size={20} />
+              <Text style={[styles.actionBtnText, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.medium }]}>
                 {t('buttons.approvePublish', { defaultValue: 'Approve & Publish' })}
               </Text>
             </>

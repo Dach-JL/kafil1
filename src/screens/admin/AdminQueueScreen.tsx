@@ -15,6 +15,7 @@ import { getPendingCases } from '../../api/cases';
 import { Case } from '../../types/cases';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
@@ -22,30 +23,30 @@ function PendingCaseCard({ item, onPress }: { item: Case; onPress: () => void })
 
   return (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <View style={styles.cardHeader}>
-        <View style={[styles.categoryBadge, { backgroundColor: colors.primary + '15' }]}>
-          <Text style={[styles.categoryText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+        <View style={[styles.categoryBadge, { backgroundColor: colors.accent + '15' }]}>
+          <Text style={[styles.categoryText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
             {t(`categories.${item.category}`)}
           </Text>
         </View>
         <View style={styles.timeBadge}>
-          <Clock color={colors.mutedForeground} size={12} style={{ marginRight: 4 }} />
-          <Text style={[styles.timeText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Clock color={colors.textSecondary} size={12} style={{ marginRight: 4 }} />
+          <Text style={[styles.timeText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}
           </Text>
         </View>
       </View>
 
-      <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
+      <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
         {item.title}
       </Text>
 
       <View style={styles.detailsRow}>
-        <Text style={[styles.target, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+        <Text style={[styles.target, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
           ${item.target_amount.toLocaleString()}
         </Text>
       </View>
@@ -73,7 +74,6 @@ export default function AdminQueueScreen({ navigation }: any) {
   }
 
   useEffect(() => {
-    // Need to reload when screen comes into focus
     const unsubscribe = navigation.addListener('focus', () => {
       loadPendingCases();
     });
@@ -83,7 +83,7 @@ export default function AdminQueueScreen({ navigation }: any) {
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -92,36 +92,36 @@ export default function AdminQueueScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <View style={styles.titleRow}>
-          <ShieldAlert color={colors.primary} size={28} />
-          <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+          <ShieldAlert color={colors.accent} size={28} />
+          <Text style={[styles.screenTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {t('admin.verificationQueue', { defaultValue: 'Verification Queue' })}
           </Text>
         </View>
-        <View style={[styles.countBadge, { backgroundColor: colors.primary + '20' }]}>
-          <Text style={[styles.countText, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
+        <View style={[styles.countBadge, { backgroundColor: colors.accent + '20' }]}>
+          <Text style={[styles.countText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
             {cases.length}
           </Text>
         </View>
       </View>
 
       <TouchableOpacity
-        style={[styles.paymentBtn, { backgroundColor: colors.secondary, borderColor: colors.border }]}
+        style={[styles.paymentBtn, { backgroundColor: palette.navyLight, borderColor: colors.border }]}
         onPress={() => navigation.navigate('AdminContributions')}
         activeOpacity={0.8}
       >
-        <Banknote color={colors.text} size={20} />
-        <Text style={[styles.paymentBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+        <Banknote color={colors.textPrimary} size={20} />
+        <Text style={[styles.paymentBtnText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
           {t('admin.viewPendingPayments', { defaultValue: 'View Pending Payments' })}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.paymentBtn, { backgroundColor: colors.secondary, borderColor: colors.border, marginTop: -4 }]}
+        style={[styles.paymentBtn, { backgroundColor: palette.navyLight, borderColor: colors.border, marginTop: -4 }]}
         onPress={() => navigation.navigate('AdminCompletionQueue')}
         activeOpacity={0.8}
       >
-        <CheckCircle2 color={colors.text} size={20} />
-        <Text style={[styles.paymentBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+        <CheckCircle2 color={colors.textPrimary} size={20} />
+        <Text style={[styles.paymentBtnText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
           {t('admin.viewCaseCompletions', { defaultValue: 'View Case Completions' })}
         </Text>
       </TouchableOpacity>
@@ -137,15 +137,15 @@ export default function AdminQueueScreen({ navigation }: any) {
         )}
         contentContainerStyle={cases.length === 0 ? styles.emptyContainer : styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPendingCases(); }} tintColor={colors.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPendingCases(); }} tintColor={colors.accent} />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <AlertCircle color={colors.mutedForeground} size={56} />
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            <AlertCircle color={colors.textSecondary} size={56} />
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
               {t('admin.allCaughtUp', { defaultValue: 'All caught up!' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.emptyDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('admin.noPendingCases', { defaultValue: 'There are no pending cases requiring review.' })}
             </Text>
           </View>

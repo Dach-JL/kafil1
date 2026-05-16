@@ -15,6 +15,7 @@ import { getPendingCompletionCases } from '../../api/cases';
 import { Case } from '../../types/cases';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
   const { colors, typography } = useTheme();
@@ -22,27 +23,27 @@ function CompletionCaseCard({ item, onPress }: { item: Case; onPress: () => void
 
   return (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <View style={styles.cardHeader}>
         <View style={styles.caseInfo}>
-          <Text style={[styles.caseTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
+          <Text style={[styles.caseTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
             {item.title}
           </Text>
-          <Text style={[styles.timeText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.timeText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('admin.targetAmount', { amount: item.target_amount.toLocaleString(), defaultValue: `Target: $${item.target_amount.toLocaleString()}` })}
           </Text>
         </View>
-        <CheckCircle2 color={colors.primary} size={24} />
+        <CheckCircle2 color={colors.accent} size={24} />
       </View>
 
       <View style={styles.detailsRow}>
-        <Text style={[styles.metaText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
           {t('admin.proofSubmittedInfo', { time: formatDistanceToNow(new Date(item.updated_at), { addSuffix: true }), defaultValue: `Proof submitted ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}` })}
         </Text>
-        <ChevronRight color={colors.mutedForeground} size={20} />
+        <ChevronRight color={colors.textSecondary} size={20} />
       </View>
     </TouchableOpacity>
   );
@@ -77,7 +78,7 @@ export default function AdminCompletionQueueScreen({ navigation }: any) {
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -86,13 +87,13 @@ export default function AdminCompletionQueueScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <View style={styles.titleRow}>
-          <CheckCircle2 color={colors.primary} size={28} />
-          <Text style={[styles.screenTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+          <CheckCircle2 color={colors.accent} size={28} />
+          <Text style={[styles.screenTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {t('admin.completionQueue', { defaultValue: 'Completion Queue' })}
           </Text>
         </View>
-        <View style={[styles.countBadge, { backgroundColor: colors.primary + '20' }]}>
-          <Text style={[styles.countText, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>
+        <View style={[styles.countBadge, { backgroundColor: colors.accent + '20' }]}>
+          <Text style={[styles.countText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
             {cases.length}
           </Text>
         </View>
@@ -109,15 +110,15 @@ export default function AdminCompletionQueueScreen({ navigation }: any) {
         )}
         contentContainerStyle={cases.length === 0 ? styles.emptyContainer : styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPendingCompletions(); }} tintColor={colors.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPendingCompletions(); }} tintColor={colors.accent} />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <AlertCircle color={colors.mutedForeground} size={56} />
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+            <AlertCircle color={colors.textSecondary} size={56} />
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
               {t('admin.noPendingCompletions', { defaultValue: 'No pending completions' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.emptyDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('admin.noCompletionsDesc', { defaultValue: 'There are no funded cases awaiting final review.' })}
             </Text>
           </View>

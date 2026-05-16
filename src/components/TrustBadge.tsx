@@ -14,7 +14,7 @@ export default function TrustBadge({ score, showText = true }: TrustBadgeProps) 
   const { t } = useTranslation();
 
   let TierIcon = ShieldCheck;
-  let tierColor = colors.mutedForeground;
+  let tierColor = colors.textSecondary;
   let tierLabel = t('trust.newMember', { defaultValue: 'New Member' });
 
   if (score >= 500) {
@@ -23,7 +23,7 @@ export default function TrustBadge({ score, showText = true }: TrustBadgeProps) 
     tierLabel = t('trust.elitePillar', { defaultValue: 'Elite Pillar' });
   } else if (score >= 200) {
     TierIcon = Award;
-    tierColor = '#F59E0B'; // Gold
+    tierColor = colors.accent; // Gold
     tierLabel = t('trust.topRated', { defaultValue: 'Top Rated' });
   } else if (score >= 50) {
     TierIcon = ShieldCheck;

@@ -277,7 +277,9 @@ const styles = StyleSheet.create({
   },
   bankName: { fontSize: 16, marginBottom: 2 },
   accNum: { fontSize: 14 },
+  accName: { fontSize: 12 },
   checkbox: {
+
     width: 24,
     height: 24,
     borderRadius: 6,

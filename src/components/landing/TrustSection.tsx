@@ -13,37 +13,37 @@ export default function TrustSection() {
 
       <View style={styles.grid}>
         <View style={styles.card}>
-          <View style={[styles.iconBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.iconBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Shield color={colors.primary} size={24} />
           </View>
-          <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.adminVetted')}
           </Text>
-          <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.cardDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('landing.adminVettedDesc')}
           </Text>
         </View>
 
         <View style={styles.card}>
-          <View style={[styles.iconBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.iconBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Fingerprint color={colors.accent} size={24} />
           </View>
-          <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.immutableProof')}
           </Text>
-          <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.cardDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('landing.immutableProofDesc')}
           </Text>
         </View>
 
         <View style={styles.card}>
-          <View style={[styles.iconBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.iconBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Lock color={colors.primary} size={24} />
           </View>
-          <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.zeroFees')}
           </Text>
-          <Text style={[styles.cardDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.cardDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('landing.zeroFeesDesc')}
           </Text>
         </View>

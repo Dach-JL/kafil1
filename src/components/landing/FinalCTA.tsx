@@ -15,22 +15,22 @@ export default function FinalCTA({ onPress }: FinalCTAProps) {
   return (
     <View style={styles.container}>
       <View style={[styles.card, { backgroundColor: colors.primary }]}>
-        <Text style={[styles.title, { color: colors.primaryForeground, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.title, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('landing.ctaTitle')}
         </Text>
-        <Text style={[styles.subtitle, { color: colors.primaryForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.subtitle, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.regular }]}>
           {t('landing.ctaSubtitle')}
         </Text>
         
         <TouchableOpacity 
-          style={[styles.btn, { backgroundColor: colors.primaryForeground }]}
+          style={[styles.btn, { backgroundColor: colors.background }]}
           onPress={onPress}
           activeOpacity={0.9}
         >
-          <Text style={[styles.btnText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.btnText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.ctaButton')}
           </Text>
-          <LogIn color={colors.primary} size={18} />
+          <LogIn color={colors.accent} size={18} />
         </TouchableOpacity>
       </View>
     </View>

@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, X, Heart, FileText, ImageIcon, Calendar, Shi
 import { useTheme } from '../hooks/useTheme';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../theme/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -38,19 +39,19 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
   if (!description && (!images || images.length === 0)) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.primary + '08', borderColor: colors.primary + '20' }]}>
+    <View style={[styles.container, { backgroundColor: palette.navyLight, borderColor: colors.accent + '20' }]}>
       <View style={styles.header}>
-        <View style={[styles.iconCircle, { backgroundColor: colors.primary }]}>
-          <Heart color="#ffffff" size={16} fill="#ffffff" />
+        <View style={[styles.iconCircle, { backgroundColor: colors.accent }]}>
+          <Heart color={palette.navy} size={16} fill={palette.navy} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {t('caseDetail.impactReport', { defaultValue: 'Impact Report' })}
           </Text>
           {isApproved && (
             <View style={styles.approvedRow}>
-              <Shield color="#22C55E" size={12} />
-              <Text style={{ color: '#22C55E', fontSize: 11, fontFamily: typography.fontFamily.medium }}>
+              <Shield color={colors.accent} size={12} />
+              <Text style={{ color: colors.accent, fontSize: 11, fontFamily: typography.fontFamily.medium }}>
                 {t('landing.immutableProof', { defaultValue: 'Immutable Proof' })} • {t('landing.adminVetted', { defaultValue: 'Admin Vetted' })}
               </Text>
             </View>
@@ -60,9 +61,9 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
 
       {/* Outcome Date */}
       {outcomeDate && (
-        <View style={[styles.dateBadge, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
-          <Calendar color={colors.mutedForeground} size={14} />
-          <Text style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+        <View style={[styles.dateBadge, { backgroundColor: palette.navy, borderColor: colors.accent + '30' }]}>
+          <Calendar color={colors.accent} size={14} />
+          <Text style={[styles.dateText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('caseDetail.outcomeDate', { defaultValue: 'Outcome Date' })}: {format(new Date(outcomeDate), 'MMMM dd, yyyy')}
           </Text>
         </View>
@@ -92,7 +93,7 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
                     <View>
                       <Image
                         source={{ uri: img }}
-                        style={[styles.image, { backgroundColor: colors.secondary }]}
+                        style={[styles.image, { backgroundColor: palette.navy }]}
                       />
                       {/* File type badge */}
                       <View style={[styles.typeBadge, { backgroundColor: '#3B82F6' }]}>
@@ -101,13 +102,13 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
                       </View>
                     </View>
                   ) : (
-                    <View style={[styles.image, styles.pdfPlaceholder, { backgroundColor: colors.secondary }]}>
-                      <FileText color={colors.mutedForeground} size={40} />
-                      <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 8 }}>
+                    <View style={[styles.image, styles.pdfPlaceholder, { backgroundColor: palette.navy }]}>
+                      <FileText color={colors.textSecondary} size={40} />
+                      <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 8 }}>
                         {t('common.document', { defaultValue: 'Document' })} {idx + 1}
                       </Text>
                       {/* File type badge */}
-                      <View style={[styles.typeBadge, { backgroundColor: '#EF4444' }]}>
+                      <View style={[styles.typeBadge, { backgroundColor: colors.error }]}>
                         <FileText color="#fff" size={10} />
                         <Text style={styles.typeBadgeText}>PDF</Text>
                       </View>
@@ -125,7 +126,7 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
                   key={idx}
                   style={[
                     styles.dot,
-                    { backgroundColor: idx === activeIndex ? colors.primary : colors.mutedForeground + '40' }
+                    { backgroundColor: idx === activeIndex ? colors.accent : colors.textSecondary + '40' }
                   ]}
                 />
               ))}
@@ -135,7 +136,7 @@ export default function OutcomeShowcase({ description, images, outcomeDate, isAp
       )}
 
       <View style={styles.content}>
-        <Text style={[styles.storyText, { color: colors.text, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.storyText, { color: colors.textPrimary, fontFamily: typography.fontFamily.regular }]}>
           {description}
         </Text>
       </View>

@@ -5,6 +5,7 @@ import { Case } from '../../types/cases';
 import { useTheme } from '../../hooks/useTheme';
 import { ShieldAlert, ArrowRight } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 interface HorizontalCaseListProps {
   onCasePress: () => void;
@@ -17,7 +18,7 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
 
   return (
     <TouchableOpacity 
-      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       activeOpacity={0.9}
     >
@@ -27,7 +28,7 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
           style={styles.image} 
         />
         <View style={styles.imageOverlay} />
-        <View style={[styles.urgencyBadge, { backgroundColor: colors.destructive }]} >
+        <View style={[styles.urgencyBadge, { backgroundColor: colors.error }]} >
           <ShieldAlert color="#fff" size={12} strokeWidth={3} />
           <Text style={[styles.urgencyText, { color: '#fff', fontFamily: typography.fontFamily.bold }]}>
             {t('landing.urgentInfo')}
@@ -36,21 +37,21 @@ function MiniCaseCard({ item, onPress }: { item: Case; onPress: () => void }) {
       </View>
       
       <View style={styles.cardContent}>
-        <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]} numberOfLines={2}>
           {item.title}
         </Text>
         
         <View style={styles.progressContainer}>
           <View style={styles.progressTextRow}>
-            <Text style={[styles.progressText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.progressText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
               ${item.collected_amount.toLocaleString()} {t('common.raised')}
             </Text>
-            <Text style={[styles.targetText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.targetText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('common.of')} ${item.target_amount.toLocaleString()}
             </Text>
           </View>
-          <View style={[styles.progressBarBg, { backgroundColor: colors.secondary }]}>
-            <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${progress}%` }]} />
+          <View style={[styles.progressBarBg, { backgroundColor: palette.navy }]}>
+            <View style={[styles.progressBarFill, { backgroundColor: colors.accent, width: `${progress}%` }]} />
           </View>
         </View>
       </View>
@@ -81,7 +82,7 @@ export default function HorizontalCaseList({ onCasePress }: HorizontalCaseListPr
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator color={colors.primary} />
+        <ActivityIndicator color={colors.accent} />
       </View>
     );
   }
@@ -91,14 +92,14 @@ export default function HorizontalCaseList({ onCasePress }: HorizontalCaseListPr
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('landing.urgentCases')}
         </Text>
         <TouchableOpacity style={styles.seeAllBtn} onPress={onCasePress}>
-          <Text style={[styles.seeAllText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.seeAllText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.seeAll')}
           </Text>
-          <ArrowRight color={colors.primary} size={16} />
+          <ArrowRight color={colors.accent} size={16} />
         </TouchableOpacity>
       </View>
 

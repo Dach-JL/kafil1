@@ -6,6 +6,7 @@ import { useTheme } from '../../hooks/useTheme';
 import { ShieldCheck, Award, ArrowRight } from 'lucide-react-native';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 interface ImpactPreviewProps {
   onPressItem: () => void;
@@ -20,7 +21,7 @@ function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) 
 
   return (
     <TouchableOpacity 
-      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
       onPress={onPress}
       activeOpacity={0.8}
     >
@@ -33,18 +34,18 @@ function MiniImpactCard({ item, onPress }: { item: Case; onPress: () => void }) 
       </View>
 
       <View style={styles.cardContent}>
-        <Text style={[styles.cardTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]} numberOfLines={2}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]} numberOfLines={2}>
           {item.title}
         </Text>
         
         <View style={styles.cardFooter}>
           <View style={styles.dateRow}>
-            <Award color={colors.primary} size={14} />
-            <Text style={[styles.dateText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Award color={colors.accent} size={14} />
+            <Text style={[styles.dateText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {item.completed_at ? formatDistanceToNow(new Date(item.completed_at), { addSuffix: true }) : t('common.recently')}
             </Text>
           </View>
-          <Text style={[styles.amountText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.amountText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             ${item.target_amount.toLocaleString()} {t('common.raised')}
           </Text>
         </View>
@@ -83,7 +84,7 @@ export default function ImpactPreview({ onPressItem }: ImpactPreviewProps) {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator color={colors.primary} />
+        <ActivityIndicator color={colors.accent} />
       </View>
     );
   }
@@ -93,14 +94,14 @@ export default function ImpactPreview({ onPressItem }: ImpactPreviewProps) {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('landing.provenImpact')}
         </Text>
         <TouchableOpacity style={styles.seeAllBtn} onPress={onPressItem}>
-          <Text style={[styles.seeAllText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.seeAllText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
             {t('landing.stories')}
           </Text>
-          <ArrowRight color={colors.primary} size={16} />
+          <ArrowRight color={colors.accent} size={16} />
         </TouchableOpacity>
       </View>
 

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Search, Banknote, ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
+import { palette } from '../../theme/colors';
 
 export default function HowItWorks() {
   const { colors, typography } = useTheme();
@@ -35,8 +36,8 @@ export default function HowItWorks() {
           return (
             <View key={index} style={styles.stepRow}>
               <View style={styles.iconColumn}>
-                <View style={[styles.iconBox, { backgroundColor: colors.secondary }]}>
-                  <Icon color={colors.primary} size={24} />
+                <View style={[styles.iconBox, { backgroundColor: palette.navyLight }]}>
+                  <Icon color={colors.accent} size={24} />
                 </View>
                 {index !== STEPS.length - 1 && (
                   <View style={[styles.connectingLine, { backgroundColor: colors.border }]} />
@@ -44,10 +45,10 @@ export default function HowItWorks() {
               </View>
               
               <View style={styles.textColumn}>
-                <Text style={[styles.stepTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                <Text style={[styles.stepTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
                   {index + 1}. {step.title}
                 </Text>
-                <Text style={[styles.stepDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+                <Text style={[styles.stepDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
                   {step.description}
                 </Text>
               </View>

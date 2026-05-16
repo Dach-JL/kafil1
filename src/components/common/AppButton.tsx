@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   ActivityIndicator, 
   ViewStyle, 
-  TextStyle 
+  TextStyle,
+  View
 } from 'react-native';
 import { colors } from '../../theme/colors';
 import { spacing } from '../../theme/spacing';
@@ -19,6 +20,7 @@ interface AppButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   variant?: 'primary' | 'secondary' | 'outline';
+  icon?: React.ReactNode;
 }
 
 export default function AppButton({ 
@@ -28,14 +30,15 @@ export default function AppButton({
   disabled = false, 
   style, 
   textStyle,
-  variant = 'primary'
+  variant = 'primary',
+  icon
 }: AppButtonProps) {
   const getButtonStyle = () => {
     switch (variant) {
       case 'primary':
         return { backgroundColor: colors.primary };
       case 'secondary':
-        return { backgroundColor: colors.primaryDark };
+        return { backgroundColor: colors.surface }; // Using surface for secondary buttons
       case 'outline':
         return { 
           backgroundColor: 'transparent', 
@@ -51,6 +54,8 @@ export default function AppButton({
     switch (variant) {
       case 'outline':
         return { color: colors.primary };
+      case 'secondary':
+        return { color: colors.accent };
       default:
         return { color: colors.textOnPrimary };
     }
@@ -71,13 +76,16 @@ export default function AppButton({
       {loading ? (
         <ActivityIndicator color={getTextStyle().color} />
       ) : (
-        <Text style={[
-          styles.text, 
-          getTextStyle(), 
-          textStyle
-        ]}>
-          {title}
-        </Text>
+        <View style={styles.content}>
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
+          <Text style={[
+            styles.text, 
+            getTextStyle(), 
+            textStyle
+          ]}>
+            {title}
+          </Text>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -85,14 +93,22 @@ export default function AppButton({
 
 const styles = StyleSheet.create({
   button: {
-    height: 52,
-    borderRadius: 12, // As requested: rounded 12
+    height: 56, // Slightly taller for premium feel
+    borderRadius: 16, // More rounded for modern look
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,
   },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    marginRight: 8,
+  },
   text: {
-    fontSize: typography.size.body,
+    fontSize: 16,
     fontFamily: typography.fontFamily.bold,
     letterSpacing: 0.5,
   },

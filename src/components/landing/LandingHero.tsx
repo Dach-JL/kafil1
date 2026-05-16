@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ShieldCheck, HeartHandshake } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
@@ -28,12 +28,12 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
           </Text>
         </View>
 
-        <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('landing.heroTitle')}{'\n'}
           <Text style={{ color: colors.primary }}>{t('landing.heroHighlight')}</Text>
         </Text>
 
-        <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
           {t('landing.heroSubtitle')}
         </Text>
 
@@ -43,18 +43,18 @@ export default function LandingHero({ onPrimaryAction, onSecondaryAction }: Land
             onPress={onPrimaryAction}
             activeOpacity={0.8}
           >
-            <HeartHandshake color={colors.primaryForeground} size={20} />
-            <Text style={[styles.primaryBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+            <HeartHandshake color={colors.textOnPrimary} size={20} />
+            <Text style={[styles.primaryBtnText, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.medium }]}>
               {t('landing.startDonating')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[styles.secondaryBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+            style={[styles.secondaryBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
             onPress={onSecondaryAction}
             activeOpacity={0.8}
           >
-            <Text style={[styles.secondaryBtnText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.secondaryBtnText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
               {t('landing.submitCase')}
             </Text>
           </TouchableOpacity>
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     gap: 6,
-    shadowColor: '#4F46E5',
+    shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 16,
     gap: 8,
-    shadowColor: '#4F46E5',
+    shadowColor: '#D4AF37',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 12,

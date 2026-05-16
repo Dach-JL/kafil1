@@ -82,9 +82,9 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.text} size={24} />
+          <ArrowLeft color={colors.textPrimary} size={24} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('caseDetail.finalizeFunding', { defaultValue: 'Finalize Funding' })}
         </Text>
         <View style={{ width: 24 }} />
@@ -94,50 +94,50 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
         <View style={styles.iconWrapper}>
           <CheckCircle color={colors.primary} size={48} />
         </View>
-        <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('caseDetail.submitImpactReport')}
         </Text>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
           {t('caseDetail.submitImpactDesc', { defaultValue: 'Provide verified evidence of how the funds were used. This report will be reviewed by an admin and, once approved, becomes a permanent, immutable public record.' })}
         </Text>
 
         {/* Outcome Date */}
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.sectionLabel, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('caseDetail.outcomeDate')}
           </Text>
-          <View style={[styles.dateInput, { borderColor: colors.border, backgroundColor: colors.card }]}>
-            <Calendar color={colors.mutedForeground} size={20} />
+          <View style={[styles.dateInput, { borderColor: colors.border, backgroundColor: colors.surface }]}>
+            <Calendar color={colors.textSecondary} size={20} />
             <TextInput
-              style={[styles.dateText, { color: colors.text, fontFamily: typography.fontFamily.regular }]}
+              style={[styles.dateText, { color: colors.textPrimary, fontFamily: typography.fontFamily.regular }]}
               placeholder={t('common.datePlaceholder', { defaultValue: 'YYYY-MM-DD' })}
-              placeholderTextColor={colors.mutedForeground}
+              placeholderTextColor={colors.textSecondary}
               value={outcomeDate}
               onChangeText={setOutcomeDate}
               maxLength={10}
             />
           </View>
-          <Text style={{ color: colors.mutedForeground, fontSize: 12, marginTop: 4, marginLeft: 4 }}>
+          <Text style={{ color: colors.textSecondary, fontSize: 12, marginTop: 4, marginLeft: 4 }}>
             {t('caseDetail.outcomeDateDesc', { defaultValue: 'The date the positive outcome actually happened.' })}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.sectionLabel, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('caseDetail.successStory')}
           </Text>
           <TextInput
             style={[
               styles.storyInput, 
               { 
-                color: colors.text, 
+                color: colors.textPrimary, 
                 borderColor: colors.border, 
-                backgroundColor: colors.card,
+                backgroundColor: colors.surface,
                 fontFamily: typography.fontFamily.regular 
               }
             ]}
             placeholder={t('caseDetail.storyPlaceholder')}
-            placeholderTextColor={colors.mutedForeground}
+            placeholderTextColor={colors.textSecondary}
             multiline
             numberOfLines={6}
             value={description}
@@ -147,7 +147,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.sectionLabel, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
             {t('caseDetail.impactPhotosCount', { count: proofPaths.length, defaultValue: `Impact Photos (${proofPaths.length}/5)` })}
           </Text>
           
@@ -165,7 +165,7 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
                   disabled={true}
                 />
                 <TouchableOpacity 
-                  style={[styles.removeBtn, { backgroundColor: colors.destructive }]} 
+                  style={[styles.removeBtn, { backgroundColor: colors.error }]} 
                   onPress={() => removePhoto(path)}
                 >
                   <XIcon color="#fff" size={14} />
@@ -198,13 +198,14 @@ export default function SubmitCompletionProofScreen({ route, navigation }: any) 
           activeOpacity={0.8}
         >
           {submitting ? (
-            <ActivityIndicator color={colors.primaryForeground} />
+            <ActivityIndicator color={colors.textOnPrimary} />
           ) : (
-            <Text style={[styles.submitBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.submitBtnText, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.medium }]}>
               Submit for Review
             </Text>
           )}
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );

@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { ShieldCheck, ArrowLeft, Image as ImageIcon, ExternalLink, FileText } from 'lucide-react-native';
 import OutcomeShowcase from '../../components/OutcomeShowcase';
 import { useTranslation } from 'react-i18next';
+import { palette } from '../../theme/colors';
 
 export default function AdminCaseCompletionDetailScreen({ route, navigation }: any) {
   const { caseInfo } = route.params as { caseInfo: Case };
@@ -61,39 +62,39 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} disabled={processing}>
-          <ArrowLeft color={colors.text} size={24} />
+          <ArrowLeft color={colors.textPrimary} size={24} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('admin.reviewCompletion', { defaultValue: 'Review Completion' })}
         </Text>
-        <ShieldCheck color={colors.primary} size={24} />
+        <ShieldCheck color={colors.accent} size={24} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('common.caseTitle', { defaultValue: 'Case Title' })}
           </Text>
-          <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {caseInfo.title}
           </Text>
 
-          <View style={styles.divider} />
+          <View style={[styles.divider, { backgroundColor: palette.navy }]} />
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.target', { defaultValue: 'Target' })}</Text>
-              <Text style={[styles.value, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>${caseInfo.target_amount.toLocaleString()}</Text>
+              <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>{t('common.target', { defaultValue: 'Target' })}</Text>
+              <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>${caseInfo.target_amount.toLocaleString()}</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.label, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>{t('common.collected', { defaultValue: 'Collected' })}</Text>
-              <Text style={[styles.value, { color: colors.primary, fontFamily: typography.fontFamily.bold }]}>${caseInfo.collected_amount.toLocaleString()}</Text>
+              <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>{t('common.collected', { defaultValue: 'Collected' })}</Text>
+              <Text style={[styles.value, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>${caseInfo.collected_amount.toLocaleString()}</Text>
             </View>
           </View>
         </View>
 
         <View style={{ marginTop: 16 }}>
-          <Text style={[styles.sectionTitle, { color: colors.text, fontFamily: typography.fontFamily.heading, marginLeft: 16 }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading, marginLeft: 16 }]}>
             {t('case.impactReport', { defaultValue: 'Impact Report' })}
           </Text>
           <OutcomeShowcase 
@@ -111,9 +112,9 @@ export default function AdminCaseCompletionDetailScreen({ route, navigation }: a
           disabled={processing || !caseInfo.completion_proof_url}
         >
           {processing ? (
-            <ActivityIndicator color={colors.primaryForeground} />
+            <ActivityIndicator color={colors.textOnPrimary} />
           ) : (
-            <Text style={[styles.btnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.btnText, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.medium }]}>
               {t('buttons.approveCompletion', { defaultValue: 'Approve Completion' })}
             </Text>
           )}
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
   value: { fontSize: 18 },
   statsRow: { flexDirection: 'row', gap: 24 },
   stat: { flex: 1 },
-  divider: { height: 1, backgroundColor: '#00000010', marginVertical: 16 },
+  divider: { height: 1, marginVertical: 16 },
   sectionTitle: { fontSize: 18, marginBottom: 16 },
   imagePlaceholder: { height: 300, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
   noImageText: { fontSize: 14 },

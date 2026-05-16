@@ -39,10 +39,10 @@ function getEventDisplay(event: EventLog, colors: any, t: any): TimelineEvent {
     case 'CASE_STATUS_CHANGED': {
       const to = metadata?.new_status;
       if (to === 'PENDING_REVIEW') return {
-        icon: <RefreshCw color={colors.mutedForeground} size={18} />,
+        icon: <RefreshCw color={colors.textSecondary} size={18} />,
         label: t('timeline.submittedForReview', { defaultValue: 'Submitted for Review' }),
         sublabel: t('timeline.waitingVerification', { defaultValue: 'Waiting for admin verification' }),
-        color: colors.mutedForeground,
+        color: colors.textSecondary,
       };
       if (to === 'ACTIVE_FUNDING' || to === 'VERIFIED') return {
         icon: <ShieldCheck color={colors.primary} size={18} />,
@@ -63,15 +63,15 @@ function getEventDisplay(event: EventLog, colors: any, t: any): TimelineEvent {
         color: '#22c55e',
       };
       if (to === 'REJECTED') return {
-        icon: <XCircle color={colors.destructive} size={18} />,
+        icon: <XCircle color={colors.error} size={18} />,
         label: t('timeline.caseRejected', { defaultValue: 'Case Rejected' }),
         sublabel: metadata?.reason || t('timeline.didNotMeetCriteria', { defaultValue: 'Did not meet verification criteria' }),
-        color: colors.destructive,
+        color: colors.error,
       };
       return {
-        icon: <FileText color={colors.mutedForeground} size={18} />,
+        icon: <FileText color={colors.textSecondary} size={18} />,
         label: t('timeline.statusIs', { status: to, defaultValue: `Status: ${to}` }),
-        color: colors.mutedForeground,
+        color: colors.textSecondary,
       };
     }
 
@@ -85,23 +85,23 @@ function getEventDisplay(event: EventLog, colors: any, t: any): TimelineEvent {
         color: '#22c55e',
       };
       if (to === 'REJECTED') return {
-        icon: <AlertCircle color={colors.destructive} size={18} />,
+        icon: <AlertCircle color={colors.error} size={18} />,
         label: t('timeline.donationRejected', { defaultValue: 'Donation Proof Rejected' }),
         sublabel: t('timeline.paymentNotVerified', { defaultValue: 'Payment could not be verified' }),
-        color: colors.destructive,
+        color: colors.error,
       };
       return {
-        icon: <DollarSign color={colors.mutedForeground} size={18} />,
+        icon: <DollarSign color={colors.textSecondary} size={18} />,
         label: t('timeline.contributionIs', { status: to, defaultValue: `Contribution: ${to}` }),
-        color: colors.mutedForeground,
+        color: colors.textSecondary,
       };
     }
 
     default:
       return {
-        icon: <FileText color={colors.mutedForeground} size={18} />,
+        icon: <FileText color={colors.textSecondary} size={18} />,
         label: action.replace(/_/g, ' '),
-        color: colors.mutedForeground,
+        color: colors.textSecondary,
       };
   }
 }
@@ -112,7 +112,7 @@ export default function CaseTimeline({ events }: { events: EventLog[] }) {
 
   if (events.length === 0) {
     return (
-      <Text style={[styles.empty, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+      <Text style={[styles.empty, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
         {t('timeline.noEvents', { defaultValue: 'No timeline events yet.' })}
       </Text>
     );
@@ -136,16 +136,16 @@ export default function CaseTimeline({ events }: { events: EventLog[] }) {
             <View style={[styles.content, !isLast && styles.contentSpaced]}>
               <View style={styles.labelRow}>
                 {icon}
-                <Text style={[styles.label, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+                <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
                   {label}
                 </Text>
               </View>
               {sublabel && (
-                <Text style={[styles.sublabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+                <Text style={[styles.sublabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
                   {sublabel}
                 </Text>
               )}
-              <Text style={[styles.time, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+              <Text style={[styles.time, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
                 {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
               </Text>
             </View>
