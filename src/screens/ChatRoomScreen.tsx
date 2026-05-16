@@ -10,8 +10,10 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Keyboard,
 } from 'react-native';
 import { Send, Flag, Info } from 'lucide-react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../hooks/useTheme';
 import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
@@ -120,18 +122,30 @@ export default function ChatRoomScreen({ route, navigation }: any) {
             styles.bubble, 
             { 
               backgroundColor: isMine ? colors.accent : palette.navyLight,
-              borderBottomRightRadius: isMine ? 4 : 16,
-              borderBottomLeftRadius: isMine ? 16 : 4,
+              borderBottomRightRadius: isMine ? 4 : 18,
+              borderBottomLeftRadius: isMine ? 18 : 4,
             }
           ]}
         >
-          <Text style={[styles.content, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[
+            styles.msgContent, 
+            { 
+              color: isMine ? palette.navy : colors.textPrimary, 
+              fontFamily: typography.fontFamily.regular 
+            }
+          ]}>
             {item.content}
           </Text>
+          <Text style={[
+            styles.timeInline, 
+            { 
+              color: isMine ? palette.navy + '80' : colors.textSecondary,
+              fontFamily: typography.fontFamily.regular,
+            }
+          ]}>
+            {format(new Date(item.created_at), 'p')}
+          </Text>
         </View>
-        <Text style={[styles.time, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
-          {format(new Date(item.created_at), 'p')}
-        </Text>
       </View>
     );
   };
@@ -139,21 +153,23 @@ export default function ChatRoomScreen({ route, navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
+      {/* Info Bar */}
       <View style={[styles.infoBar, { borderBottomColor: palette.navyLight }]}>
         <View style={styles.infoLeft}>
           <Info size={14} color={colors.accent} />
-          <Text style={[styles.infoText, { color: colors.accent, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
-            {t('chat.privacy', { defaultValue: 'Privacy: Encryption at rest active' })}
+          <Text style={[styles.infoText, { color: colors.accent, opacity: 0.7, fontFamily: typography.fontFamily.regular }]}>
+            {t('chat.privacy', { defaultValue: 'Encryption at rest active' })}
           </Text>
         </View>
-        <TouchableOpacity onPress={handleReport}>
-          <Flag size={18} color={colors.accent} />
+        <TouchableOpacity onPress={handleReport} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <Flag size={16} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
+      {/* Messages Area — takes all available space */}
       {loading ? (
         <View style={styles.loading}>
           <ActivityIndicator color={colors.accent} />
@@ -167,15 +183,19 @@ export default function ChatRoomScreen({ route, navigation }: any) {
           contentContainerStyle={styles.listContent}
           inverted
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          style={styles.messagesList}
         />
       )}
 
+      {/* Input Bar — fixed at bottom, pushed by keyboard */}
       <View style={[styles.inputContainer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
         <View style={[styles.inputWrapper, { backgroundColor: palette.navyLight }]}>
           <TextInput
-            style={[styles.input, { color: colors.textInverse, fontFamily: typography.fontFamily.regular }]}
+            style={[styles.input, { color: colors.textPrimary, fontFamily: typography.fontFamily.regular }]}
             placeholder={t('chat.typeMessage', { defaultValue: 'Type a message...' })}
-            placeholderTextColor={colors.accent + '80'}
+            placeholderTextColor={colors.textSecondary}
             value={content}
             onChangeText={setContent}
             multiline
@@ -189,11 +209,12 @@ export default function ChatRoomScreen({ route, navigation }: any) {
           ]}
           onPress={handleSend}
           disabled={!content.trim() || sending}
+          activeOpacity={0.7}
         >
           {sending ? (
-            <ActivityIndicator size="small" color={colors.textOnPrimary} />
+            <ActivityIndicator size="small" color={content.trim() ? palette.navy : colors.textSecondary} />
           ) : (
-            <Send color={colors.textOnPrimary} size={20} />
+            <Send color={content.trim() ? palette.navy : colors.textSecondary} size={20} />
           )}
         </TouchableOpacity>
       </View>
@@ -202,22 +223,30 @@ export default function ChatRoomScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { 
+    flex: 1,
+  },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   infoBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderBottomWidth: 1,
   },
   infoLeft: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   infoText: { fontSize: 11 },
-  listContent: { padding: 16, paddingBottom: 24 },
+  messagesList: {
+    flex: 1,
+  },
+  listContent: { 
+    padding: 16, 
+    paddingBottom: 8,
+  },
   messageWrapper: {
-    marginBottom: 16,
-    maxWidth: '85%',
+    marginBottom: 10,
+    maxWidth: '80%',
   },
   myMessageWrapper: {
     alignSelf: 'flex-end',
@@ -228,17 +257,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   bubble: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 18,
   },
-  content: { fontSize: 15, lineHeight: 22 },
-  time: { fontSize: 10, marginTop: 4 },
+  msgContent: { 
+    fontSize: 15, 
+    lineHeight: 21,
+  },
+  timeInline: { 
+    fontSize: 10, 
+    marginTop: 4,
+    alignSelf: 'flex-end',
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+    paddingHorizontal: 10,
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 10,
     borderTopWidth: 1,
     gap: 8,
   },
@@ -246,14 +283,15 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 24,
     paddingHorizontal: 16,
-    paddingVertical: 4,
     minHeight: 44,
+    maxHeight: 120,
     justifyContent: 'center',
   },
   input: {
     fontSize: 15,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingTop: Platform.OS === 'ios' ? 10 : 8,
+    paddingBottom: Platform.OS === 'ios' ? 10 : 8,
+    lineHeight: 20,
   },
   sendButton: {
     width: 44,
@@ -261,6 +299,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 0,
   },
 });
-
