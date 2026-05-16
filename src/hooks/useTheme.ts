@@ -1,15 +1,12 @@
-import { useColorScheme } from 'react-native';
-import { Colors } from '../constants/Colors';
-import { Typography } from '../constants/Typography';
+import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
+import { typography } from '../theme/typography';
 
 export const useTheme = () => {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-
   return {
     colors,
-    typography: Typography,
-    isDark: colorScheme === 'dark',
-    colorScheme,
+    spacing,
+    typography,
+    isDark: true, // Always dark as per the "deep navy" requirement
   };
 };

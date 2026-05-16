@@ -54,7 +54,8 @@ export default function App() {
           <RootNavigator />
         </ChatProvider>
       </NotificationsProvider>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <StatusBar style="light" />
     </AuthProvider>
   );
 }
+

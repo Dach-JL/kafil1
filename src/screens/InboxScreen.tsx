@@ -12,12 +12,13 @@ import {
 import { MessageSquare, ChevronRight, Inbox as InboxIcon } from 'lucide-react-native';
 import { useChat } from '../supabase/ChatContext';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../supabase/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 export default function InboxScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { user } = useAuth();
   const { t } = useTranslation();
   const { rooms, loading, refreshRooms } = useChat();
@@ -33,15 +34,15 @@ export default function InboxScreen({ navigation }: any) {
 
     return (
       <TouchableOpacity
-        style={[styles.roomItem, { borderBottomColor: colors.border }]}
+        style={[styles.roomItem, { borderBottomColor: palette.navyLight }]}
         onPress={() => navigation.navigate('ChatRoom', { roomId: item.id, recipientName: displayName })}
         activeOpacity={0.7}
       >
-        <View style={[styles.avatarContainer, { backgroundColor: colors.secondary }]}>
+        <View style={[styles.avatarContainer, { backgroundColor: colors.accent + '15' }]}>
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} style={styles.avatar} />
           ) : (
-            <Text style={[styles.avatarPlaceholder, { color: colors.mutedForeground }]}>
+            <Text style={[styles.avatarPlaceholder, { color: colors.accent }]}>
               {displayName.charAt(0).toUpperCase()}
             </Text>
           )}
@@ -49,11 +50,11 @@ export default function InboxScreen({ navigation }: any) {
 
         <View style={styles.content}>
           <View style={styles.nameRow}>
-            <Text style={[styles.name, { color: colors.text, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
+            <Text style={[styles.name, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]} numberOfLines={1}>
               {displayName}
             </Text>
             {item.last_message_at && (
-              <Text style={[styles.time, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+              <Text style={[styles.time, { color: colors.accent, fontFamily: typography.fontFamily.regular }]}>
                 {formatDistanceToNow(new Date(item.last_message_at), { addSuffix: true })}
               </Text>
             )}
@@ -64,9 +65,10 @@ export default function InboxScreen({ navigation }: any) {
               style={[
                 styles.preview, 
                 { 
-                  color: colors.mutedForeground, 
+                  color: colors.textInverse, 
+                  opacity: 0.7,
                   fontFamily: typography.fontFamily.regular,
-                  fontWeight: item.unreadCount > 0 ? '700' : '400'
+                  fontWeight: (item.unreadCount || 0) > 0 ? '700' : '400'
                 }
               ]} 
               numberOfLines={1}
@@ -74,12 +76,12 @@ export default function InboxScreen({ navigation }: any) {
               {item.latest_message ? item.latest_message.content : t('chat.noMessagesYet', { defaultValue: 'No messages yet' })}
             </Text>
             {(item.unreadCount || 0) > 0 && (
-              <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]} />
+              <View style={[styles.unreadBadge, { backgroundColor: colors.accent }]} />
             )}
           </View>
         </View>
 
-        <ChevronRight color={colors.secondaryForeground} size={16} />
+        <ChevronRight color={colors.textInverse} opacity={0.3} size={16} />
       </TouchableOpacity>
     );
   };
@@ -87,7 +89,7 @@ export default function InboxScreen({ navigation }: any) {
   if (loading && rooms.length === 0) {
     return (
       <View style={[styles.loading, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -100,17 +102,17 @@ export default function InboxScreen({ navigation }: any) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refreshRooms} colors={[colors.primary]} />
+          <RefreshControl refreshing={loading} onRefresh={refreshRooms} tintColor={colors.accent} colors={[colors.accent]} />
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <View style={[styles.emptyIconCircle, { backgroundColor: colors.secondary }]}>
-              <InboxIcon color={colors.mutedForeground} size={40} />
+            <View style={[styles.emptyIconCircle, { backgroundColor: palette.navyLight }]}>
+              <InboxIcon color={colors.accent} size={40} />
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+            <Text style={[styles.emptyTitle, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
               {t('chat.noMessages', { defaultValue: 'No Messages' })}
             </Text>
-            <Text style={[styles.emptySub, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.emptySub, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
               {t('chat.inboxEmpty', { defaultValue: 'Direct messages with donors or beneficiaries will appear here.' })}
             </Text>
           </View>
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  preview: { fontSize: 14, flex: 1, opacity: 0.8 },
+  preview: { fontSize: 14, flex: 1 },
   unreadBadge: {
     width: 10,
     height: 10,
@@ -181,5 +183,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   emptyTitle: { fontSize: 20, marginBottom: 8 },
-  emptySub: { fontSize: 15, textAlign: 'center', opacity: 0.7 },
+  emptySub: { fontSize: 15, textAlign: 'center' },
 });
+

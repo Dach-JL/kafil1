@@ -11,13 +11,16 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { getUserPaymentMethods, deletePaymentMethod, UserPaymentMethod, setDefaultPaymentMethod } from '../api/paymentMethods';
 import { Plus, CreditCard, Trash2, CheckCircle2 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AppCard from '../components/common/AppCard';
+import AppButton from '../components/common/AppButton';
 
 export default function PaymentMethodsScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
   const { profile } = useAuth();
 
@@ -78,21 +81,21 @@ export default function PaymentMethodsScreen({ navigation }: any) {
   };
 
   const renderItem = ({ item }: { item: UserPaymentMethod }) => (
-    <View style={[styles.card, { backgroundColor: colors.card, borderColor: item.is_default ? colors.primary : colors.border }]}>
+    <AppCard style={[styles.card, item.is_default && { borderColor: colors.accent + '40', borderWidth: 1.5 }]}>
       <View style={styles.cardHeader}>
         <View style={styles.bankInfo}>
-          <View style={[styles.iconBg, { backgroundColor: colors.secondary }]}>
-            <CreditCard color={colors.primary} size={20} />
+          <View style={[styles.iconBg, { backgroundColor: palette.navy }]}>
+            <CreditCard color={colors.accent} size={22} />
           </View>
           <View>
-            <Text style={[styles.bankName, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+            <Text style={[styles.bankName, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
               {t(`banks.${item.bank_name.toLowerCase()}`, { defaultValue: item.bank_name })}
             </Text>
             {item.is_default && (
               <View style={styles.defaultBadge}>
-                <CheckCircle2 color={colors.accent} size={12} />
-                <Text style={[styles.defaultText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
-                  {t('common.default', { defaultValue: 'Default' })}
+                <CheckCircle2 color={colors.accent} size={14} />
+                <Text style={[styles.defaultText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+                  {t('common.default', { defaultValue: 'DEFAULT' })}
                 </Text>
               </View>
             )}
@@ -100,36 +103,45 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         </View>
         {!item.is_default && (
           <TouchableOpacity onPress={() => handleSetDefault(item.id)} style={styles.setDefaultBtn}>
-            <Text style={[styles.setDefaultText, { color: colors.primary, fontFamily: typography.fontFamily.medium }]}>
-              {t('buttons.setAsDefault', { defaultValue: 'Set Default' })}
+            <Text style={[styles.setDefaultText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+              {t('buttons.setAsDefault', { defaultValue: 'SET DEFAULT' })}
             </Text>
           </TouchableOpacity>
         )}
       </View>
 
-      <View style={styles.divider} />
+      <View style={[styles.divider, { backgroundColor: palette.navy }]} />
 
       <View style={styles.detailsRow}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.label, { color: colors.mutedForeground }]}>{t('createCase.accountNumber')}</Text>
-          <Text style={[styles.value, { color: colors.text }]}>{item.account_number}</Text>
+        <View style={{ flex: 1.2 }}>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
+            {t('createCase.accountNumber')}
+          </Text>
+          <Text style={[styles.value, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
+            {item.account_number}
+          </Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.label, { color: colors.mutedForeground }]}>{t('createCase.accountName')}</Text>
-          <Text style={[styles.value, { color: colors.text }]} numberOfLines={1}>{item.account_name}</Text>
+          <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
+            {t('createCase.accountName')}
+          </Text>
+          <Text style={[styles.value, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]} numberOfLines={1}>
+            {item.account_name}
+          </Text>
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn}>
-        <Trash2 color={colors.error} size={18} />
+
+      <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn} activeOpacity={0.7}>
+        <Trash2 color={colors.error} size={20} opacity={0.6} />
       </TouchableOpacity>
-    </View>
+    </AppCard>
   );
 
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -141,31 +153,36 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadMethods(); }} tintColor={colors.primary} />}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={() => { setRefreshing(true); loadMethods(); }} 
+            tintColor={colors.accent} 
+          />
+        }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <CreditCard color={colors.mutedForeground} size={64} style={{ marginBottom: 16 }} />
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              {t('profile.noPaymentMethods', { defaultValue: 'No payment methods' })}
+            <View style={[styles.emptyIconWrap, { backgroundColor: palette.navyLight }]}>
+              <CreditCard color={colors.accent} size={48} opacity={0.3} />
+            </View>
+            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+              {t('profile.noPaymentMethods', { defaultValue: 'No Payment Methods' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
               {t('profile.noPaymentMethodsDesc', { defaultValue: 'Save your bank details for faster case creation and payouts.' })}
             </Text>
+
           </View>
         }
       />
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.addBtn, { backgroundColor: colors.primary }]}
+        <AppButton
+          title={t('buttons.addNewMethod', { defaultValue: 'Add New Method' })}
           onPress={() => navigation.navigate('AddPaymentMethod')}
-          activeOpacity={0.85}
-        >
-          <Plus color={colors.primaryForeground} size={20} />
-          <Text style={[styles.addBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-            {t('buttons.addNewMethod', { defaultValue: 'Add New Method' })}
-          </Text>
-        </TouchableOpacity>
+          style={styles.addBtn}
+        />
       </View>
     </SafeAreaView>
   );
@@ -174,48 +191,38 @@ export default function PaymentMethodsScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 20, paddingBottom: 100 },
+  list: { padding: 20, paddingBottom: 120 },
   card: {
-    padding: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginBottom: 16,
-    position: 'relative',
+    marginBottom: 20,
+    padding: 20,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 20,
   },
-  bankInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  iconBg: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  bankName: { fontSize: 16 },
-  defaultBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  defaultText: { fontSize: 11 },
-  setDefaultBtn: { padding: 4 },
-  setDefaultText: { fontSize: 12 },
-  divider: { height: 1, backgroundColor: '#00000008', marginBottom: 12 },
-  detailsRow: { flexDirection: 'row', gap: 16 },
-  label: { fontSize: 11, marginBottom: 2, textTransform: 'uppercase' },
-  value: { fontSize: 14, fontWeight: '500' },
-  deleteBtn: { position: 'absolute', bottom: 16, right: 16, padding: 4 },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, marginTop: 60 },
-  emptyTitle: { fontSize: 20, marginBottom: 8 },
-  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, backgroundColor: 'transparent' },
+  bankInfo: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  iconBg: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  bankName: { fontSize: 18 },
+  defaultBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+  defaultText: { fontSize: 11, letterSpacing: 1 },
+  setDefaultBtn: { padding: 8 },
+  setDefaultText: { fontSize: 11, letterSpacing: 1 },
+  divider: { height: 1, marginBottom: 20, opacity: 0.5 },
+  detailsRow: { flexDirection: 'row', gap: 24 },
+  label: { fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 1 },
+  value: { fontSize: 16 },
+  deleteBtn: { position: 'absolute', bottom: 20, right: 20, padding: 8 },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, marginTop: 80, gap: 16 },
+  emptyIconWrap: { width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  emptyTitle: { fontSize: 22, textAlign: 'center' },
+  emptyDesc: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, paddingBottom: 40 },
   addBtn: {
-    height: 56,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    height: 60,
+    borderRadius: 30,
   },
-  addBtnText: { fontSize: 16 },
 });
+
+

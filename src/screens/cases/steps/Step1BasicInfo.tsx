@@ -2,14 +2,15 @@ import React from 'react';
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
+import { palette } from '../../../theme/colors';
 import { CaseCategory, CATEGORY_LABELS } from '../../../types/cases';
+import AppInput from '../../../components/common/AppInput';
 
 interface Step1Props {
   data: {
@@ -23,110 +24,91 @@ interface Step1Props {
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as CaseCategory[];
 
 export default function Step1BasicInfo({ data, onChange }: Step1Props) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
 
-  const inputStyle = [
-    styles.input,
-    {
-      backgroundColor: colors.card,
-      color: colors.text,
-      borderColor: colors.border,
-      fontFamily: typography.fontFamily.regular,
-    },
-  ];
-
-  const labelStyle = [
-    styles.label,
-    { color: colors.text, fontFamily: typography.fontFamily.medium },
-  ];
-
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
+      <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
         {t('createCase.caseDetails', { defaultValue: 'Case Details' })}
       </Text>
 
       {/* Category Selector */}
-      <Text style={labelStyle}>{t('createCase.categoryLabel', { defaultValue: 'Category *' })}</Text>
+      <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        {t('createCase.categoryLabel', { defaultValue: 'Category *' })}
+      </Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow}>
-        {CATEGORIES.map((cat) => (
-          <TouchableOpacity
-            key={cat}
-            style={[
-              styles.categoryChip,
-              {
-                backgroundColor:
-                  data.category === cat ? colors.primary : colors.card,
-                borderColor:
-                  data.category === cat ? colors.primary : colors.border,
-              },
-            ]}
-            onPress={() => onChange('category', cat)}
-          >
-            <Text
+        {CATEGORIES.map((cat) => {
+          const isSelected = data.category === cat;
+          return (
+            <TouchableOpacity
+              key={cat}
               style={[
-                styles.categoryText,
+                styles.categoryChip,
                 {
-                  color: data.category === cat ? colors.primaryForeground : colors.text,
-                  fontFamily: typography.fontFamily.medium,
+                  backgroundColor: isSelected ? colors.accent : palette.navyLight,
+                  borderColor: isSelected ? colors.accent : colors.accent + '20',
                 },
               ]}
+              onPress={() => onChange('category', cat)}
+              activeOpacity={0.7}
             >
-              {t(`categories.${cat}`)}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.categoryText,
+                  {
+                    color: isSelected ? colors.background : colors.textInverse,
+                    fontFamily: isSelected ? typography.fontFamily.bold : typography.fontFamily.medium,
+                    opacity: isSelected ? 1 : 0.6,
+                  },
+                ]}
+              >
+                {t(`categories.${cat}`)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       {/* Title */}
-      <Text style={labelStyle}>{t('createCase.caseTitleLabel', { defaultValue: 'Case Title *' })}</Text>
-      <TextInput
-        style={inputStyle}
+      <AppInput
+        label={t('createCase.caseTitleLabel', { defaultValue: 'Case Title *' })}
         placeholder={t('createCase.caseTitlePlaceholder', { defaultValue: 'e.g. Emergency surgery for Ahmed, 7' })}
-        placeholderTextColor={colors.mutedForeground}
         value={data.title}
         onChangeText={(v) => onChange('title', v)}
         maxLength={80}
       />
 
       {/* Description */}
-      <Text style={labelStyle}>{t('createCase.fullDescriptionLabel', { defaultValue: 'Full Description *' })}</Text>
-      <TextInput
-        style={[inputStyle, styles.textarea]}
+      <AppInput
+        label={t('createCase.fullDescriptionLabel', { defaultValue: 'Full Description *' })}
         placeholder={t('createCase.descriptionPlaceholder', { defaultValue: 'Describe the situation in detail — what happened, why help is needed, and how funds will be used...' })}
-        placeholderTextColor={colors.mutedForeground}
         value={data.description}
         onChangeText={(v) => onChange('description', v)}
         multiline
-        numberOfLines={5}
-        textAlignVertical="top"
+        numberOfLines={6}
+        inputStyle={styles.textarea}
+        containerStyle={styles.textareaContainer}
       />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionTitle: { fontSize: 20, marginBottom: 20 },
-  label: { fontSize: 14, marginBottom: 6, marginLeft: 2 },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    marginBottom: 16,
-  },
-  textarea: { height: 110, paddingTop: 12, marginBottom: 16 },
-  categoryRow: { marginBottom: 16 },
+  container: { paddingBottom: 40 },
+  sectionTitle: { fontSize: 24, marginBottom: 24 },
+  label: { fontSize: 13, marginBottom: 12, marginLeft: 4, textTransform: 'uppercase', letterSpacing: 1 },
+  categoryRow: { marginBottom: 32 },
   categoryChip: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 24,
     borderWidth: 1.5,
-    marginRight: 8,
+    marginRight: 12,
   },
-  categoryText: { fontSize: 13 },
-  row: { flexDirection: 'row', gap: 12 },
-  halfField: { flex: 1 },
+  categoryText: { fontSize: 14 },
+  textareaContainer: { marginBottom: 32 },
+  textarea: { height: 160, paddingTop: 16, textAlignVertical: 'top' },
 });
+
+

@@ -13,7 +13,6 @@ import {
   Settings,
   ShieldCheck,
   Heart,
-  TrendingUp,
   LogOut,
   ChevronRight,
   CreditCard,
@@ -23,10 +22,13 @@ import {
 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { getUserStats, UserStats } from '../api/profiles';
 import TrustBadge from '../components/TrustBadge';
 import { changeLanguage, SUPPORTED_LANGS } from '../i18n';
+import AppCard from '../components/common/AppCard';
+import { useNavigation } from '@react-navigation/native';
 
 const LANGUAGE_NAMES: Record<string, string> = {
   en: 'English',
@@ -34,10 +36,8 @@ const LANGUAGE_NAMES: Record<string, string> = {
   am: 'አማርኛ',
 };
 
-import { useNavigation } from '@react-navigation/native';
-
 export default function ProfileScreen() {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t, i18n } = useTranslation();
   const { profile, signOut } = useAuth();
   const [stats, setStats] = useState<UserStats | null>(null);
@@ -70,7 +70,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View style={[styles.loading, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -79,129 +79,137 @@ export default function ProfileScreen() {
     <ScrollView 
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
     >
       {/* Header Section */}
       <View style={styles.header}>
-        <View style={[styles.avatarContainer, { backgroundColor: colors.secondary }]}>
-          <User color={colors.primary} size={40} />
+        <View style={[styles.avatarContainer, { backgroundColor: colors.accent + '10', borderColor: colors.accent + '40' }]}>
+          <User color={colors.accent} size={48} />
         </View>
-        <Text style={[styles.name, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+        <Text style={[styles.name, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
           {profile?.name}
         </Text>
-        <Text style={[styles.role, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {profile?.role.toUpperCase()} • {t('common.memberSince', { year: '2026' })}
-        </Text>
+        <View style={[styles.roleBadge, { backgroundColor: palette.navyLight }]}>
+          <Text style={[styles.role, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+            {profile?.role.toUpperCase()}
+          </Text>
+        </View>
       </View>
 
       {/* Trust Score Card */}
-      <View style={[styles.trustCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <AppCard style={styles.trustCard}>
         <View style={styles.trustHeader}>
-          <ShieldCheck color={colors.primary} size={24} />
-          <Text style={[styles.trustTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+          <View style={[styles.iconWrap, { backgroundColor: colors.accent + '15' }]}>
+            <ShieldCheck color={colors.accent} size={22} />
+          </View>
+          <Text style={[styles.trustTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {t('profile.trustReputation')}
           </Text>
         </View>
         <View style={styles.scoreRow}>
-          <Text style={[styles.score, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+          <Text style={[styles.score, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
             {profile?.trust_score || 0}
           </Text>
           <View style={styles.badgeCol}>
             <TrustBadge score={profile?.trust_score || 0} />
-            <Text style={[styles.rankLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.rankLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
               {t('profile.platformRank')}
             </Text>
           </View>
         </View>
-      </View>
+      </AppCard>
 
       {/* Stats Grid */}
       <View style={styles.statsGrid}>
-        <View style={[styles.statBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <AppCard style={styles.statBox}>
           <Heart color="#ef4444" size={24} />
-          <Text style={[styles.statValue, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+          <Text style={[styles.statValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
             ${stats?.totalDonated.toLocaleString() || 0}
           </Text>
-          <Text style={[styles.statLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
             {t('profile.totalDonated')}
           </Text>
-        </View>
-        <View style={[styles.statBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Target color="#3b82f6" size={24} />
-          <Text style={[styles.statValue, { color: colors.text, fontFamily: typography.fontFamily.bold }]}>
+        </AppCard>
+        <AppCard style={styles.statBox}>
+          <Target color={colors.accent} size={24} />
+          <Text style={[styles.statValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
             {stats?.casesCompleted || 0}
           </Text>
-          <Text style={[styles.statLabel, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
             {t('profile.casesCompleted')}
           </Text>
-        </View>
+        </AppCard>
       </View>
 
       {/* Menu Options */}
       <View style={styles.menu}>
-        <Text style={[styles.menuTitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+        <Text style={[styles.menuTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
           {t('profile.account')}
         </Text>
         
         <TouchableOpacity 
-          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          style={[styles.menuItem, { borderBottomColor: palette.navyLight }]}
           onPress={() => navigation.navigate('AccountSettings')}
+          activeOpacity={0.7}
         >
           <View style={styles.menuLeft}>
-            <View style={[styles.iconBg, { backgroundColor: colors.secondary }]}>
-              <Settings color={colors.primary} size={20} />
+            <View style={[styles.iconBg, { backgroundColor: colors.accent + '10' }]}>
+              <Settings color={colors.accent} size={20} />
             </View>
-            <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.menuLabel, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
               {t('profile.accountSettings')}
             </Text>
           </View>
-          <ChevronRight color={colors.mutedForeground} size={20} />
+          <ChevronRight color={colors.textInverse} opacity={0.3} size={20} />
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          style={[styles.menuItem, { borderBottomColor: palette.navyLight }]}
           onPress={() => navigation.navigate('PaymentMethods')}
+          activeOpacity={0.7}
         >
           <View style={styles.menuLeft}>
-            <View style={[styles.iconBg, { backgroundColor: '#dcfce7' }]}>
-              <CreditCard color="#166534" size={20} />
+            <View style={[styles.iconBg, { backgroundColor: colors.accent + '10' }]}>
+              <CreditCard color={colors.accent} size={20} />
             </View>
-            <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.menuLabel, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
               {t('profile.paymentMethods')}
             </Text>
           </View>
-          <ChevronRight color={colors.mutedForeground} size={20} />
+          <ChevronRight color={colors.textInverse} opacity={0.3} size={20} />
         </TouchableOpacity>
 
-        {/* Language Selector */}
         <TouchableOpacity 
-          style={[styles.menuItem, { borderBottomColor: colors.border }]}
+          style={[styles.menuItem, { borderBottomColor: palette.navyLight }]}
           onPress={() => setShowLanguagePicker(!showLanguagePicker)}
+          activeOpacity={0.7}
         >
           <View style={styles.menuLeft}>
-            <View style={[styles.iconBg, { backgroundColor: '#e0e7ff' }]}>
-              <Globe color="#4F46E5" size={20} />
+            <View style={[styles.iconBg, { backgroundColor: colors.accent + '10' }]}>
+              <Globe color={colors.accent} size={20} />
             </View>
             <View>
-              <Text style={[styles.menuLabel, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+              <Text style={[styles.menuLabel, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
                 {t('profile.language')}
               </Text>
-              <Text style={[styles.currentLang, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+              <Text style={[styles.currentLang, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
                 {LANGUAGE_NAMES[i18n.language] || 'English'}
               </Text>
             </View>
           </View>
-          <ChevronRight color={colors.mutedForeground} size={20} />
+          <ChevronRight color={colors.textInverse} opacity={0.3} size={20} />
         </TouchableOpacity>
 
         {showLanguagePicker && (
-          <View style={[styles.langPicker, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            {SUPPORTED_LANGS.map((lang) => (
+          <View style={[styles.langPicker, { backgroundColor: palette.navyLight, borderColor: colors.accent + '20' }]}>
+            {SUPPORTED_LANGS.map((lang, index) => (
               <TouchableOpacity
                 key={lang}
                 style={[
                   styles.langOption,
-                  { borderBottomColor: colors.border },
-                  i18n.language === lang && { backgroundColor: colors.primary + '10' },
+                  { borderBottomColor: colors.background + '50' },
+                  index === SUPPORTED_LANGS.length - 1 && { borderBottomWidth: 0 },
+                  i18n.language === lang && { backgroundColor: colors.accent + '15' },
                 ]}
                 onPress={() => {
                   changeLanguage(lang);
@@ -210,11 +218,11 @@ export default function ProfileScreen() {
               >
                 <Text style={[
                   styles.langText, 
-                  { color: i18n.language === lang ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }
+                  { color: i18n.language === lang ? colors.accent : colors.textInverse, fontFamily: i18n.language === lang ? typography.fontFamily.bold : typography.fontFamily.medium }
                 ]}>
                   {LANGUAGE_NAMES[lang]}
                 </Text>
-                {i18n.language === lang && <Check color={colors.primary} size={18} />}
+                {i18n.language === lang && <Check color={colors.accent} size={18} />}
               </TouchableOpacity>
             ))}
           </View>
@@ -223,21 +231,22 @@ export default function ProfileScreen() {
         <TouchableOpacity 
           style={styles.menuItem}
           onPress={handleSignOut}
+          activeOpacity={0.7}
         >
           <View style={styles.menuLeft}>
-            <View style={[styles.iconBg, { backgroundColor: '#fee2e2' }]}>
-              <LogOut color="#991b1b" size={20} />
+            <View style={[styles.iconBg, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
+              <LogOut color="#ef4444" size={20} />
             </View>
-            <Text style={[styles.menuLabel, { color: '#991b1b', fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.menuLabel, { color: '#ef4444', fontFamily: typography.fontFamily.bold }]}>
               {t('auth.signOut')}
             </Text>
           </View>
-          <ChevronRight color="#991b1b" size={20} />
+          <ChevronRight color="#ef4444" opacity={0.5} size={20} />
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.version, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-        {t('common.version')}
+      <Text style={[styles.version, { color: colors.textInverse, opacity: 0.2, fontFamily: typography.fontFamily.regular }]}>
+        {t('common.version')} 1.0.0
       </Text>
     </ScrollView>
   );
@@ -246,34 +255,46 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  scrollContent: { paddingBottom: 40 },
+  scrollContent: { paddingBottom: 60 },
   header: {
     alignItems: 'center',
-    paddingVertical: 32,
-    gap: 8,
+    paddingTop: 48,
+    paddingBottom: 32,
+    gap: 12,
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    borderWidth: 2,
+    marginBottom: 4,
   },
-  name: { fontSize: 24 },
-  role: { fontSize: 13, textTransform: 'uppercase', letterSpacing: 1 },
+  name: { fontSize: 28, letterSpacing: -0.5 },
+  roleBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  role: { fontSize: 11, letterSpacing: 1.5 },
   trustCard: {
     marginHorizontal: 20,
-    padding: 24,
-    borderRadius: 24,
-    borderWidth: 1,
     marginBottom: 20,
+    padding: 20,
   },
   trustHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
     marginBottom: 20,
+  },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   trustTitle: { fontSize: 18 },
   scoreRow: {
@@ -281,75 +302,77 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  score: { fontSize: 44 },
-  badgeCol: { alignItems: 'flex-end', gap: 4 },
-  rankLabel: { fontSize: 12 },
+  score: { fontSize: 48, letterSpacing: -1 },
+  badgeCol: { alignItems: 'flex-end', gap: 6 },
+  rankLabel: { fontSize: 12, opacity: 0.6 },
   statsGrid: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    gap: 12,
-    marginBottom: 32,
+    gap: 16,
+    marginBottom: 40,
   },
   statBox: {
     flex: 1,
-    padding: 20,
-    borderRadius: 20,
-    borderWidth: 1,
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+    paddingVertical: 20,
   },
-  statValue: { fontSize: 20 },
-  statLabel: { fontSize: 12 },
+  statValue: { fontSize: 22 },
+  statLabel: { fontSize: 12, opacity: 0.6 },
   menu: {
     paddingHorizontal: 20,
   },
   menuTitle: {
-    fontSize: 13,
-    marginBottom: 12,
+    fontSize: 12,
+    marginBottom: 16,
     marginLeft: 4,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 18,
     borderBottomWidth: 1,
   },
   menuLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
   },
   iconBg: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  menuLabel: { fontSize: 16 },
+  menuLabel: { fontSize: 17 },
   currentLang: { fontSize: 12, marginTop: 2 },
   langPicker: {
-    marginLeft: 52,
-    marginBottom: 8,
-    borderRadius: 12,
-    borderWidth: 1,
+    marginLeft: 60,
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 1.5,
     overflow: 'hidden',
+    marginTop: 8,
   },
   langOption: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
   },
   langText: { fontSize: 15 },
   version: {
     textAlign: 'center',
-    marginTop: 40,
+    marginTop: 60,
     fontSize: 12,
+    letterSpacing: 1,
   },
 });
+
+

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Send, Flag, Info } from 'lucide-react-native';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { getChatMessages, sendMessage, reportChatRoom, ChatMessage } from '../api/chat';
 import { supabase } from '../supabase/supabaseClient';
@@ -21,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function ChatRoomScreen({ route, navigation }: any) {
   const { roomId, recipientName } = route.params;
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { user } = useAuth();
   const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -31,7 +32,12 @@ export default function ChatRoomScreen({ route, navigation }: any) {
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    navigation.setOptions({ title: recipientName });
+    navigation.setOptions({ 
+      title: recipientName,
+      headerStyle: { backgroundColor: colors.background },
+      headerTitleStyle: { color: colors.accent, fontFamily: typography.fontFamily.heading },
+      headerTintColor: colors.accent,
+    });
     fetchMessages();
 
     // Subscribe to new messages for THIS room
@@ -113,17 +119,17 @@ export default function ChatRoomScreen({ route, navigation }: any) {
           style={[
             styles.bubble, 
             { 
-              backgroundColor: isMine ? colors.primary : colors.secondary,
+              backgroundColor: isMine ? colors.accent : palette.navyLight,
               borderBottomRightRadius: isMine ? 4 : 16,
               borderBottomLeftRadius: isMine ? 16 : 4,
             }
           ]}
         >
-          <Text style={[styles.content, { color: isMine ? colors.primaryForeground : colors.text, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.content, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.regular }]}>
             {item.content}
           </Text>
         </View>
-        <Text style={[styles.time, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.time, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
           {format(new Date(item.created_at), 'p')}
         </Text>
       </View>
@@ -136,21 +142,21 @@ export default function ChatRoomScreen({ route, navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
-      <View style={[styles.infoBar, { borderBottomColor: colors.border }]}>
+      <View style={[styles.infoBar, { borderBottomColor: palette.navyLight }]}>
         <View style={styles.infoLeft}>
-          <Info size={14} color={colors.mutedForeground} />
-          <Text style={[styles.infoText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Info size={14} color={colors.accent} />
+          <Text style={[styles.infoText, { color: colors.accent, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
             {t('chat.privacy', { defaultValue: 'Privacy: Encryption at rest active' })}
           </Text>
         </View>
         <TouchableOpacity onPress={handleReport}>
-          <Flag size={18} color={colors.mutedForeground} />
+          <Flag size={18} color={colors.accent} />
         </TouchableOpacity>
       </View>
 
       {loading ? (
         <View style={styles.loading}>
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors.accent} />
         </View>
       ) : (
         <FlatList
@@ -164,28 +170,30 @@ export default function ChatRoomScreen({ route, navigation }: any) {
         />
       )}
 
-      <View style={[styles.inputContainer, { borderTopColor: colors.border, backgroundColor: colors.card }]}>
-        <TextInput
-          style={[styles.input, { color: colors.text, fontFamily: typography.fontFamily.regular }]}
-          placeholder={t('chat.typeMessage', { defaultValue: 'Type a message...' })}
-          placeholderTextColor={colors.mutedForeground}
-          value={content}
-          onChangeText={setContent}
-          multiline
-          maxLength={1000}
-        />
+      <View style={[styles.inputContainer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
+        <View style={[styles.inputWrapper, { backgroundColor: palette.navyLight }]}>
+          <TextInput
+            style={[styles.input, { color: colors.textInverse, fontFamily: typography.fontFamily.regular }]}
+            placeholder={t('chat.typeMessage', { defaultValue: 'Type a message...' })}
+            placeholderTextColor={colors.accent + '80'}
+            value={content}
+            onChangeText={setContent}
+            multiline
+            maxLength={1000}
+          />
+        </View>
         <TouchableOpacity 
           style={[
             styles.sendButton, 
-            { backgroundColor: content.trim() ? colors.primary : colors.muted }
+            { backgroundColor: content.trim() ? colors.accent : palette.navyLight }
           ]}
           onPress={handleSend}
           disabled={!content.trim() || sending}
         >
           {sending ? (
-            <ActivityIndicator size="small" color="#ffffff" />
+            <ActivityIndicator size="small" color={colors.textOnPrimary} />
           ) : (
-            <Send color="#ffffff" size={20} />
+            <Send color={colors.textOnPrimary} size={20} />
           )}
         </TouchableOpacity>
       </View>
@@ -201,7 +209,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 1,
   },
   infoLeft: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
   listContent: { padding: 16, paddingBottom: 24 },
   messageWrapper: {
     marginBottom: 16,
-    maxWidth: '80%',
+    maxWidth: '85%',
   },
   myMessageWrapper: {
     alignSelf: 'flex-end',
@@ -224,29 +232,35 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 16,
   },
-  content: { fontSize: 15, lineHeight: 20 },
-  time: { fontSize: 10, marginTop: 4, opacity: 0.8 },
+  content: { fontSize: 15, lineHeight: 22 },
+  time: { fontSize: 10, marginTop: 4 },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: 12,
     paddingBottom: Platform.OS === 'ios' ? 24 : 12,
     borderTopWidth: 1,
-    gap: 12,
+    gap: 8,
+  },
+  inputWrapper: {
+    flex: 1,
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   input: {
-    flex: 1,
-    minHeight: 40,
-    maxHeight: 100,
-    backgroundColor: 'transparent',
     fontSize: 15,
     paddingTop: 8,
+    paddingBottom: 8,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
 });
+

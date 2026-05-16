@@ -4,7 +4,6 @@ import {
   Text,
   View,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -12,12 +11,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Award, AlertCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { supabase } from '../supabase/supabaseClient';
 import { Case } from '../types/cases';
 import PublicCaseCard from '../components/PublicCaseCard';
 
 export default function HistoryScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ export default function HistoryScreen({ navigation }: any) {
   if (loading && !refreshing) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -59,15 +59,15 @@ export default function HistoryScreen({ navigation }: any) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
         <View style={styles.titleRow}>
-          <Award color={colors.primary} size={24} />
-          <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            {t('history.title')}
+          <Award color={colors.accent} size={28} />
+          <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            {t('history.title', { defaultValue: 'Impact History' })}
           </Text>
         </View>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {t('history.subtitle')}
+        <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.medium }]}>
+          {t('history.subtitle', { defaultValue: 'Celebrating successfully completed cases' })}
         </Text>
       </View>
 
@@ -79,25 +79,30 @@ export default function HistoryScreen({ navigation }: any) {
           <PublicCaseCard
             data={item}
             onPress={() => navigation.navigate('CaseDetail', { caseId: item.id })}
+            style={styles.card}
           />
         )}
         contentContainerStyle={cases.length === 0 ? styles.emptyContainer : styles.list}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl 
             refreshing={refreshing} 
             onRefresh={() => { setRefreshing(true); loadCompletedCases(); }} 
-            tintColor={colors.primary} 
+            tintColor={colors.accent} 
           />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <AlertCircle color={colors.mutedForeground} size={56} />
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              {t('history.noResultsTitle')}
+            <View style={[styles.emptyIconWrap, { backgroundColor: palette.navyLight }]}>
+              <Award color={colors.accent} size={48} opacity={0.3} />
+            </View>
+            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+              {t('history.noResultsTitle', { defaultValue: 'No History Yet' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {t('history.noResultsDesc')}
+            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
+              {t('history.noResultsDesc', { defaultValue: 'Completed cases will appear here as they are successfully funded and verified.' })}
             </Text>
+
           </View>
         }
       />
@@ -109,26 +114,30 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: 24,
+    paddingTop: 20,
+    paddingBottom: 24,
     borderBottomWidth: 1,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
+    gap: 12,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 26,
-    letterSpacing: -0.5,
+    fontSize: 28,
   },
   subtitle: {
     fontSize: 14,
+    lineHeight: 22,
   },
   list: {
-    padding: 16,
+    padding: 20,
+    paddingBottom: 60,
+  },
+  card: {
+    marginBottom: 16,
   },
   emptyContainer: {
     flex: 1,
@@ -138,8 +147,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 40,
-    gap: 12,
+    gap: 16,
+    marginTop: 80,
   },
-  emptyTitle: { fontSize: 20 },
-  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  emptyIconWrap: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  emptyTitle: { fontSize: 22, textAlign: 'center' },
+  emptyDesc: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
 });
+
+

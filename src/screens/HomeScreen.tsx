@@ -13,12 +13,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Sparkles, AlertCircle } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { getPublicCases } from '../api/cases';
 import { Case, CaseCategory } from '../types/cases';
 import PublicCaseCard from '../components/PublicCaseCard';
 
 export default function HomeScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
   
   const [cases, setCases] = useState<Case[]>([]);
@@ -27,7 +28,7 @@ export default function HomeScreen({ navigation }: any) {
   const [selectedCategory, setSelectedCategory] = useState<CaseCategory | null>(null);
 
   const categories: { label: string; value: CaseCategory | null }[] = [
-    { label: t('home.allCases'), value: null },
+    { label: t('home.allCases', { defaultValue: 'All Cases' }), value: null },
     ...(['MEDICAL', 'EDUCATION', 'EMERGENCY', 'HOUSING', 'FOOD', 'OTHER'] as CaseCategory[]).map(cat => ({
       label: t(`categories.${cat}`),
       value: cat,
@@ -53,7 +54,7 @@ export default function HomeScreen({ navigation }: any) {
   if (loading && !refreshing) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.primary} size="large" />
+        <ActivityIndicator color={colors.accent} size="large" />
       </View>
     );
   }
@@ -61,20 +62,20 @@ export default function HomeScreen({ navigation }: any) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
         <View style={styles.titleRow}>
-          <Sparkles color={colors.primary} size={24} />
-          <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-            {t('home.title')}
+          <Sparkles color={colors.accent} size={24} />
+          <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            {t('home.title', { defaultValue: 'Explore Cases' })}
           </Text>
         </View>
-        <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-          {t('home.subtitle')}
+        <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.7, fontFamily: typography.fontFamily.regular }]}>
+          {t('home.subtitle', { defaultValue: 'Support those in need around you' })}
         </Text>
       </View>
 
       {/* Categories Horizontal Scroll */}
-      <View style={[styles.categoriesWrapper, { borderBottomColor: colors.border }]}>
+      <View style={[styles.categoriesWrapper, { borderBottomColor: palette.navyLight }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -87,8 +88,10 @@ export default function HomeScreen({ navigation }: any) {
                 key={idx}
                 style={[
                   styles.categoryPill,
-                  { backgroundColor: isSelected ? colors.primary : colors.secondary },
-                  !isSelected && { borderWidth: 1, borderColor: colors.border },
+                  { 
+                    backgroundColor: isSelected ? colors.accent : palette.navyLight,
+                    borderColor: isSelected ? colors.accent : palette.navyLight
+                  },
                 ]}
                 onPress={() => {
                   setLoading(true);
@@ -99,7 +102,10 @@ export default function HomeScreen({ navigation }: any) {
                 <Text
                   style={[
                     styles.categoryPillText,
-                    { color: isSelected ? colors.primaryForeground : colors.text, fontFamily: typography.fontFamily.medium },
+                    { 
+                      color: isSelected ? colors.textOnPrimary : colors.textInverse, 
+                      fontFamily: typography.fontFamily.medium 
+                    },
                   ]}
                 >
                   {cat.label}
@@ -122,16 +128,23 @@ export default function HomeScreen({ navigation }: any) {
         )}
         contentContainerStyle={cases.length === 0 ? styles.emptyContainer : styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadCases(); }} tintColor={colors.primary} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={() => { setRefreshing(true); loadCases(); }} 
+            tintColor={colors.accent} 
+            colors={[colors.accent]} 
+          />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <AlertCircle color={colors.mutedForeground} size={56} />
-            <Text style={[styles.emptyTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              {t('home.noCasesTitle')}
+            <View style={[styles.emptyIconWrap, { backgroundColor: colors.accent + '15' }]}>
+              <AlertCircle color={colors.accent} size={48} />
+            </View>
+            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+              {t('home.noCasesTitle', { defaultValue: 'No Cases Found' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {t('home.noCasesDesc')} {selectedCategory ? t('home.noCasesInCategory') : ''}
+            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
+              {t('home.noCasesDesc', { defaultValue: 'There are currently no active cases' })} {selectedCategory ? t('home.noCasesInCategory', { defaultValue: 'in this category' }) : ''}
             </Text>
           </View>
         }
@@ -146,40 +159,43 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 12,
+    paddingBottom: 20,
     borderBottomWidth: 1,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
+    gap: 10,
+    marginBottom: 6,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
+    lineHeight: 20,
   },
   categoriesWrapper: {
     borderBottomWidth: 1,
   },
   categoriesScroll: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: 14,
+    gap: 10,
   },
   categoryPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 22,
+    borderWidth: 1,
   },
   categoryPillText: {
     fontSize: 14,
   },
   list: {
     padding: 16,
+    paddingBottom: 40,
   },
   emptyContainer: {
     flex: 1,
@@ -189,8 +205,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 40,
-    gap: 12,
+    gap: 16,
+    marginTop: 60,
   },
-  emptyTitle: { fontSize: 20 },
-  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  emptyIconWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  emptyTitle: { fontSize: 22 },
+  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 22 },
 });
+

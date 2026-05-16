@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 
 interface StepIndicatorProps {
   steps: string[];
@@ -24,27 +25,24 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                 style={[
                   styles.circle,
                   {
-                    backgroundColor: isCompleted
+                    backgroundColor: isCompleted || isActive
                       ? colors.accent
-                      : isActive
-                      ? colors.primary
-                      : colors.muted,
-                    borderColor: isCompleted
+                      : palette.navyLight,
+                    borderColor: isCompleted || isActive
                       ? colors.accent
-                      : isActive
-                      ? colors.primary
-                      : colors.border,
+                      : palette.navyLight,
                   },
                 ]}
               >
                 {isCompleted ? (
-                  <Text style={[styles.checkMark, { color: colors.primaryForeground }]}>✓</Text>
+                  <Text style={[styles.checkMark, { color: colors.textOnPrimary }]}>✓</Text>
                 ) : (
                   <Text
                     style={[
                       styles.circleText,
                       {
-                        color: isActive ? colors.primaryForeground : colors.mutedForeground,
+                        color: isActive ? colors.textOnPrimary : colors.textInverse,
+                        opacity: isActive ? 1 : 0.4,
                         fontFamily: typography.fontFamily.bold,
                       },
                     ]}
@@ -57,11 +55,14 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                 style={[
                   styles.stepLabel,
                   {
-                    color: isActive ? colors.primary : colors.mutedForeground,
+                    color: isActive ? colors.accent : colors.textInverse,
+                    opacity: isActive ? 1 : 0.4,
                     fontFamily: isActive
-                      ? typography.fontFamily.medium
+                      ? typography.fontFamily.bold
                       : typography.fontFamily.regular,
                     fontSize: 10,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
                   },
                 ]}
                 numberOfLines={1}
@@ -75,7 +76,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                 style={[
                   styles.connector,
                   {
-                    backgroundColor: isCompleted ? colors.accent : colors.border,
+                    backgroundColor: isCompleted ? colors.accent : palette.navyLight,
                   },
                 ]}
               />
@@ -93,26 +94,26 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    marginBottom: 28,
+    marginBottom: 32,
   },
   stepItem: {
     alignItems: 'center',
-    width: 56,
+    width: 60,
   },
   circle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   circleText: {
-    fontSize: 13,
+    fontSize: 14,
   },
   checkMark: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '700',
   },
   stepLabel: {
@@ -121,6 +122,7 @@ const styles = StyleSheet.create({
   connector: {
     flex: 1,
     height: 2,
-    marginTop: 15,
+    marginTop: 17,
   },
 });
+

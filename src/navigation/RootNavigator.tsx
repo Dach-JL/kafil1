@@ -8,6 +8,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { useChat } from '../supabase/ChatContext';
 import HomeScreen from '../screens/HomeScreen';
@@ -50,19 +51,23 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.accent, // Gold
         tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: colors.border,
+          backgroundColor: colors.background, // Navy
+          borderTopColor: palette.navyLight,
+          height: 60,
+          paddingBottom: 8,
         },
         headerStyle: {
-          backgroundColor: colors.card,
+          backgroundColor: colors.background, // Navy
         },
         headerTitleStyle: {
           fontFamily: typography.fontFamily.heading,
-          color: colors.text,
+          fontSize: typography.size.section,
+          color: colors.accent, // Gold title
         },
+        headerTintColor: colors.accent,
         headerRight: () => <NotificationBell />,
       }}
     >
@@ -205,7 +210,7 @@ export default function RootNavigator() {
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }

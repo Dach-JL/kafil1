@@ -4,7 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Globe, Check, ChevronDown } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+import { palette } from '../theme/colors';
 import { changeLanguage, SUPPORTED_LANGS } from '../i18n';
+import AppButton from '../components/common/AppButton';
 
 const LANGUAGE_NAMES: Record<string, string> = {
   en: 'English',
@@ -13,7 +15,7 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 export default function LandingScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t, i18n } = useTranslation();
   const [showLangPicker, setShowLangPicker] = useState(false);
 
@@ -23,27 +25,28 @@ export default function LandingScreen({ navigation }: any) {
       <View style={styles.topBar}>
         <View />
         <TouchableOpacity 
-          style={[styles.langTrigger, { backgroundColor: colors.card, borderColor: colors.border }]}
+          style={[styles.langTrigger, { backgroundColor: palette.navyLight, borderColor: colors.accent + '30' }]}
           onPress={() => setShowLangPicker(!showLangPicker)}
           activeOpacity={0.7}
         >
-          <Globe size={16} color={colors.primary} />
-          <Text style={[styles.langTriggerText, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Globe size={18} color={colors.accent} />
+          <Text style={[styles.langTriggerText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
             {i18n.language.toUpperCase()}
           </Text>
-          <ChevronDown size={14} color={colors.mutedForeground} />
+          <ChevronDown size={14} color={colors.accent} opacity={0.6} />
         </TouchableOpacity>
       </View>
 
       {showLangPicker && (
-        <View style={[styles.langMenu, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          {SUPPORTED_LANGS.map((lang) => (
+        <View style={[styles.langMenu, { backgroundColor: palette.navyLight, borderColor: colors.accent + '40', shadowColor: '#000' }]}>
+          {SUPPORTED_LANGS.map((lang, index) => (
             <TouchableOpacity
               key={lang}
               style={[
                 styles.langOption,
-                { borderBottomColor: colors.border },
-                i18n.language === lang && { backgroundColor: colors.primary + '10' },
+                { borderBottomColor: colors.background + '50' },
+                index === SUPPORTED_LANGS.length - 1 && { borderBottomWidth: 0 },
+                i18n.language === lang && { backgroundColor: colors.accent + '15' },
               ]}
               onPress={() => {
                 changeLanguage(lang);
@@ -52,11 +55,11 @@ export default function LandingScreen({ navigation }: any) {
             >
               <Text style={[
                 styles.langText, 
-                { color: i18n.language === lang ? colors.primary : colors.text, fontFamily: typography.fontFamily.medium }
+                { color: i18n.language === lang ? colors.accent : colors.textInverse, fontFamily: i18n.language === lang ? typography.fontFamily.bold : typography.fontFamily.medium }
               ]}>
                 {LANGUAGE_NAMES[lang]}
               </Text>
-              {i18n.language === lang && <Check color={colors.primary} size={16} />}
+              {i18n.language === lang && <Check color={colors.accent} size={18} />}
             </TouchableOpacity>
           ))}
         </View>
@@ -65,30 +68,21 @@ export default function LandingScreen({ navigation }: any) {
       <Pressable style={{ flex: 1 }} onPress={() => setShowLangPicker(false)}>
         <View style={styles.content}>
           <View style={styles.headerGroup}>
-            <Text style={[styles.title, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
-              {t('common.appName')}
+            <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+              {t('common.appName', { defaultValue: 'Kafil' })}
             </Text>
-            <Text style={[styles.subtitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
-              {t('landing.tagline')}
+            <View style={[styles.divider, { backgroundColor: colors.accent }]} />
+            <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
+              {t('landing.tagline', { defaultValue: 'Transparent, trust-driven impact for Ethiopia' })}
             </Text>
           </View>
           
           <View style={styles.actionGroup}>
-            <Pressable 
-              style={({ pressed }) => [
-                styles.button,
-                { 
-                  backgroundColor: colors.primary,
-                  opacity: pressed ? 0.9 : 1,
-                  transform: [{ scale: pressed ? 0.98 : 1 }]
-                }
-              ]}
+            <AppButton
+              title={t('buttons.getStarted', { defaultValue: 'Get Started' })}
               onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={[styles.buttonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                {t('buttons.getStarted')}
-              </Text>
-            </Pressable>
+              style={styles.button}
+            />
           </View>
         </View>
       </Pressable>
@@ -102,7 +96,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -111,81 +105,77 @@ const styles = StyleSheet.create({
   langTrigger: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 24,
+    borderWidth: 1.5,
   },
   langTriggerText: {
-    fontSize: 13,
+    fontSize: 14,
   },
   langMenu: {
     position: 'absolute',
-    top: 60,
+    top: 70,
     right: 20,
-    width: 180,
-    borderRadius: 16,
-    borderWidth: 1,
+    width: 220,
+    borderRadius: 20,
+    borderWidth: 1.5,
     zIndex: 100,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.3,
+    shadowRadius: 24,
+    elevation: 12,
   },
   langOption: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 24,
     borderBottomWidth: 1,
   },
   langText: {
-    fontSize: 14,
+    fontSize: 15,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 32,
-    paddingBottom: 80,
+    paddingHorizontal: 36,
+    paddingBottom: 60,
   },
   headerGroup: {
     alignItems: 'center',
-    marginBottom: 64,
+    marginBottom: 80,
   },
   title: {
-    fontSize: 48,
-    letterSpacing: -1,
-    marginBottom: 8,
+    fontSize: 72,
+    letterSpacing: -2,
+    marginBottom: 16,
     textAlign: 'center',
   },
+  divider: {
+    width: 60,
+    height: 4,
+    borderRadius: 2,
+    marginBottom: 24,
+  },
   subtitle: {
-    fontSize: 17,
-    letterSpacing: 0.2,
+    fontSize: 20,
+    letterSpacing: 0.3,
     textAlign: 'center',
+    lineHeight: 30,
+    paddingHorizontal: 10,
   },
   actionGroup: {
     width: '100%',
-    maxWidth: 300,
+    maxWidth: 320,
   },
   button: {
-    height: 58,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    letterSpacing: 0.3,
+    height: 64,
   },
 });
+
+

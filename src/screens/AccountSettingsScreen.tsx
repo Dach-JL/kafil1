@@ -3,20 +3,19 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
 import { useAuth } from '../supabase/AuthContext';
 import { updateProfile } from '../api/profiles';
 import { Save, User as UserIcon, Phone } from 'lucide-react-native';
+import AppButton from '../components/common/AppButton';
+import AppInput from '../components/common/AppInput';
 
 export default function AccountSettingsScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
   const { profile, refreshProfile } = useAuth();
 
@@ -43,104 +42,66 @@ export default function AccountSettingsScreen({ navigation }: any) {
     }
   };
 
-  const inputStyle = [
-    styles.input,
-    {
-      backgroundColor: colors.card,
-      color: colors.text,
-      borderColor: colors.border,
-      fontFamily: typography.fontFamily.regular,
-    },
-  ];
-
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: colors.background }]} 
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
-          {t('profile.personalInfo', { defaultValue: 'PERSONAL INFORMATION' })}
+        <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+          {t('profile.personalInfo', { defaultValue: 'Personal Information' })}
         </Text>
         
         <View style={styles.inputContainer}>
           <View style={styles.labelRow}>
-            <UserIcon size={16} color={colors.primary} />
-            <Text style={[styles.label, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            <UserIcon size={18} color={colors.accent} />
+            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
               {t('auth.fullName')}
             </Text>
           </View>
-          <TextInput
-            style={inputStyle}
+          <AppInput
             value={name}
             onChangeText={setName}
             placeholder={t('auth.namePlaceholder')}
-            placeholderTextColor={colors.mutedForeground}
           />
         </View>
 
         <View style={styles.inputContainer}>
           <View style={styles.labelRow}>
-            <Phone size={16} color={colors.primary} />
-            <Text style={[styles.label, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+            <Phone size={18} color={colors.accent} />
+            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
               {t('auth.phoneNumber', { defaultValue: 'Phone Number' })}
             </Text>
           </View>
-          <TextInput
-            style={inputStyle}
+          <AppInput
             value={phone}
             onChangeText={setPhone}
             placeholder="+251 9..."
-            placeholderTextColor={colors.mutedForeground}
             keyboardType="phone-pad"
           />
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.saveBtn, { backgroundColor: colors.primary }]}
+      <AppButton
+        title={t('buttons.saveChanges', { defaultValue: 'Save Changes' })}
         onPress={handleSave}
-        disabled={saving}
-      >
-        {saving ? (
-          <ActivityIndicator color={colors.primaryForeground} />
-        ) : (
-          <>
-            <Save color={colors.primaryForeground} size={20} />
-            <Text style={[styles.saveBtnText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-              {t('buttons.saveChanges', { defaultValue: 'Save Changes' })}
-            </Text>
-          </>
-        )}
-      </TouchableOpacity>
+        loading={saving}
+        style={styles.saveBtn}
+      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, paddingBottom: 40 },
-  section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 13, letterSpacing: 1, marginBottom: 20 },
-  inputContainer: { marginBottom: 20 },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
-  label: { fontSize: 14 },
-  input: {
-    height: 54,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    fontSize: 16,
-  },
-  saveBtn: {
-    height: 56,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    shadowColor: '#4F46E5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  saveBtnText: { fontSize: 16 },
+  content: { padding: 24, paddingBottom: 60 },
+  section: { marginBottom: 40 },
+  sectionTitle: { fontSize: 13, letterSpacing: 1.5, marginBottom: 24, textTransform: 'uppercase' },
+  inputContainer: { marginBottom: 28 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  label: { fontSize: 14, opacity: 0.8 },
+  saveBtn: { marginTop: 8 },
 });
+
+

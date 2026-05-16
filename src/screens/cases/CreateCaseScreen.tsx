@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, ArrowRight, Send, AlertCircle, RefreshCw } from 'lucide-react-native';
 import { useTheme } from '../../hooks/useTheme';
+import { palette } from '../../theme/colors';
 import { useAuth } from '../../supabase/AuthContext';
 import { createCase } from '../../api/cases';
 import { useSubmitCase } from '../../hooks/useSubmitCase';
@@ -24,6 +25,7 @@ import Step2Financial from './steps/Step2Financial';
 import Step3Evidence from './steps/Step3Evidence';
 import Step4Review from './steps/Step4Review';
 import { useTranslation } from 'react-i18next';
+import AppButton from '../../components/common/AppButton';
 
 const INITIAL_FORM = {
   title: '',
@@ -38,7 +40,7 @@ const INITIAL_FORM = {
 };
 
 export default function CreateCaseScreen({ navigation }: any) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { user } = useAuth();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(1);
@@ -204,14 +206,14 @@ export default function CreateCaseScreen({ navigation }: any) {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
         <TouchableOpacity onPress={() => currentStep > 1 ? setCurrentStep(s => s - 1) : navigation.goBack()}>
-          <ArrowLeft color={colors.text} size={22} />
+          <ArrowLeft color={colors.accent} size={22} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
           {t('cases.newCase')}
         </Text>
-        <Text style={[styles.stepCount, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+        <Text style={[styles.stepCount, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
           {currentStep}/4
         </Text>
       </View>
@@ -258,43 +260,23 @@ export default function CreateCaseScreen({ navigation }: any) {
         </View>
 
         {/* Navigation Buttons */}
-        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.background }]}>
+        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
           {currentStep < 4 ? (
-            <TouchableOpacity
-              style={[styles.nextButton, { backgroundColor: colors.primary }]}
+            <AppButton
+              title={currentStep === 2 ? t('buttons.continue') : t('buttons.next')}
               onPress={saveDraftAndNext}
-              disabled={isSavingDraft}
-              activeOpacity={0.85}
-            >
-              {isSavingDraft ? (
-                <ActivityIndicator color={colors.primaryForeground} />
-              ) : (
-                <>
-                  <Text style={[styles.nextButtonText, { color: colors.primaryForeground, fontFamily: typography.fontFamily.medium }]}>
-                    {currentStep === 2 ? t('buttons.continue') : t('buttons.next')}
-                  </Text>
-                  <ArrowRight color={colors.primaryForeground} size={18} />
-                </>
-              )}
-            </TouchableOpacity>
+              loading={isSavingDraft}
+              icon={<ArrowRight color={colors.textOnPrimary} size={18} />}
+              style={styles.nextButton}
+            />
           ) : (
-            <TouchableOpacity
-              style={[styles.nextButton, { backgroundColor: colors.accent }]}
+            <AppButton
+              title={t('createCase.submitForReview')}
               onPress={handleSubmit}
-              disabled={submitState === 'submitting'}
-              activeOpacity={0.85}
-            >
-              {submitState === 'submitting' ? (
-                <ActivityIndicator color={colors.accentForeground} />
-              ) : (
-                <>
-                  <Text style={[styles.nextButtonText, { color: colors.accentForeground, fontFamily: typography.fontFamily.medium }]}>
-                    {t('createCase.submitForReview')}
-                  </Text>
-                  <Send color={colors.accentForeground} size={18} />
-                </>
-              )}
-            </TouchableOpacity>
+              loading={submitState === 'submitting'}
+              icon={<Send color={colors.textOnPrimary} size={18} />}
+              style={styles.nextButton}
+            />
           )}
         </View>
       </KeyboardAvoidingView>
@@ -313,8 +295,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   headerTitle: { fontSize: 18 },
-  stepCount: { fontSize: 13 },
-  indicatorContainer: { paddingTop: 20, paddingHorizontal: 8 },
+  stepCount: { fontSize: 14 },
+  indicatorContainer: { paddingTop: 24, paddingHorizontal: 8 },
   content: { flex: 1, paddingHorizontal: 20 },
   footer: {
     padding: 20,
@@ -322,11 +304,7 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     height: 54,
-    borderRadius: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+    borderRadius: 12,
   },
-  nextButtonText: { fontSize: 16 },
 });
+

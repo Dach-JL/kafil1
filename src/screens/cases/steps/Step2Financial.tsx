@@ -9,9 +9,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
-
+import { palette } from '../../../theme/colors';
 import { useNavigation } from '@react-navigation/native';
-import { CreditCard, ExternalLink, AlertCircle } from 'lucide-react-native';
+import { CreditCard, ExternalLink, AlertCircle, Check } from 'lucide-react-native';
+import AppCard from '../../../components/common/AppCard';
+import AppInput from '../../../components/common/AppInput';
 
 interface Step2Props {
   data: {
@@ -35,43 +37,30 @@ const URGENCY_LEVELS = [
 ];
 
 export default function Step2Financial({ data, onChange, allProfileMethods, onToggleBank }: Step2Props) {
-  const { colors, typography } = useTheme();
+  const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
 
   const isSelected = (id: string) => data.bank_accounts.some(acc => acc.id === id);
 
-  const inputStyle = [
-    styles.input,
-    {
-      backgroundColor: colors.card,
-      color: colors.text,
-      borderColor: colors.border,
-      fontFamily: typography.fontFamily.regular,
-    },
-  ];
-
-  const labelStyle = [
-    styles.label,
-    { color: colors.text, fontFamily: typography.fontFamily.medium },
-  ];
-
   return (
-    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-      <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading }]}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
+      <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
         {t('createCase.fundingDetails', { defaultValue: 'Funding Details' })}
       </Text>
 
       {/* Target Amount */}
-      <Text style={labelStyle}>{t('createCase.fundingGoalLabel', { defaultValue: 'Funding Goal (USD) *' })}</Text>
-      <View style={[styles.amountRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.currency, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+      <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        {t('createCase.fundingGoalLabel', { defaultValue: 'Funding Goal (USD) *' })}
+      </Text>
+      <View style={[styles.amountRow, { backgroundColor: palette.navyLight, borderColor: colors.accent + '30' }]}>
+        <Text style={[styles.currency, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
           $
         </Text>
         <TextInput
-          style={[styles.amountInput, { color: colors.text, fontFamily: typography.fontFamily.bold }]}
+          style={[styles.amountInput, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}
           placeholder="0.00"
-          placeholderTextColor={colors.mutedForeground}
+          placeholderTextColor={colors.accent + '50'}
           value={data.target_amount}
           onChangeText={(v) => onChange('target_amount', v)}
           keyboardType="decimal-pad"
@@ -79,7 +68,9 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
       </View>
 
       {/* Urgency Level */}
-      <Text style={labelStyle}>{t('createCase.urgencyLabel', { defaultValue: 'Urgency Level *' })}</Text>
+      <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        {t('createCase.urgencyLabel', { defaultValue: 'Urgency Level *' })}
+      </Text>
       <View style={styles.urgencyRow}>
         {URGENCY_LEVELS.map(({ level, label, color }) => (
           <TouchableOpacity
@@ -88,96 +79,95 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
               styles.urgencyChip,
               {
                 backgroundColor:
-                  data.urgency_level === level ? color + '20' : colors.card,
+                  data.urgency_level === level ? color + '20' : palette.navyLight,
                 borderColor:
-                  data.urgency_level === level ? color : colors.border,
+                  data.urgency_level === level ? color : palette.navyLight,
               },
             ]}
             onPress={() => onChange('urgency_level', level)}
           >
-            <Text style={[styles.urgencyText, { color: data.urgency_level === level ? color : colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.urgencyText, { color: data.urgency_level === level ? color : colors.textInverse, opacity: data.urgency_level === level ? 1 : 0.6, fontFamily: typography.fontFamily.medium }]}>
               {t(`urgency.${label.toLowerCase()}`, { defaultValue: label })}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* Primary Payout Account (Read Only) */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, marginBottom: 12 }}>
-        <Text style={[styles.sectionTitle, { color: colors.primary, fontFamily: typography.fontFamily.heading, marginBottom: 0 }]}>
+      {/* Primary Payout Account */}
+      <View style={styles.payoutHeader}>
+        <Text style={[styles.payoutTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
           {t('createCase.payoutDestinations', { defaultValue: 'Payout Accounts' })}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }}>
+        <Text style={[styles.selectedCount, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
           {data.bank_accounts.length} {t('common.selected', { defaultValue: 'Selected' })}
         </Text>
       </View>
       
       {allProfileMethods.length > 0 ? (
-        <View style={{ gap: 12, marginBottom: 24 }}>
+        <View style={styles.methodsList}>
           {allProfileMethods.map((method) => (
             <TouchableOpacity 
               key={method.id}
-              style={[
-                styles.payoutCard, 
-                { 
-                  backgroundColor: colors.card, 
-                  borderColor: isSelected(method.id) ? colors.primary : colors.border,
-                  borderWidth: isSelected(method.id) ? 2 : 1
-                }
-              ]}
               onPress={() => onToggleBank(method)}
-              activeOpacity={0.7}
+              activeOpacity={0.8}
             >
-              <View style={styles.cardHeader}>
-                <View style={[styles.iconBox, { backgroundColor: isSelected(method.id) ? colors.primary + '15' : colors.secondary }]}>
-                  <CreditCard color={isSelected(method.id) ? colors.primary : colors.mutedForeground} size={20} />
+              <AppCard 
+                style={[
+                  styles.payoutCard, 
+                  isSelected(method.id) && { borderColor: colors.accent, borderWidth: 2 }
+                ]}
+              >
+                <View style={styles.cardHeader}>
+                  <View style={[styles.iconBox, { backgroundColor: colors.accent + '10' }]}>
+                    <CreditCard color={colors.accent} size={20} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.bankName, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
+                      {t(`banks.${method.bank_name.toLowerCase()}`, { defaultValue: method.bank_name })}
+                    </Text>
+                    <Text style={[styles.accNum, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
+                      {method.account_number}
+                    </Text>
+                    <Text style={[styles.accName, { color: colors.textSecondary, opacity: 0.8, fontSize: 12 }]}>
+                      {method.account_name}
+                    </Text>
+                  </View>
+                  <View style={[
+                    styles.checkbox, 
+                    { 
+                      backgroundColor: isSelected(method.id) ? colors.accent : 'transparent',
+                      borderColor: isSelected(method.id) ? colors.accent : palette.navyLight
+                    }
+                  ]}>
+                    {isSelected(method.id) && <Check color={colors.textOnPrimary} size={14} />}
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.bankName, { color: isSelected(method.id) ? colors.primary : colors.text, fontFamily: typography.fontFamily.bold }]}>
-                    {t(`banks.${method.bank_name.toLowerCase()}`, { defaultValue: method.bank_name })}
-                  </Text>
-                  <Text style={[styles.accNum, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
-                    {method.account_number}
-                  </Text>
-                  <Text style={[styles.accName, { color: colors.mutedForeground }]}>
-                    {method.account_name}
-                  </Text>
-                </View>
-                <View style={[
-                  styles.checkbox, 
-                  { 
-                    backgroundColor: isSelected(method.id) ? colors.primary : 'transparent',
-                    borderColor: isSelected(method.id) ? colors.primary : colors.border
-                  }
-                ]}>
-                  {isSelected(method.id) && <View style={styles.checkInner} />}
-                </View>
-              </View>
+              </AppCard>
             </TouchableOpacity>
           ))}
           
           <TouchableOpacity 
-            style={[styles.manageBtn, { borderTopColor: colors.border + '40' }]}
+            style={[styles.manageBtn, { borderTopColor: colors.textInverse + '20' }]}
             onPress={() => navigation.navigate('PaymentMethods')}
           >
-            <Text style={[styles.manageBtnText, { color: colors.mutedForeground, fontFamily: typography.fontFamily.medium }]}>
+            <Text style={[styles.manageBtnText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
               {t('profile.manageInSettings', { defaultValue: 'Manage in Account Settings' })}
             </Text>
-            <ExternalLink color={colors.mutedForeground} size={14} />
+            <ExternalLink color={colors.accent} size={14} />
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={[styles.errorCard, { backgroundColor: colors.error + '10', borderColor: colors.error }]}>
-          <AlertCircle color={colors.error} size={24} />
+        <View style={[styles.errorCard, { backgroundColor: '#fee2e2', borderColor: '#ef4444' }]}>
+          <AlertCircle color="#ef4444" size={24} />
           <View style={{ flex: 1 }}>
-            <Text style={[styles.errorTitle, { color: colors.error, fontFamily: typography.fontFamily.bold }]}>
+            <Text style={[styles.errorTitle, { color: '#991b1b', fontFamily: typography.fontFamily.bold }]}>
               {t('createCase.noPaymentMethod', { defaultValue: 'No Payout Account Found' })}
             </Text>
-            <Text style={[styles.errorDesc, { color: colors.error }]}>
+            <Text style={[styles.errorDesc, { color: '#991b1b' }]}>
               {t('createCase.mustAddPaymentMethod', { defaultValue: 'You must add a payout account to your profile before creating a case.' })}
             </Text>
             <TouchableOpacity 
-              style={[styles.addBtn, { backgroundColor: colors.error }]}
+              style={[styles.addBtn, { backgroundColor: '#ef4444' }]}
               onPress={() => navigation.navigate('PaymentMethods')}
             >
               <Text style={{ color: '#fff', fontWeight: '600' }}>{t('buttons.addNow', { defaultValue: 'Add in Profile' })}</Text>
@@ -187,25 +177,29 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
       )}
 
       {/* Deadline */}
-      <Text style={labelStyle}>{t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}</Text>
-      <TextInput
-        style={inputStyle}
+      <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        {t('createCase.deadlineLabel', { defaultValue: 'Deadline (optional)' })}
+      </Text>
+      <AppInput
         placeholder={t('createCase.deadlinePlaceholder', { defaultValue: 'YYYY-MM-DD (e.g. 2026-06-01)' })}
-        placeholderTextColor={colors.mutedForeground}
         value={data.deadline}
         onChangeText={(v) => onChange('deadline', v)}
         keyboardType="numbers-and-punctuation"
         maxLength={10}
       />
 
+      <View style={{ height: 16 }} />
+
       {/* Anonymous Toggle */}
-      <Text style={labelStyle}>{t('createCase.anonymityLabel', { defaultValue: 'Anonymity' })}</Text>
-      <View style={[styles.toggleRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        {t('createCase.anonymityLabel', { defaultValue: 'Anonymity' })}
+      </Text>
+      <View style={[styles.toggleRow, { backgroundColor: palette.navyLight, borderColor: colors.accent + '20' }]}>
         <View style={styles.toggleInfo}>
-          <Text style={[styles.toggleTitle, { color: colors.text, fontFamily: typography.fontFamily.medium }]}>
+          <Text style={[styles.toggleTitle, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
             {t('createCase.postAnonymously', { defaultValue: 'Post Anonymously' })}
           </Text>
-          <Text style={[styles.toggleDesc, { color: colors.mutedForeground, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.toggleDesc, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
             {t('createCase.anonymousDesc', { defaultValue: 'Your name will be hidden from the public feed' })}
           </Text>
         </View>
@@ -213,7 +207,7 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
           style={[
             styles.toggle,
             {
-              backgroundColor: data.is_anonymous ? colors.primary : colors.muted,
+              backgroundColor: data.is_anonymous ? colors.accent : colors.background,
             },
           ]}
           onPress={() => onChange('is_anonymous', !data.is_anonymous)}
@@ -222,7 +216,7 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
             style={[
               styles.toggleThumb,
               {
-                backgroundColor: colors.primaryForeground,
+                backgroundColor: colors.textOnPrimary,
                 transform: [{ translateX: data.is_anonymous ? 20 : 2 }],
               },
             ]}
@@ -234,67 +228,44 @@ export default function Step2Financial({ data, onChange, allProfileMethods, onTo
 }
 
 const styles = StyleSheet.create({
-  sectionTitle: { fontSize: 20, marginBottom: 20 },
-  label: { fontSize: 14, marginBottom: 6, marginLeft: 2 },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    marginBottom: 16,
-  },
+  container: { paddingBottom: 40 },
+  sectionTitle: { fontSize: 20, marginBottom: 24 },
+  label: { fontSize: 14, marginBottom: 8, marginLeft: 2 },
   amountRow: {
-    height: 60,
+    height: 64,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    marginBottom: 20,
+    paddingHorizontal: 16,
+    marginBottom: 24,
   },
-  currency: { fontSize: 22, marginRight: 6 },
-  amountInput: { flex: 1, fontSize: 26 },
-  urgencyRow: { flexDirection: 'row', gap: 8, marginBottom: 20, flexWrap: 'wrap' },
+  currency: { fontSize: 22, marginRight: 8 },
+  amountInput: { flex: 1, fontSize: 28 },
+  urgencyRow: { flexDirection: 'row', gap: 8, marginBottom: 24, flexWrap: 'wrap' },
   urgencyChip: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1.5,
   },
   urgencyText: { fontSize: 13 },
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 16,
+  payoutHeader: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginTop: 8, 
+    marginBottom: 16 
   },
-  toggleInfo: { flex: 1 },
-  toggleTitle: { fontSize: 14, marginBottom: 2 },
-  toggleDesc: { fontSize: 12 },
-  toggle: {
-    width: 44,
-    height: 26,
-    borderRadius: 13,
-    justifyContent: 'center',
-  },
-  toggleThumb: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-  },
+  payoutTitle: { fontSize: 18 },
+  selectedCount: { fontSize: 12 },
+  methodsList: { gap: 12, marginBottom: 24 },
   payoutCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    marginBottom: 24,
-    overflow: 'hidden',
+    marginBottom: 12,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
     gap: 12,
   },
   iconBox: {
@@ -305,8 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bankName: { fontSize: 16, marginBottom: 2 },
-  accNum: { fontSize: 15 },
-  accName: { fontSize: 13, marginTop: 4 },
+  accNum: { fontSize: 14 },
   checkbox: {
     width: 24,
     height: 24,
@@ -315,21 +285,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 2,
-    backgroundColor: '#fff',
-  },
   manageBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderTopWidth: 1,
-    gap: 6,
+    gap: 8,
+    marginTop: 4,
   },
-  manageBtnText: { fontSize: 12 },
+  manageBtnText: { fontSize: 13 },
   errorCard: {
     flexDirection: 'row',
     padding: 16,
@@ -346,4 +311,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
   },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  toggleInfo: { flex: 1 },
+  toggleTitle: { fontSize: 14, marginBottom: 4 },
+  toggleDesc: { fontSize: 12 },
+  toggle: {
+    width: 44,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: 'center',
+  },
+  toggleThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
 });
+
