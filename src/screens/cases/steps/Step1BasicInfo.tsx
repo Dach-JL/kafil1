@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   categoryText: { fontSize: 14 },
   textareaContainer: { marginBottom: 32 },
-  textarea: { height: 160, paddingTop: 16, textAlignVertical: 'top' },
+  textarea: { textAlignVertical: 'top' },
 });
 
 

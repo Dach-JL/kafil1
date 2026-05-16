@@ -6,7 +6,8 @@ import {
   StyleSheet, 
   TextInputProps, 
   ViewStyle,
-  TextStyle
+  TextStyle,
+  Platform,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { palette } from '../../theme/colors';
@@ -23,6 +24,8 @@ export default function AppInput({
   error, 
   containerStyle, 
   inputStyle,
+  multiline,
+  numberOfLines,
   ...props 
 }: AppInputProps) {
   const { colors, typography, spacing } = useTheme();
@@ -41,6 +44,8 @@ export default function AppInput({
           backgroundColor: palette.navyLight, 
           borderColor: error ? colors.error : (isFocused ? colors.accent : palette.navyLight),
         },
+        // For multiline: remove fixed height, use minHeight instead
+        multiline ? styles.inputContainerMultiline : null,
         error ? styles.inputError : null,
         isFocused ? { borderWidth: 1.5 } : null
       ]}>
@@ -48,10 +53,15 @@ export default function AppInput({
           style={[
             styles.input, 
             { color: colors.textInverse, fontFamily: typography.fontFamily.regular },
+            // For multiline: text at top, auto-grow
+            multiline ? styles.inputMultiline : null,
             inputStyle
           ]}
           placeholderTextColor="rgba(255, 255, 255, 0.4)"
-
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+          textAlignVertical={multiline ? 'top' : 'center'}
+          scrollEnabled={false}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...props}
@@ -83,9 +93,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: 'center',
   },
+  inputContainerMultiline: {
+    height: undefined,     // Remove fixed height
+    minHeight: 120,        // Minimum visible area
+    paddingVertical: 12,
+    justifyContent: 'flex-start',
+  },
   input: {
     fontSize: 15,
     height: '100%',
+  },
+  inputMultiline: {
+    height: undefined,     // Remove fixed height so it auto-grows
+    minHeight: 96,         // Minimum text area
+    paddingTop: Platform.OS === 'ios' ? 0 : 4,
+    lineHeight: 22,
   },
   inputError: {
     borderWidth: 1,
@@ -96,4 +118,3 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
-
