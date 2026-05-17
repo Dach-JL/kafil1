@@ -132,9 +132,7 @@ export default function CreateCaseScreen({ navigation }: any) {
       }
     }
     if (currentStep === 3) {
-      if (form.evidencePaths.length === 0) {
-        Alert.alert('Required', 'Please upload at least one supporting document.'); return false;
-      }
+      // Evidence is now optional
     }
     return true;
   }

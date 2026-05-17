@@ -43,7 +43,7 @@ export default function Step3Evidence({ userId, caseId, evidencePaths, onEvidenc
         bucket="case-evidence"
         userId={userId}
         caseId={caseId}
-        label={t('createCase.primaryEvidence', { defaultValue: 'Primary Evidence Document *' })}
+        label={t('createCase.primaryEvidence', { defaultValue: 'Primary Evidence Document (optional)' })}
         onUploadComplete={onEvidenceUploaded}
         existingPath={evidencePaths[0]}
       />
