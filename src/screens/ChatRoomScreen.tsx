@@ -21,6 +21,8 @@ import { getChatMessages, sendMessage, reportChatRoom, ChatMessage } from '../ap
 import { supabase } from '../supabase/supabaseClient';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import PromptModal from '../components/common/PromptModal';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 export default function ChatRoomScreen({ route, navigation }: any) {
   const { roomId, recipientName } = route.params;
@@ -31,7 +33,9 @@ export default function ChatRoomScreen({ route, navigation }: any) {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState('');
   const [sending, setSending] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     navigation.setOptions({ 
@@ -90,26 +94,21 @@ export default function ChatRoomScreen({ route, navigation }: any) {
   };
 
   const handleReport = () => {
-    Alert.prompt(
-      t('chat.reportConversation', { defaultValue: 'Report Conversation' }),
-      t('chat.reportPrompt', { defaultValue: 'Please describe why you are reporting this chat. This will allow admins to review the messages for safety.' }),
-      [
-        { text: t('buttons.cancel'), style: 'cancel' },
-        { 
-          text: t('chat.report', { defaultValue: 'Report' }), 
-          style: 'destructive',
-          onPress: async (reason: string | undefined) => {
-            if (!reason) return;
-            try {
-              await reportChatRoom(roomId, reason);
-              Alert.alert(t('chat.reported', { defaultValue: 'Reported' }), t('chat.reportedMessage', { defaultValue: 'The conversation has been reported to admins for review.' }));
-            } catch (err: any) {
-              Alert.alert(t('common.error'), err.message);
-            }
-          }
-        }
-      ]
-    );
+    setReportModalVisible(true);
+  };
+
+  const submitReport = async (reason: string) => {
+    if (!reason.trim()) {
+      Alert.alert(t('common.required', { defaultValue: 'Required' }), t('chat.reportReasonRequired', { defaultValue: 'You must provide a reason.' }));
+      return;
+    }
+    setReportModalVisible(false);
+    try {
+      await reportChatRoom(roomId, reason);
+      Alert.alert(t('chat.reported', { defaultValue: 'Reported' }), t('chat.reportedMessage', { defaultValue: 'The conversation has been reported to admins for review.' }));
+    } catch (err: any) {
+      Alert.alert(t('common.error'), err.message);
+    }
   };
 
   const renderItem = ({ item }: { item: ChatMessage }) => {
@@ -153,8 +152,8 @@ export default function ChatRoomScreen({ route, navigation }: any) {
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      behavior="padding"
+      keyboardVerticalOffset={headerHeight}
     >
       {/* Info Bar */}
       <View style={[styles.infoBar, { borderBottomColor: palette.navyLight }]}>
@@ -218,6 +217,18 @@ export default function ChatRoomScreen({ route, navigation }: any) {
           )}
         </TouchableOpacity>
       </View>
+
+      <PromptModal
+        visible={reportModalVisible}
+        title={t('chat.reportConversation', { defaultValue: 'Report Conversation' })}
+        message={t('chat.reportPrompt', { defaultValue: 'Please describe why you are reporting this chat. This will allow admins to review the messages for safety.' })}
+        placeholder={t('chat.reportReasonPlaceholder', { defaultValue: 'Reason for reporting...' })}
+        cancelText={t('buttons.cancel', { defaultValue: 'Cancel' })}
+        submitText={t('chat.report', { defaultValue: 'Report' })}
+        submitStyle="destructive"
+        onCancel={() => setReportModalVisible(false)}
+        onSubmit={submitReport}
+      />
     </KeyboardAvoidingView>
   );
 }

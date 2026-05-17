@@ -19,6 +19,7 @@ import { Check, X, FileText, Download, ArrowLeft } from 'lucide-react-native';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { palette } from '../../theme/colors';
+import PromptModal from '../../components/common/PromptModal';
 
 interface Props {
   route: any;
@@ -34,6 +35,7 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
   const [evidenceFiles, setEvidenceFiles] = useState<{ name: string; url: string }[]>([]);
   const [loadingEvidence, setLoadingEvidence] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [rejectModalVisible, setRejectModalVisible] = useState(false);
 
   useEffect(() => {
     async function loadEvidence() {
@@ -82,34 +84,26 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
     );
   }
 
-  async function handleReject() {
-    Alert.prompt(
-      t('admin.rejectCaseTitle', { defaultValue: 'Reject Case' }),
-      t('admin.rejectCasePrompt', { defaultValue: 'Please provide a reason for rejection. This will be visible to the case owner.' }),
-      [
-        { text: t('buttons.cancel'), style: 'cancel' },
-        {
-          text: t('buttons.reject', { defaultValue: 'Reject' }),
-          style: 'destructive',
-          onPress: async (reason: string | undefined) => {
-            if (!reason?.trim()) {
-              Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
-              return;
-            }
-            setSubmitting(true);
-            try {
-              await rejectCase(caseInfo.id, reason.trim());
-              Alert.alert(t('admin.caseRejectedTitle', { defaultValue: 'Case Rejected' }), t('admin.caseRejectedMsg', { defaultValue: 'The case owner will be notified to make corrections.' }));
-              navigation.goBack();
-            } catch (err: any) {
-              Alert.alert(t('common.error'), err.message);
-            } finally {
-              setSubmitting(false);
-            }
-          }
-        }
-      ]
-    );
+  function handleReject() {
+    setRejectModalVisible(true);
+  }
+
+  async function submitReject(reason: string) {
+    if (!reason.trim()) {
+      Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
+      return;
+    }
+    setRejectModalVisible(false);
+    setSubmitting(true);
+    try {
+      await rejectCase(caseInfo.id, reason.trim());
+      Alert.alert(t('admin.caseRejectedTitle', { defaultValue: 'Case Rejected' }), t('admin.caseRejectedMsg', { defaultValue: 'The case owner will be notified to make corrections.' }));
+      navigation.goBack();
+    } catch (err: any) {
+      Alert.alert(t('common.error'), err.message);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const URGENCY_LABELS = ['', t('urgency.low', {defaultValue:'Low'}), t('urgency.medium', {defaultValue:'Medium'}), t('urgency.high', {defaultValue:'High'}), t('urgency.critical', {defaultValue:'Critical'}), t('urgency.emergency', {defaultValue:'Emergency'})];
@@ -222,6 +216,18 @@ export default function AdminCaseVerificationScreen({ route, navigation }: Props
           )}
         </TouchableOpacity>
       </View>
+
+      <PromptModal
+        visible={rejectModalVisible}
+        title={t('admin.rejectCaseTitle', { defaultValue: 'Reject Case' })}
+        message={t('admin.rejectCasePrompt', { defaultValue: 'Please provide a reason for rejection. This will be visible to the case owner.' })}
+        placeholder={t('admin.rejectionReasonPlaceholder', { defaultValue: 'Reason for rejection...' })}
+        cancelText={t('buttons.cancel', { defaultValue: 'Cancel' })}
+        submitText={t('buttons.reject', { defaultValue: 'Reject' })}
+        submitStyle="destructive"
+        onCancel={() => setRejectModalVisible(false)}
+        onSubmit={submitReject}
+      />
     </SafeAreaView>
   );
 }

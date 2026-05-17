@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { ShieldAlert, ArrowLeft, Image as ImageIcon, Fingerprint, ExternalLink } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { palette } from '../../theme/colors';
+import PromptModal from '../../components/common/PromptModal';
 
 export default function AdminContributionDetailScreen({ route, navigation }: any) {
   const { contribution } = route.params as { contribution: Contribution };
@@ -29,6 +30,7 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [rejectModalVisible, setRejectModalVisible] = useState(false);
 
   useEffect(() => {
     async function fetchImage() {
@@ -73,36 +75,27 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
     );
   };
 
-  const handleReject = async () => {
-    Alert.prompt(
-      t('admin.rejectContributionTitle', { defaultValue: 'Reject Contribution' }),
-      t('admin.rejectContributionPrompt', { defaultValue: 'Please provide a reason for rejecting this payment proof:' }),
-      [
-        { text: t('buttons.cancel'), style: 'cancel' },
-        {
-          text: t('buttons.reject', { defaultValue: 'Reject' }),
-          style: 'destructive',
-          onPress: async (reason: string | undefined) => {
-            if (!reason?.trim()) {
-              Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
-              return;
-            }
-            setProcessing(true);
-            try {
-              await rejectContribution(contribution.id, reason);
-              Alert.alert(t('common.success', { defaultValue: 'Rejected' }), t('admin.contributionRejected', { defaultValue: 'The contribution was rejected.' }), [
-                { text: 'OK', onPress: () => navigation.goBack() },
-              ]);
-            } catch (err: any) {
-              Alert.alert(t('common.error'), err.message || 'Failed to reject contribution.');
-            } finally {
-              setProcessing(false);
-            }
-          },
-        },
-      ],
-      'plain-text'
-    );
+  const handleReject = () => {
+    setRejectModalVisible(true);
+  };
+
+  const submitReject = async (reason: string) => {
+    if (!reason.trim()) {
+      Alert.alert(t('common.required', { defaultValue: 'Required' }), t('admin.rejectionReasonRequired', { defaultValue: 'You must provide a rejection reason.' }));
+      return;
+    }
+    setRejectModalVisible(false);
+    setProcessing(true);
+    try {
+      await rejectContribution(contribution.id, reason);
+      Alert.alert(t('common.success', { defaultValue: 'Rejected' }), t('admin.contributionRejected', { defaultValue: 'The contribution was rejected.' }), [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    } catch (err: any) {
+      Alert.alert(t('common.error'), err.message || 'Failed to reject contribution.');
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
@@ -222,6 +215,18 @@ export default function AdminContributionDetailScreen({ route, navigation }: any
           )}
         </TouchableOpacity>
       </View>
+
+      <PromptModal
+        visible={rejectModalVisible}
+        title={t('admin.rejectContributionTitle', { defaultValue: 'Reject Contribution' })}
+        message={t('admin.rejectContributionPrompt', { defaultValue: 'Please provide a reason for rejecting this payment proof:' })}
+        placeholder={t('admin.rejectionReasonPlaceholder', { defaultValue: 'Reason for rejection...' })}
+        cancelText={t('buttons.cancel', { defaultValue: 'Cancel' })}
+        submitText={t('buttons.reject', { defaultValue: 'Reject' })}
+        submitStyle="destructive"
+        onCancel={() => setRejectModalVisible(false)}
+        onSubmit={submitReject}
+      />
     </SafeAreaView>
   );
 }
