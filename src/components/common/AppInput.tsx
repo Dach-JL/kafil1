@@ -8,9 +8,11 @@ import {
   ViewStyle,
   TextStyle,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import { useTheme } from '../../hooks/useTheme';
 import { palette } from '../../theme/colors';
+import { Eye, EyeOff } from 'lucide-react-native';
 
 interface AppInputProps extends TextInputProps {
   label?: string;
@@ -26,10 +28,14 @@ export default function AppInput({
   inputStyle,
   multiline,
   numberOfLines,
+  secureTextEntry,
   ...props 
 }: AppInputProps) {
   const { colors, typography, spacing } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const isPasswordInput = secureTextEntry;
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -64,8 +70,23 @@ export default function AppInput({
           scrollEnabled={false}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          secureTextEntry={isPasswordInput ? !isPasswordVisible : undefined}
           {...props}
         />
+        {isPasswordInput && (
+          <TouchableOpacity
+            style={styles.eyeButton}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            {isPasswordVisible ? (
+              <EyeOff size={20} color="rgba(255, 255, 255, 0.6)" />
+            ) : (
+              <Eye size={20} color="rgba(255, 255, 255, 0.6)" />
+            )}
+          </TouchableOpacity>
+        )}
       </View>
       {error && (
         <Text style={[styles.errorText, { color: colors.error, fontFamily: typography.fontFamily.medium }]}>
@@ -91,7 +112,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     paddingHorizontal: 16,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   inputContainerMultiline: {
     height: undefined,     // Remove fixed height
@@ -100,6 +122,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   input: {
+    flex: 1,
     fontSize: 15,
     height: '100%',
   },
@@ -117,4 +140,10 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginLeft: 4,
   },
+  eyeButton: {
+    paddingLeft: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
