@@ -105,46 +105,6 @@ export default function RegisterScreen({ navigation }: any) {
             />
           </View>
 
-          <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium, marginTop: 8 }]}>
-            {t('auth.roleLabel', { defaultValue: 'I want to...' })}
-          </Text>
-          <View style={styles.roleContainer}>
-            <TouchableOpacity 
-              style={[
-                styles.roleButton, 
-                { 
-                  borderColor: role === 'contributor' ? colors.accent : palette.navyLight,
-                  backgroundColor: role === 'contributor' ? colors.accent + '15' : palette.navyLight 
-                }
-              ]}
-              onPress={() => setRole('contributor')}
-              activeOpacity={0.7}
-            >
-              <Text style={[
-                styles.roleText, 
-                { color: role === 'contributor' ? colors.accent : colors.textInverse, fontFamily: typography.fontFamily.bold }
-              ]}>{t('auth.contributor', { defaultValue: 'Support' })}</Text>
-              <Text style={[styles.roleDesc, { color: colors.textInverse, opacity: 0.6 }]}>{t('auth.contributorDesc', { defaultValue: 'I want to fund cases' })}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[
-                styles.roleButton, 
-                { 
-                  borderColor: role === 'owner' ? colors.accent : palette.navyLight,
-                  backgroundColor: role === 'owner' ? colors.accent + '15' : palette.navyLight 
-                }
-              ]}
-              onPress={() => setRole('owner')}
-              activeOpacity={0.7}
-            >
-              <Text style={[
-                styles.roleText, 
-                { color: role === 'owner' ? colors.accent : colors.textInverse, fontFamily: typography.fontFamily.bold }
-              ]}>{t('auth.caseOwner', { defaultValue: 'Organize' })}</Text>
-              <Text style={[styles.roleDesc, { color: colors.textInverse, opacity: 0.6 }]}>{t('auth.caseOwnerDesc', { defaultValue: 'I need help for a case' })}</Text>
-            </TouchableOpacity>
-          </View>
 
           <AppButton 
             title={t('auth.signUp', { defaultValue: 'Create Account' })}
