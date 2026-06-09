@@ -68,7 +68,11 @@ export default function LandingScreen({ navigation }: any) {
       <Pressable style={{ flex: 1 }} onPress={() => setShowLangPicker(false)}>
         <View style={styles.content}>
           <View style={styles.headerGroup}>
-            <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            <Text 
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}
+            >
               {t('common.appName', { defaultValue: 'Kafil' })}
             </Text>
             <View style={[styles.divider, { backgroundColor: colors.accent }]} />
@@ -149,12 +153,14 @@ const styles = StyleSheet.create({
   headerGroup: {
     alignItems: 'center',
     marginBottom: 80,
+    width: '100%',
   },
   title: {
     fontSize: 72,
     letterSpacing: -2,
     marginBottom: 16,
     textAlign: 'center',
+    width: '100%',
   },
   divider: {
     width: 60,
