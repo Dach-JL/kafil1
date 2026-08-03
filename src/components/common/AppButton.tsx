@@ -94,7 +94,7 @@ export default function AppButton({
 const styles = StyleSheet.create({
   button: {
     height: 56, // Slightly taller for premium feel
-    borderRadius: 16, // More rounded for modern look
+    borderRadius: 28, // Fully rounded pill shape for CharityTrust theme
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.xl,

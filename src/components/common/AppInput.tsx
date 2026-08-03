@@ -47,8 +47,8 @@ export default function AppInput({
       <View style={[
         styles.inputContainer,
         { 
-          backgroundColor: palette.navyLight, 
-          borderColor: error ? colors.error : (isFocused ? colors.accent : palette.navyLight),
+          backgroundColor: colors.surface, 
+          borderColor: error ? colors.error : (isFocused ? colors.accent : colors.border),
         },
         // For multiline: remove fixed height, use minHeight instead
         multiline ? styles.inputContainerMultiline : null,
@@ -58,12 +58,12 @@ export default function AppInput({
         <TextInput
           style={[
             styles.input, 
-            { color: colors.textInverse, fontFamily: typography.fontFamily.regular },
+            { color: colors.textPrimary, fontFamily: typography.fontFamily.regular },
             // For multiline: text at top, auto-grow
             multiline ? styles.inputMultiline : null,
             inputStyle
           ]}
-          placeholderTextColor="rgba(255, 255, 255, 0.4)"
+          placeholderTextColor={colors.textSecondary + '80'}
           multiline={multiline}
           numberOfLines={numberOfLines}
           textAlignVertical={multiline ? 'top' : 'center'}
@@ -81,9 +81,9 @@ export default function AppInput({
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             {isPasswordVisible ? (
-              <EyeOff size={20} color="rgba(255, 255, 255, 0.6)" />
+              <EyeOff size={20} color={colors.textSecondary} />
             ) : (
-              <Eye size={20} color="rgba(255, 255, 255, 0.6)" />
+              <Eye size={20} color={colors.textSecondary} />
             )}
           </TouchableOpacity>
         )}

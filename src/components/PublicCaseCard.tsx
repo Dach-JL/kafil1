@@ -31,9 +31,9 @@ export default function PublicCaseCard({ data, onPress, style }: Props) {
           </View>
           
           {(data.status === 'VERIFIED' || data.status === 'ACTIVE_FUNDING') && (
-            <View style={[styles.statusBadge, { backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: 'rgba(34, 197, 94, 0.2)' }]}>
-              <ShieldCheck color="#22C55E" size={12} />
-              <Text style={[styles.statusText, { color: '#22C55E', fontFamily: typography.fontFamily.bold }]}>
+            <View style={[styles.statusBadge, { backgroundColor: colors.success + '15', borderColor: colors.success + '25' }]}>
+              <ShieldCheck color={colors.success} size={12} />
+              <Text style={[styles.statusText, { color: colors.success, fontFamily: typography.fontFamily.bold }]}>
                 {t('statuses.VERIFIED')}
               </Text>
             </View>

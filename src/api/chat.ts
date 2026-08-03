@@ -109,7 +109,7 @@ export async function getOrCreateChatRoom(caseId: string, otherUserId: string): 
   if (searchError) throw searchError;
 
   if (existingRooms && existingRooms.length > 0) {
-    const roomIds = existingRooms.map(r => r.room_id);
+    const roomIds = existingRooms.map((r: any) => r.room_id);
     
     // Find a room in those roomIds that also has the other user and the same caseId
     const { data: matchingRooms, error: matchError } = await supabase

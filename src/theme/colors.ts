@@ -1,43 +1,46 @@
 export const palette = {
-  gold: '#D4AF37',       // Metallic Gold
-  goldLight: '#F5E6BE',  // Light Gold for tints
-  goldDark: '#996515',   // Golden Brown
-  navy: '#0A1128',       // Deep Navy Background
-  navyLight: '#1C2541',  // Lighter Navy for surfaces
-  white: '#FFFFFF',      // Surface White
-  black: '#1A1A1A',      // Dark Text
-  gray: '#94A3B8',       // Muted Gray
-  border: '#1E293B',     // Dark Border
-  warmTint: '#FFF9F0',   // Light warm tint
+  gold: '#C89B3C',       // CharityTrust Warm Gold
+  goldLight: 'rgba(200, 155, 60, 0.15)', // Light Gold tint
+  goldDark: '#A87E2A',   // Darker gold
+  goldBadgeBg: '#F5E6BE', // Gold badge background
+  cream: '#FFF5E6',      // Main Screen Background
+  creamLight: '#FFF9F0',  // Light warm tint for sections
+  white: '#FFFFFF',      // Card/Surface backgrounds
+  navy: '#0F1B2D',       // Dark Navy for text and hero cards
+  navyLight: '#1C2541',  // Muted navy
+  gray: '#6B7280',       // Muted text gray
+  grayLight: '#F3F4F6',  // Light gray for fields/tracks
 };
 
 export const colors = {
   // Brand Tokens
   primary: palette.gold,
   primaryDark: palette.goldDark,
-  background: palette.navy,
-  surface: palette.navyLight,
+  background: palette.cream,
+  surface: palette.white,
   accent: palette.gold,
   
   // Text Tokens
-  textPrimary: palette.white,           // Default text for navy theme
-  textSecondary: '#94A3B8',             // Muted text
-  textOnPrimary: palette.white,         // For primary buttons
-  textInverse: palette.white,           // Consistent inverse
+  textPrimary: palette.navy,            // Dark navy text on cream/white
+  textSecondary: palette.gray,          // Muted gray text
+  textOnPrimary: palette.white,         // White text on primary buttons
+  textInverse: palette.navy,            // Matching dark text for compatibility
   textAccent: palette.gold,             // Gold highlights
+  textOnDark: palette.white,            // White text on navy background sections
   
   // UI Elements
-  border: '#334155',                    // Refined border for navy
-  cardBackground: palette.navyLight,
-  evidenceBackground: 'rgba(245, 230, 190, 0.05)', // Subtle gold tint on dark
+  border: palette.goldLight,            // Gold-tinted border
+  cardBackground: palette.white,
+  evidenceBackground: palette.creamLight,
   
   // Status
-  success: '#22C55E',
-  error: '#EF4444',
-  warning: '#F59E0B',
+  success: '#2D6A4F',                   // Humanitarian Deep Green
+  error: '#B91C1C',                     // Humanitatian Deep Red
+  warning: '#D97706',
 
   // Navigation
-  tabIconDefault: '#64748B',
+  tabIconDefault: '#9CA3AF',
   tabIconSelected: palette.gold,
 };
+
 

@@ -7,6 +7,7 @@ export const useTheme = () => {
     colors,
     spacing,
     typography,
-    isDark: true, // Always dark as per the "deep navy" requirement
+    isDark: false, // Inverted to light cream theme
   };
 };
+

@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
-import { palette } from '../../theme/colors';
 import { supabase } from '../../supabase/supabaseClient';
+import { FolderHeart } from 'lucide-react-native';
 import AppInput from '../../components/common/AppInput';
 import AppButton from '../../components/common/AppButton';
+import AppCard from '../../components/common/AppCard';
 
 export default function RegisterScreen({ navigation }: any) {
   const { colors, typography, spacing } = useTheme();
@@ -26,8 +27,8 @@ export default function RegisterScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   async function signUpWithEmail() {
-    if (!name || !email || !password) {
-      Alert.alert(t('common.error'), t('auth.fillAllFields'));
+    if (!name.trim() || !email.trim() || !password) {
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), t('auth.fillAllFields', { defaultValue: 'Please fill in all fields' }));
       return;
     }
 
@@ -37,16 +38,16 @@ export default function RegisterScreen({ navigation }: any) {
       password: password,
       options: {
         data: {
-          name: name,
+          name: name.trim(),
           role: role,
         },
       },
     });
 
     if (error) {
-      Alert.alert(t('common.error'), error.message);
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), error.message);
     } else {
-      Alert.alert(t('common.success'), t('auth.verificationSent'));
+      Alert.alert(t('common.success', { defaultValue: 'Success' }), t('auth.verificationSent', { defaultValue: 'Verification email sent. Please check your inbox.' }));
       navigation.navigate('Login');
     }
     setLoading(false);
@@ -57,73 +58,153 @@ export default function RegisterScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={[styles.heading, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-            {t('auth.registerHeading', { defaultValue: 'Join Kafil' })}
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Top Branding Header */}
+        <View style={styles.brandingHeader}>
+          <View style={[styles.logoCircle, { backgroundColor: colors.primary }]}>
+            <FolderHeart color={colors.surface} size={18} />
+          </View>
+          <View style={styles.brandingText}>
+            <Text style={[styles.brandTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              CharityTrust
+            </Text>
+            <Text style={[styles.brandSubtitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+              KAAFILUL YATIIM
+            </Text>
+          </View>
+        </View>
+
+        {/* Create Account Heading */}
+        <View style={styles.welcomeSection}>
+          <Text style={[styles.heading, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            Create account
           </Text>
-          <Text style={[styles.subheading, { color: colors.textInverse, opacity: 0.7, fontFamily: typography.fontFamily.regular }]}>
-            {t('auth.registerSubheading', { defaultValue: 'Create an account to start making an impact' })}
+          <Text style={[styles.subheading, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Join with a profile built for verified giving, evidence, and responsible case submission.
           </Text>
         </View>
 
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
-              {t('auth.fullNameLabel', { defaultValue: 'Full Name' })}
+        {/* Input Form Card */}
+        <AppCard style={styles.formCard}>
+          {/* Custom Pill Role Selector */}
+          <View style={styles.roleWrapper}>
+            <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+              I want to join as
+            </Text>
+            <View style={styles.roleContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.roleButton,
+                  role === 'contributor'
+                    ? { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary }
+                    : { backgroundColor: 'transparent', borderColor: colors.border }
+                ]}
+                onPress={() => setRole('contributor')}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.roleText,
+                    {
+                      color: role === 'contributor' ? colors.surface : colors.textPrimary,
+                      fontFamily: typography.fontFamily.bold
+                    }
+                  ]}
+                >
+                  Donor
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.roleButton,
+                  role === 'owner'
+                    ? { backgroundColor: colors.textPrimary, borderColor: colors.textPrimary }
+                    : { backgroundColor: 'transparent', borderColor: colors.border }
+                ]}
+                onPress={() => setRole('owner')}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.roleText,
+                    {
+                      color: role === 'owner' ? colors.surface : colors.textPrimary,
+                      fontFamily: typography.fontFamily.bold
+                    }
+                  ]}
+                >
+                  Case owner
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Form Fields */}
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+              Full name
             </Text>
             <AppInput
-              placeholder={t('auth.fullNamePlaceholder', { defaultValue: 'John Doe' })}
-              onChangeText={(text) => setName(text)}
+              placeholder="John Doe"
+              onChangeText={setName}
               value={name}
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
-              {t('auth.emailLabel', { defaultValue: 'Email Address' })}
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+              Email address
             </Text>
             <AppInput
-              placeholder={t('auth.emailPlaceholder', { defaultValue: 'name@example.com' })}
-              onChangeText={(text) => setEmail(text)}
+              placeholder="name@example.com"
+              onChangeText={setEmail}
               value={email}
-              autoCapitalize={'none'}
-              keyboardType={'email-address'}
+              autoCapitalize="none"
+              keyboardType="email-address"
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
-              {t('auth.passwordLabel', { defaultValue: 'Password' })}
+          <View style={styles.inputGroup}>
+            <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+              Password
             </Text>
             <AppInput
-              placeholder={t('auth.passwordPlaceholder', { defaultValue: '••••••••' })}
-              onChangeText={(text) => setPassword(text)}
+              placeholder="••••••••"
+              onChangeText={setPassword}
               value={password}
               secureTextEntry={true}
-              autoCapitalize={'none'}
+              autoCapitalize="none"
             />
           </View>
 
-
           <AppButton 
-            title={t('auth.signUp', { defaultValue: 'Create Account' })}
+            title="Create account"
             onPress={() => signUpWithEmail()}
             loading={loading}
-            style={styles.button}
+            style={styles.signUpButton}
           />
+        </AppCard>
 
-          <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: colors.textInverse, opacity: 0.6 }]}>
-              {t('auth.haveAccount', { defaultValue: 'Already have an account?' })}{' '}
-            </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text style={[styles.link, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-                {t('auth.signIn', { defaultValue: 'Sign In' })}
-              </Text>
-            </TouchableOpacity>
-          </View>
+        {/* Terms Warning Banner */}
+        <View style={[styles.termsBanner, { backgroundColor: colors.border }]}>
+          <Text style={[styles.termsText, { color: colors.textPrimary, fontFamily: typography.fontFamily.regular }]}>
+            By creating an account, you agree to keep case information accurate, respond to validation requests, and maintain the audit trail of all contributions.
+          </Text>
         </View>
+
+        {/* Sign In Spacer and Outlined Button */}
+        <View style={styles.footerSpacing} />
+        <AppButton 
+          title="Already have an account? Sign in"
+          onPress={() => navigation.navigate('Login')}
+          variant="outline"
+          style={styles.signInButton}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -136,69 +217,101 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     padding: 24,
-    paddingTop: 40,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    justifyContent: 'flex-start',
   },
-  header: {
-    marginBottom: 40,
+  brandingHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 40,
+    gap: 12,
+  },
+  logoCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  brandingText: {
+    justifyContent: 'center',
+  },
+  brandTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 20,
+  },
+  brandSubtitle: {
+    fontSize: 9,
+    letterSpacing: 1,
+    lineHeight: 11,
+  },
+  welcomeSection: {
+    marginBottom: 32,
   },
   heading: {
     fontSize: 32,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   subheading: {
-    fontSize: 16,
-    textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 20,
+    fontSize: 15,
+    lineHeight: 22,
   },
-  form: {
-    width: '100%',
-  },
-  inputContainer: {
+  formCard: {
+    padding: 20,
     marginBottom: 20,
   },
-  label: {
-    fontSize: 14,
-    marginBottom: 10,
-    marginLeft: 4,
+  roleWrapper: {
+    marginBottom: 20,
   },
   roleContainer: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 32,
     marginTop: 4,
   },
   roleButton: {
     flex: 1,
-    padding: 16,
-    borderWidth: 2,
-    borderRadius: 16,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   roleText: {
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: 14,
   },
-  roleDesc: {
-    fontSize: 11,
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    marginBottom: 8,
+    marginLeft: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  signUpButton: {
+    marginTop: 10,
+    width: '100%',
+  },
+  termsBanner: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 32,
+  },
+  termsText: {
+    fontSize: 13,
+    lineHeight: 19,
     textAlign: 'center',
-    lineHeight: 14,
+    opacity: 0.85,
   },
-  button: {
-    marginTop: 8,
+  footerSpacing: {
+    flex: 1,
+    minHeight: 20,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 32,
-    marginBottom: 40,
-  },
-  footerText: {
-    fontSize: 15,
-  },
-  link: {
-    fontSize: 15,
+  signInButton: {
+    width: '100%',
+    marginBottom: 10,
   },
 });
-

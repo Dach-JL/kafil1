@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
 
 interface StepIndicatorProps {
   steps: string[];
@@ -27,10 +26,10 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                   {
                     backgroundColor: isCompleted || isActive
                       ? colors.accent
-                      : palette.navyLight,
+                      : colors.border,
                     borderColor: isCompleted || isActive
                       ? colors.accent
-                      : palette.navyLight,
+                      : colors.border,
                   },
                 ]}
               >
@@ -76,7 +75,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
                 style={[
                   styles.connector,
                   {
-                    backgroundColor: isCompleted ? colors.accent : palette.navyLight,
+                    backgroundColor: isCompleted ? colors.accent : colors.border,
                   },
                 ]}
               />

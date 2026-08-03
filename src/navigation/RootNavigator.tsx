@@ -3,7 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Home, FolderHeart, User, ShieldAlert, MessageSquare, Award } from 'lucide-react-native';
+import { Home, FolderHeart, User, ShieldAlert, MessageSquare, Award, Compass, Bell } from 'lucide-react-native';
 import { ActivityIndicator, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +11,9 @@ import { useTheme } from '../hooks/useTheme';
 import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { useChat } from '../supabase/ChatContext';
+import { useNotifications } from '../supabase/NotificationsContext';
 import HomeScreen from '../screens/HomeScreen';
+import ExploreScreen from '../screens/ExploreScreen';
 import CasesScreen from '../screens/CasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import HistoryScreen from '../screens/HistoryScreen';
@@ -46,7 +48,7 @@ function TabNavigator() {
   const { colors, typography } = useTheme();
   const { profile } = useAuth();
   const { t } = useTranslation();
-  const { unreadMessagesCount } = useChat();
+  const { unreadCount } = useNotifications();
 
   return (
     <Tab.Navigator
@@ -54,44 +56,46 @@ function TabNavigator() {
         tabBarActiveTintColor: colors.accent, // Gold
         tabBarInactiveTintColor: colors.tabIconDefault,
         tabBarStyle: {
-          backgroundColor: colors.background, // Navy
-          borderTopColor: palette.navyLight,
-          height: 60,
-          paddingBottom: 8,
+          backgroundColor: colors.surface, // White tab bar
+          borderTopColor: colors.border,
+          height: 65,
+          paddingBottom: 10,
+          paddingTop: 5,
         },
         headerStyle: {
-          backgroundColor: colors.background, // Navy
+          backgroundColor: colors.surface, // White header
+          borderBottomWidth: 1,
+          borderBottomColor: colors.border,
         },
         headerTitleStyle: {
           fontFamily: typography.fontFamily.heading,
           fontSize: typography.size.section,
-          color: colors.accent, // Gold title
+          color: colors.textPrimary, // Navy title
         },
-        headerTintColor: colors.accent,
-        headerRight: () => <NotificationBell />,
+        headerTintColor: colors.textPrimary,
       }}
     >
       <Tab.Screen 
         name="Home" 
         component={HomeScreen} 
         options={{
-          tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
-          title: t('tabs.explore'),
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <Home color={color} size={size} />,
+          title: t('tabs.home', { defaultValue: 'Home' }),
         }}
       />
       <Tab.Screen 
-        name="Cases" 
-        component={CasesScreen} 
+        name="Explore" 
+        component={ExploreScreen} 
         options={{
-          tabBarIcon: ({ color, size }) => <FolderHeart color={color} size={size} />,
-          title: t('tabs.cases'),
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <Compass color={color} size={size} />,
+          title: t('tabs.explore', { defaultValue: 'Explore' }),
         }}
       />
       <Tab.Screen 
         name="History" 
         component={HistoryScreen} 
         options={{
-          tabBarIcon: ({ color, size }) => <Award color={color} size={size} />,
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <Award color={color} size={size} />,
           title: t('tabs.history'),
         }}
       />
@@ -100,26 +104,26 @@ function TabNavigator() {
           name="AdminQueue" 
           component={AdminQueueScreen} 
           options={{
-            tabBarIcon: ({ color, size }) => <ShieldAlert color={color} size={size} />,
+            tabBarIcon: ({ color, size }: { color: string; size: number }) => <ShieldAlert color={color} size={size} />,
             title: t('tabs.verify'),
           }}
         />
       )}
       <Tab.Screen 
-        name="Inbox" 
-        component={InboxScreen} 
+        name="Notifications" 
+        component={NotificationsScreen} 
         options={{
-          tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size} />,
-          title: t('tabs.messages'),
-          tabBarBadge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined,
-          tabBarBadgeStyle: { backgroundColor: colors.primary },
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <Bell color={color} size={size} />,
+          title: t('tabs.notifications', { defaultValue: 'Notifications' }),
+          tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+          tabBarBadgeStyle: { backgroundColor: colors.primary, color: colors.textOnPrimary },
         }}
       />
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen} 
         options={{
-          tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => <User color={color} size={size} />,
           title: t('tabs.profile'),
         }}
       />
