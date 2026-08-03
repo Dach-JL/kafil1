@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,14 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
-import { palette } from '../../theme/colors';
 import { getCaseById } from '../../api/cases';
 import { getCaseTimeline } from '../../api/events';
 import { Case } from '../../types/cases';
 import { useTranslation } from 'react-i18next';
-import { EventLog} from '../../types/events';
+import { EventLog } from '../../types/events';
 import { ArrowLeft, ShieldCheck, Clock, User, Target, CheckCircle2, MessageSquare, Heart } from 'lucide-react-native';
 import { getOrCreateChatRoom } from '../../api/chat';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -70,7 +69,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
       });
     } catch (err: any) {
       console.error(err);
-      alert(t('errors.failedRequest'));
+      alert(t('errors.failedRequest', { defaultValue: 'Failed to open chat room' }));
     } finally {
       setInitiatingChat(false);
     }
@@ -90,11 +89,11 @@ export default function CaseDetailScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <ArrowLeft color={colors.accent} size={24} />
+          <ArrowLeft color={colors.accent} size={22} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('caseDetail.title', { defaultValue: 'Case Details' })}
         </Text>
         <View style={{ width: 44 }} />
@@ -104,9 +103,9 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Verification Banner */}
         {isVerified && (
           <View style={[styles.verifiedBanner, { backgroundColor: colors.accent + '15', borderColor: colors.accent + '30' }]}>
-            <ShieldCheck color={colors.accent} size={20} />
-            <Text style={[styles.verifiedText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
-              {t('landing.verified')}
+            <ShieldCheck color={colors.accent} size={18} />
+            <Text style={[styles.verifiedText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+              {t('landing.verified', { defaultValue: 'Verified Case · Audited Evidence' })}
             </Text>
           </View>
         )}
@@ -121,20 +120,22 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           />
         )}
 
-        <View style={[styles.categoryBadge, { backgroundColor: palette.navyLight }]}>
-          <Text style={[styles.categoryText, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
-            {t(`categories.${caseInfo.category}`)}
+        {/* Category Badge */}
+        <View style={[styles.categoryBadge, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.categoryText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+            {t(`categories.${caseInfo.category}`, { defaultValue: caseInfo.category })}
           </Text>
         </View>
 
-        <Text style={[styles.title, { color: colors.textInverse, fontFamily: typography.fontFamily.heading }]}>
+        {/* Title */}
+        <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {caseInfo.title}
         </Text>
 
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Clock color={colors.textInverse} opacity={0.6} size={14} />
-            <Text style={[styles.metaText, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
+            <Clock color={colors.textSecondary} size={13} />
+            <Text style={[styles.metaText, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('common.postedDate', { date: formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true }), defaultValue: `Posted ${formatDistanceToNow(new Date(caseInfo.created_at), { addSuffix: true })}` })}
             </Text>
           </View>
@@ -144,7 +145,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         <AppCard style={styles.statsCard}>
           <View style={styles.fundingHeader}>
             <Text style={[styles.raisedLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
-              {t('caseDetail.fundingProgress')}
+              {t('caseDetail.fundingProgress', { defaultValue: 'Funding Progress' })}
             </Text>
             <Text style={[styles.percentage, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
               {Math.round(progress)}%
@@ -154,21 +155,21 @@ export default function CaseDetailScreen({ route, navigation }: any) {
           <Text style={[styles.raisedAmount, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             ${caseInfo.collected_amount.toLocaleString()}
             <Text style={[styles.targetAmount, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
-              {' '}{t('common.of')} ${caseInfo.target_amount.toLocaleString()}
+              {' '}{t('common.of', { defaultValue: 'of' })} ${caseInfo.target_amount.toLocaleString()}
             </Text>
           </Text>
 
-          <View style={[styles.progressTrack, { backgroundColor: colors.background + '10' }]}>
+          <View style={[styles.progressTrack, { backgroundColor: colors.border }]}>
             <View style={[styles.progressFill, { backgroundColor: colors.accent, width: `${progress}%` }]} />
           </View>
         </AppCard>
 
         {/* Description */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-            {t('caseDetail.description')}
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            {t('caseDetail.description', { defaultValue: 'Story & Situation' })}
           </Text>
-          <Text style={[styles.description, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.description, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {caseInfo.description}
           </Text>
         </View>
@@ -176,45 +177,46 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Organizer Section */}
         {caseInfo.owner_id && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-              {t('caseDetail.organizer')}
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {t('caseDetail.organizer', { defaultValue: 'Case Owner' })}
             </Text>
-            <View style={[styles.organizerCard, { borderColor: palette.navyLight, backgroundColor: palette.navyLight }]}>
+            <AppCard style={styles.organizerCard}>
               <View style={[styles.ownerAvatar, { backgroundColor: colors.accent + '15' }]}>
                 <User color={colors.accent} size={22} />
               </View>
               <View style={styles.organizerInfo}>
-                <Text style={[styles.ownerName, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
-                  {caseInfo.owner?.name || t('caseDetail.organizer')}
+                <Text style={[styles.ownerName, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+                  {caseInfo.owner?.name || t('caseDetail.organizer', { defaultValue: 'Case Owner' })}
                 </Text>
                 {caseInfo.owner && <TrustBadge score={caseInfo.owner.trust_score} />}
               </View>
               {user?.id !== caseInfo.owner_id && (
                 <TouchableOpacity 
-                  style={[styles.msgBtn, { backgroundColor: colors.background, borderColor: colors.accent }]}
+                  style={[styles.msgBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
                   onPress={handleMessageOrganizer}
                   disabled={initiatingChat}
+                  activeOpacity={0.8}
                 >
                   {initiatingChat ? (
                     <ActivityIndicator size="small" color={colors.accent} />
                   ) : (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                      <MessageSquare color={colors.accent} size={18} />
-                      <Text style={{ color: colors.accent, fontFamily: typography.fontFamily.medium, fontSize: 13 }}>
+                    <View style={styles.msgBtnContent}>
+                      <MessageSquare color={colors.accent} size={16} />
+                      <Text style={[styles.msgBtnText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
                         {t('common.message', { defaultValue: 'Message' })}
                       </Text>
                     </View>
                   )}
                 </TouchableOpacity>
               )}
-            </View>
+            </AppCard>
           </View>
         )}
 
         {/* Timeline */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-            {t('caseDetail.timeline')}
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            {t('caseDetail.timeline', { defaultValue: 'Verification & Event Audit' })}
           </Text>
           <CaseTimeline events={events} />
         </View>
@@ -222,7 +224,7 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         {/* Contributions (For Owners) */}
         {user?.id === caseInfo.owner_id && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
               {t('caseDetail.recentContributions', { defaultValue: 'Recent Contributions' })}
             </Text>
             <CaseContributionList caseId={caseId} />
@@ -230,18 +232,22 @@ export default function CaseDetailScreen({ route, navigation }: any) {
         )}
 
         {/* Meta Details Grid */}
-        <View style={[styles.grid, { borderColor: palette.navyLight, borderTopWidth: 1, borderBottomWidth: 1 }]}>
-          <View style={[styles.gridItem, { borderRightWidth: 1, borderColor: palette.navyLight }]}>
-            <Target color={colors.accent} size={22} />
-            <Text style={[styles.gridLabel, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>{t('common.urgency', { defaultValue: 'Urgency' })}</Text>
-            <Text style={[styles.gridValue, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+        <View style={[styles.grid, { borderColor: colors.border, borderTopWidth: 1, borderBottomWidth: 1 }]}>
+          <View style={[styles.gridItem, { borderRightWidth: 1, borderColor: colors.border }]}>
+            <Target color={colors.accent} size={20} />
+            <Text style={[styles.gridLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+              {t('common.urgency', { defaultValue: 'Urgency' })}
+            </Text>
+            <Text style={[styles.gridValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
               {t('caseDetail.urgencyLevel', { level: caseInfo.urgency_level, defaultValue: `Level ${caseInfo.urgency_level}/5` })}
             </Text>
           </View>
           <View style={styles.gridItem}>
-            <Clock color={colors.accent} size={22} />
-            <Text style={[styles.gridLabel, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>{t('common.deadline', { defaultValue: 'Deadline' })}</Text>
-            <Text style={[styles.gridValue, { color: colors.textInverse, fontFamily: typography.fontFamily.medium }]}>
+            <Clock color={colors.accent} size={20} />
+            <Text style={[styles.gridLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+              {t('common.deadline', { defaultValue: 'Deadline' })}
+            </Text>
+            <Text style={[styles.gridValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
               {caseInfo.deadline ? format(new Date(caseInfo.deadline), 'MMM dd, yyyy') : t('common.none', { defaultValue: 'None' })}
             </Text>
           </View>
@@ -250,9 +256,9 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
       {/* Action Footer */}
       {(caseInfo.status === 'VERIFIED' || caseInfo.status === 'ACTIVE_FUNDING') && (
-        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
           <AppButton
-            title={t('donation.fundCase')}
+            title={t('donation.fundCase', { defaultValue: 'Contribute Now' })}
             onPress={() => navigation.navigate('FundCase', { caseId })}
           />
         </View>
@@ -260,9 +266,9 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
       {/* Owner Action: Submit Completion Proof */}
       {caseInfo.status === 'FUNDED' && user?.id === caseInfo.owner_id && !caseInfo.completion_proof_url && (
-        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
           <AppButton
-            title={t('caseDetail.submitImpactReport')}
+            title={t('caseDetail.submitImpactReport', { defaultValue: 'Submit Impact Report & Proof' })}
             onPress={() => navigation.navigate('SubmitCompletionProof', { caseId })}
           />
         </View>
@@ -270,11 +276,11 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
       {/* Goal Met Celebration */}
       {caseInfo.status === 'FUNDED' && (user?.id !== caseInfo.owner_id || caseInfo.completion_proof_url) && (
-        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
-          <View style={[styles.statusBanner, { backgroundColor: colors.accent + '15', borderColor: colors.accent + '40', borderWidth: 1 }]}>
-            <Heart color={colors.accent} size={20} fill={colors.accent} />
-            <Text style={[styles.statusBannerText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-              {t('caseDetail.goalMet', { defaultValue: 'Goal Met! Thanks for your help 💝' })}
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+          <View style={[styles.statusBanner, { backgroundColor: colors.accent + '15', borderColor: colors.accent + '30', borderWidth: 1 }]}>
+            <Heart color={colors.accent} size={18} fill={colors.accent} />
+            <Text style={[styles.statusBannerText, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
+              {t('caseDetail.goalMet', { defaultValue: 'Goal Met! Thank you for your support 💝' })}
             </Text>
           </View>
         </View>
@@ -282,10 +288,10 @@ export default function CaseDetailScreen({ route, navigation }: any) {
 
       {/* Completed Banner */}
       {caseInfo.status === 'COMPLETED' && (
-        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
-          <View style={[styles.statusBanner, { backgroundColor: colors.accent + '20' }]}>
-            <CheckCircle2 color={colors.accent} size={20} />
-            <Text style={[styles.statusBannerText, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+          <View style={[styles.statusBanner, { backgroundColor: colors.success + '15', borderColor: colors.success + '30', borderWidth: 1 }]}>
+            <CheckCircle2 color={colors.success} size={18} />
+            <Text style={[styles.statusBannerText, { color: colors.success, fontFamily: typography.fontFamily.bold }]}>
               {t('caseDetail.caseCompleted', { defaultValue: 'Case Successfully Completed' })}
             </Text>
           </View>
@@ -303,98 +309,103 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
   },
   backBtn: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { fontSize: 18 },
+  headerTitle: { fontSize: 17 },
   scroll: { padding: 20, paddingBottom: 40 },
   verifiedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    marginBottom: 24,
+    marginBottom: 20,
   },
-  verifiedText: { fontSize: 14 },
+  verifiedText: { fontSize: 13 },
   categoryBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
-    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 14,
   },
-  categoryText: { fontSize: 13 },
-  title: { fontSize: 28, lineHeight: 36, letterSpacing: -0.5, marginBottom: 16 },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24 },
+  categoryText: { fontSize: 12 },
+  title: { fontSize: 24, lineHeight: 32, letterSpacing: -0.5, marginBottom: 12 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 20 },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  metaText: { fontSize: 13 },
-  statsCard: { marginBottom: 32 },
-  fundingHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  raisedLabel: { fontSize: 14 },
-  percentage: { fontSize: 16 },
-  raisedAmount: { fontSize: 36, marginBottom: 16 },
-  targetAmount: { fontSize: 18 },
-  progressTrack: { height: 10, borderRadius: 5, overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 5 },
-  section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 20, marginBottom: 16 },
-  description: { fontSize: 16, lineHeight: 28 },
+  metaText: { fontSize: 12 },
+  statsCard: { marginBottom: 24, padding: 18 },
+  fundingHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
+  raisedLabel: { fontSize: 13 },
+  percentage: { fontSize: 15 },
+  raisedAmount: { fontSize: 32, marginBottom: 14 },
+  targetAmount: { fontSize: 16 },
+  progressTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: 4 },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 18, marginBottom: 12 },
+  description: { fontSize: 15, lineHeight: 24 },
   organizerCard: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginTop: 8,
+    marginBottom: 0,
   },
   ownerAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 14,
   },
   organizerInfo: {
     flex: 1,
   },
   msgBtn: {
-    paddingHorizontal: 16,
-    height: 40,
-    borderRadius: 20,
+    paddingHorizontal: 14,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 12,
-    borderWidth: 1.5,
+    marginLeft: 10,
+    borderWidth: 1,
+  },
+  msgBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  msgBtnText: {
+    fontSize: 12,
   },
   ownerName: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 2,
   },
-  grid: { flexDirection: 'row', paddingVertical: 24, marginBottom: 16 },
-  gridItem: { flex: 1, alignItems: 'center', gap: 8 },
-  gridLabel: { fontSize: 13 },
-  gridValue: { fontSize: 15 },
-  footer: { padding: 20, borderTopWidth: 1 },
+  grid: { flexDirection: 'row', paddingVertical: 20, marginBottom: 16 },
+  gridItem: { flex: 1, alignItems: 'center', gap: 6 },
+  gridLabel: { fontSize: 12 },
+  gridValue: { fontSize: 14 },
+  footer: { padding: 16, borderTopWidth: 1 },
   statusBanner: {
-    height: 60,
-    borderRadius: 18,
+    height: 52,
+    borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 8,
     paddingHorizontal: 16,
   },
-  statusBannerText: { fontSize: 16 },
+  statusBannerText: { fontSize: 14 },
 });
-
-

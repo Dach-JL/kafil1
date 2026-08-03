@@ -9,13 +9,12 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { getUserPaymentMethods, deletePaymentMethod, UserPaymentMethod, setDefaultPaymentMethod } from '../api/paymentMethods';
-import { Plus, CreditCard, Trash2, CheckCircle2 } from 'lucide-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { CreditCard, Trash2, CheckCircle2 } from 'lucide-react-native';
 import AppCard from '../components/common/AppCard';
 import AppButton from '../components/common/AppButton';
 
@@ -53,16 +52,16 @@ export default function PaymentMethodsScreen({ navigation }: any) {
       t('profile.deletePaymentMethod', { defaultValue: 'Delete Payment Method' }),
       t('profile.deletePaymentMethodConfirm', { defaultValue: 'Are you sure you want to remove this account?' }),
       [
-        { text: t('buttons.cancel'), style: 'cancel' },
+        { text: t('buttons.cancel', { defaultValue: 'Cancel' }), style: 'cancel' },
         {
-          text: t('buttons.delete'),
+          text: t('buttons.delete', { defaultValue: 'Delete' }),
           style: 'destructive',
           onPress: async () => {
             try {
               await deletePaymentMethod(id);
               setMethods(methods.filter((m) => m.id !== id));
             } catch (err: any) {
-              Alert.alert(t('common.error'), err.message || 'Failed to delete payment method');
+              Alert.alert(t('common.error', { defaultValue: 'Error' }), err.message || 'Failed to delete payment method');
             }
           },
         },
@@ -76,25 +75,25 @@ export default function PaymentMethodsScreen({ navigation }: any) {
       await setDefaultPaymentMethod(profile.id, id);
       await loadMethods();
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || 'Failed to set default method');
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), err.message || 'Failed to set default method');
     }
   };
 
   const renderItem = ({ item }: { item: UserPaymentMethod }) => (
-    <AppCard style={[styles.card, item.is_default && { borderColor: colors.accent + '40', borderWidth: 1.5 }]}>
+    <AppCard style={[styles.card, item.is_default && { borderColor: colors.accent, borderWidth: 1.5 }]}>
       <View style={styles.cardHeader}>
         <View style={styles.bankInfo}>
-          <View style={[styles.iconBg, { backgroundColor: palette.navy }]}>
-            <CreditCard color={colors.accent} size={22} />
+          <View style={[styles.iconBg, { backgroundColor: colors.accent + '15' }]}>
+            <CreditCard color={colors.accent} size={20} />
           </View>
           <View>
-            <Text style={[styles.bankName, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
+            <Text style={[styles.bankName, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
               {t(`banks.${item.bank_name.toLowerCase()}`, { defaultValue: item.bank_name })}
             </Text>
             {item.is_default && (
               <View style={styles.defaultBadge}>
-                <CheckCircle2 color={colors.accent} size={14} />
-                <Text style={[styles.defaultText, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
+                <CheckCircle2 color={colors.success} size={12} />
+                <Text style={[styles.defaultText, { color: colors.success, fontFamily: typography.fontFamily.bold }]}>
                   {t('common.default', { defaultValue: 'DEFAULT' })}
                 </Text>
               </View>
@@ -110,30 +109,29 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         )}
       </View>
 
-      <View style={[styles.divider, { backgroundColor: palette.navy }]} />
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
       <View style={styles.detailsRow}>
         <View style={{ flex: 1.2 }}>
           <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
-            {t('createCase.accountNumber')}
+            {t('createCase.accountNumber', { defaultValue: 'Account Number' })}
           </Text>
-          <Text style={[styles.value, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
             {item.account_number}
           </Text>
         </View>
         <View style={{ flex: 1 }}>
           <Text style={[styles.label, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
-            {t('createCase.accountName')}
+            {t('createCase.accountName', { defaultValue: 'Account Name' })}
           </Text>
-          <Text style={[styles.value, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]} numberOfLines={1}>
+          <Text style={[styles.value, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]} numberOfLines={1}>
             {item.account_name}
           </Text>
         </View>
       </View>
 
-
       <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteBtn} activeOpacity={0.7}>
-        <Trash2 color={colors.error} size={20} opacity={0.6} />
+        <Trash2 color={colors.error} size={18} opacity={0.7} />
       </TouchableOpacity>
     </AppCard>
   );
@@ -163,23 +161,22 @@ export default function PaymentMethodsScreen({ navigation }: any) {
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <View style={[styles.emptyIconWrap, { backgroundColor: palette.navyLight }]}>
-              <CreditCard color={colors.accent} size={48} opacity={0.3} />
+            <View style={[styles.emptyIconWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <CreditCard color={colors.accent} size={40} />
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-              {t('profile.noPaymentMethods', { defaultValue: 'No Payment Methods' })}
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {t('profile.noPaymentMethods', { defaultValue: 'No Saved Accounts' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
-              {t('profile.noPaymentMethodsDesc', { defaultValue: 'Save your bank details for faster case creation and payouts.' })}
+            <Text style={[styles.emptyDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+              {t('profile.noPaymentMethodsDesc', { defaultValue: 'Save your bank details for faster case creation and verified payouts.' })}
             </Text>
-
           </View>
         }
       />
 
       <View style={styles.footer}>
         <AppButton
-          title={t('buttons.addNewMethod', { defaultValue: 'Add New Method' })}
+          title={t('buttons.addNewMethod', { defaultValue: 'Add New Account' })}
           onPress={() => navigation.navigate('AddPaymentMethod')}
           style={styles.addBtn}
         />
@@ -191,38 +188,35 @@ export default function PaymentMethodsScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  list: { padding: 20, paddingBottom: 120 },
+  list: { padding: 20, paddingBottom: 100 },
   card: {
-    marginBottom: 20,
-    padding: 20,
+    marginBottom: 16,
+    padding: 18,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  bankInfo: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  iconBg: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  bankName: { fontSize: 18 },
-  defaultBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
-  defaultText: { fontSize: 11, letterSpacing: 1 },
-  setDefaultBtn: { padding: 8 },
-  setDefaultText: { fontSize: 11, letterSpacing: 1 },
-  divider: { height: 1, marginBottom: 20, opacity: 0.5 },
-  detailsRow: { flexDirection: 'row', gap: 24 },
-  label: { fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 1 },
-  value: { fontSize: 16 },
-  deleteBtn: { position: 'absolute', bottom: 20, right: 20, padding: 8 },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, marginTop: 80, gap: 16 },
-  emptyIconWrap: { width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  emptyTitle: { fontSize: 22, textAlign: 'center' },
-  emptyDesc: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
-  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, paddingBottom: 40 },
+  bankInfo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  iconBg: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  bankName: { fontSize: 16 },
+  defaultBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  defaultText: { fontSize: 10, letterSpacing: 0.5 },
+  setDefaultBtn: { padding: 6 },
+  setDefaultText: { fontSize: 10, letterSpacing: 0.5 },
+  divider: { height: 1, marginBottom: 14 },
+  detailsRow: { flexDirection: 'row', gap: 16 },
+  label: { fontSize: 10, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  value: { fontSize: 14 },
+  deleteBtn: { position: 'absolute', bottom: 16, right: 16, padding: 6 },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, marginTop: 60 },
+  emptyIconWrap: { width: 72, height: 72, borderRadius: 36, borderWidth: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  emptyTitle: { fontSize: 18, marginBottom: 6, textAlign: 'center' },
+  emptyDesc: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
+  footer: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 20, paddingBottom: 24, backgroundColor: 'transparent' },
   addBtn: {
-    height: 60,
-    borderRadius: 30,
+    height: 56,
   },
 });
-
-

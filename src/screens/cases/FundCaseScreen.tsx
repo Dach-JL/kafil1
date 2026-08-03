@@ -10,18 +10,18 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
-import { palette } from '../../theme/colors';
 import { useAuth } from '../../supabase/AuthContext';
 import { createContribution } from '../../api/contributions';
 import { getCaseById } from '../../api/cases';
 import { Case } from '../../types/cases';
-import { ArrowLeft, Send, AlertCircle, CheckCircle2 } from 'lucide-react-native';
+import { ArrowLeft, AlertCircle, CheckCircle2, Building2 } from 'lucide-react-native';
 import FileUpload from '../../components/FileUpload';
 import AppButton from '../../components/common/AppButton';
+import AppCard from '../../components/common/AppCard';
 
 export default function FundCaseScreen({ route, navigation }: any) {
   const { caseId } = route.params;
@@ -91,7 +91,6 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
     setSubmitting(true);
     try {
-      // Just taking the first proof path for the contribution
       const paymentProofUrl = proofPaths[0];
       const paymentProofHash = proofHashes[0];
 
@@ -109,7 +108,7 @@ export default function FundCaseScreen({ route, navigation }: any) {
         [{ text: t('buttons.returnToCase', { defaultValue: 'Return to Case' }), onPress: () => navigation.goBack() }]
       );
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || 'Failed to submit contribution.');
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), err.message || 'Failed to submit contribution.');
     } finally {
       setSubmitting(false);
     }
@@ -126,17 +125,17 @@ export default function FundCaseScreen({ route, navigation }: any) {
   if (!caseInfo || caseInfo.status !== 'ACTIVE_FUNDING') {
     return (
       <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ArrowLeft color={colors.accent} size={24} />
+        <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <ArrowLeft color={colors.accent} size={22} />
           </TouchableOpacity>
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
           <AlertCircle color={colors.accent} size={48} />
-          <Text style={{ fontSize: 20, color: colors.accent, fontFamily: typography.fontFamily.bold, marginTop: 16 }}>
+          <Text style={{ fontSize: 20, color: colors.textPrimary, fontFamily: typography.fontFamily.heading, marginTop: 16 }}>
             {t('caseDetail.notAcceptingDonations', { defaultValue: 'Not Accepting Donations' })}
           </Text>
-          <Text style={{ textAlign: 'center', color: colors.textInverse, opacity: 0.6, marginTop: 8 }}>
+          <Text style={{ textAlign: 'center', color: colors.textSecondary, fontFamily: typography.fontFamily.regular, marginTop: 8 }}>
             {t('caseDetail.notAcceptingDonationsDesc', { defaultValue: 'This case is either fully funded or not yet verified for active funding.' })}
           </Text>
         </View>
@@ -146,11 +145,11 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <ArrowLeft color={colors.accent} size={24} />
+          <ArrowLeft color={colors.accent} size={22} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
           {t('donation.contribute', { defaultValue: 'Contribute' })}
         </Text>
         <View style={{ width: 44 }} />
@@ -158,22 +157,23 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+          <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
             {t('donation.enterAmount', { defaultValue: 'How much are you giving?' })}
           </Text>
-          <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
+          <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
             {t('donation.amountDesc', { defaultValue: 'Please enter the exact amount you transferred so we can verify the funds correctly.' })}
           </Text>
 
+          {/* Amount Input Box */}
           <View style={[
             styles.inputWrapper, 
-            { borderColor: isOverAmount ? colors.error : palette.navyLight, backgroundColor: palette.navyLight }
+            { borderColor: isOverAmount ? colors.error : colors.border, backgroundColor: colors.surface }
           ]}>
             <Text style={[styles.currency, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>$</Text>
             <TextInput
-              style={[styles.input, { color: isOverAmount ? colors.error : colors.textInverse, fontFamily: typography.fontFamily.bold }]}
+              style={[styles.input, { color: isOverAmount ? colors.error : colors.textPrimary, fontFamily: typography.fontFamily.bold }]}
               placeholder="0.00"
-              placeholderTextColor={colors.textInverse + '40'}
+              placeholderTextColor={colors.textSecondary}
               keyboardType="decimal-pad"
               value={amountStr}
               onChangeText={setAmountStr}
@@ -182,41 +182,45 @@ export default function FundCaseScreen({ route, navigation }: any) {
           </View>
 
           {isOverAmount ? (
-            <Text style={{ color: colors.error, marginTop: -24, marginBottom: 24, fontSize: 13, fontFamily: typography.fontFamily.medium }}>
-              {t('donation.maxRemaining', { amount: remaining.toFixed(2) })}
+            <Text style={{ color: colors.error, marginTop: -20, marginBottom: 24, fontSize: 13, fontFamily: typography.fontFamily.medium }}>
+              {t('donation.maxRemaining', { amount: remaining.toFixed(2), defaultValue: `Maximum remaining: $${remaining.toFixed(2)}` })}
             </Text>
           ) : (
-            <Text style={{ color: colors.textInverse, opacity: 0.5, marginTop: -24, marginBottom: 24, fontSize: 13, fontFamily: typography.fontFamily.medium }}>
+            <Text style={{ color: colors.textSecondary, marginTop: -20, marginBottom: 24, fontSize: 13, fontFamily: typography.fontFamily.medium }}>
               {t('donation.remainingTarget', { amount: remaining.toFixed(2), defaultValue: `Remaining target: $${remaining.toFixed(2)}` })}
             </Text>
           )}
 
+          {/* Bank Transfer Details Card */}
           <View style={styles.section}>
             {(caseInfo.bank_accounts || []).length > 0 && (
-              <View style={[styles.bankCard, { backgroundColor: palette.navyLight, borderColor: colors.accent + '30', borderWidth: 1, borderRadius: 20, padding: 20, marginBottom: 32 }]}>
-                <Text style={{ color: colors.accent, fontFamily: typography.fontFamily.bold, marginBottom: 16 }}>
-                  {t('donation.sendFundsTo', { defaultValue: 'Transfer funds to the account below:' })}
-                </Text>
+              <AppCard style={styles.bankCard}>
+                <View style={styles.bankHeaderRow}>
+                  <Building2 color={colors.accent} size={18} />
+                  <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.bold, fontSize: 14 }}>
+                    {t('donation.sendFundsTo', { defaultValue: 'Transfer funds to the account below:' })}
+                  </Text>
+                </View>
                 
                 {/* Bank Selector Chips */}
                 {(caseInfo.bank_accounts || []).length > 1 && (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
                     {(caseInfo.bank_accounts || []).map((acc) => (
                       <TouchableOpacity
                         key={acc.id}
                         style={{
-                          paddingHorizontal: 16,
-                          paddingVertical: 10,
-                          borderRadius: 22,
-                          borderWidth: 1.5,
-                          borderColor: selectedBankId === acc.id ? colors.accent : colors.accent + '20',
-                          backgroundColor: selectedBankId === acc.id ? colors.accent + '15' : 'transparent',
-                          marginRight: 10
+                          paddingHorizontal: 14,
+                          paddingVertical: 8,
+                          borderRadius: 20,
+                          borderWidth: 1,
+                          borderColor: selectedBankId === acc.id ? colors.textPrimary : colors.border,
+                          backgroundColor: selectedBankId === acc.id ? colors.textPrimary : colors.surface,
+                          marginRight: 8
                         }}
                         onPress={() => setSelectedBankId(acc.id)}
                         activeOpacity={0.7}
                       >
-                        <Text style={{ color: selectedBankId === acc.id ? colors.accent : colors.textInverse, opacity: selectedBankId === acc.id ? 1 : 0.6, fontFamily: typography.fontFamily.bold, fontSize: 13 }}>
+                        <Text style={{ color: selectedBankId === acc.id ? colors.surface : colors.textPrimary, fontFamily: typography.fontFamily.bold, fontSize: 12 }}>
                           {t(`banks.${acc.bank_name.toLowerCase()}`, { defaultValue: acc.bank_name })}
                         </Text>
                       </TouchableOpacity>
@@ -231,28 +235,28 @@ export default function FundCaseScreen({ route, navigation }: any) {
                   return (
                     <View style={styles.bankDetails}>
                       <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>{t('createCase.bankName').replace(' *', '')}</Text>
-                        <Text style={styles.detailValue}>{t(`banks.${selectedAcc.bank_name.toLowerCase()}`, { defaultValue: selectedAcc.bank_name })}</Text>
+                        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{t('createCase.bankName', { defaultValue: 'BANK NAME' }).replace(' *', '')}</Text>
+                        <Text style={[styles.detailValue, { color: colors.textPrimary }]}>{t(`banks.${selectedAcc.bank_name.toLowerCase()}`, { defaultValue: selectedAcc.bank_name })}</Text>
                       </View>
                       <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>{t('createCase.accountNumber').replace(' *', '')}</Text>
-                        <Text style={styles.detailValueLarge}>{selectedAcc.account_number}</Text>
+                        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{t('createCase.accountNumber', { defaultValue: 'ACCOUNT NUMBER' }).replace(' *', '')}</Text>
+                        <Text style={[styles.detailValueLarge, { color: colors.accent }]}>{selectedAcc.account_number}</Text>
                       </View>
                       <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>{t('createCase.accountName').replace(' *', '')}</Text>
-                        <Text style={styles.detailValue}>{selectedAcc.account_name}</Text>
+                        <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>{t('createCase.accountName', { defaultValue: 'ACCOUNT NAME' }).replace(' *', '')}</Text>
+                        <Text style={[styles.detailValue, { color: colors.textPrimary }]}>{selectedAcc.account_name}</Text>
                       </View>
                     </View>
                   );
                 })()}
-
-              </View>
+              </AppCard>
             )}
 
-            <Text style={[styles.sectionTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            {/* Proof Uploader */}
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
               {t('donation.paymentMethod', { defaultValue: 'Proof of Payment' })}
             </Text>
-            <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular, marginBottom: 20 }]}>
+            <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular, marginBottom: 16 }]}>
               {t('donation.proofDesc', { defaultValue: 'Upload a screenshot of your bank transfer or official receipt.' })}
             </Text>
             
@@ -266,8 +270,8 @@ export default function FundCaseScreen({ route, navigation }: any) {
             />
             {proofPaths.length > 0 && (
               <View style={styles.successBadge}>
-                <CheckCircle2 color={colors.accent} size={18} />
-                <Text style={{ color: colors.accent, fontFamily: typography.fontFamily.bold, fontSize: 13 }}>
+                <CheckCircle2 color={colors.success} size={18} />
+                <Text style={{ color: colors.success, fontFamily: typography.fontFamily.bold, fontSize: 13 }}>
                   {t('common.success', { defaultValue: 'Proof uploaded successfully' })}
                 </Text>
               </View>
@@ -276,9 +280,9 @@ export default function FundCaseScreen({ route, navigation }: any) {
 
         </ScrollView>
 
-        <View style={[styles.footer, { borderTopColor: palette.navyLight, backgroundColor: colors.background }]}>
+        <View style={[styles.footer, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
           <AppButton
-            title={t('donation.confirmDonation')}
+            title={t('donation.confirmDonation', { defaultValue: 'Submit Contribution' })}
             onPress={handleSubmit}
             loading={submitting}
             disabled={isOverAmount || proofPaths.length === 0}
@@ -297,39 +301,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderBottomWidth: 1,
   },
-  backBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18 },
-  scroll: { padding: 24, paddingBottom: 100 },
-  title: { fontSize: 26, marginBottom: 8, letterSpacing: -0.5 },
-  subtitle: { fontSize: 14, lineHeight: 22, marginBottom: 24 },
+  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 17 },
+  scroll: { padding: 20, paddingBottom: 100 },
+  title: { fontSize: 24, marginBottom: 6, letterSpacing: -0.5 },
+  subtitle: { fontSize: 13, lineHeight: 18, marginBottom: 20 },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    marginBottom: 32,
-    height: 80,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    marginBottom: 28,
+    height: 72,
   },
-  currency: { fontSize: 32, marginRight: 10 },
-  input: { flex: 1, fontSize: 36, height: '100%' },
-  section: { marginBottom: 32 },
-  sectionTitle: { fontSize: 20, marginBottom: 8 },
+  currency: { fontSize: 28, marginRight: 8 },
+  input: { flex: 1, fontSize: 32, height: '100%' },
+  section: { marginBottom: 24 },
+  sectionTitle: { fontSize: 18, marginBottom: 6 },
   bankCard: {
-    // Styles handled inline
+    padding: 18,
+    marginBottom: 24,
   },
-  bankDetails: { gap: 16 },
-  detailRow: { gap: 4 },
-  detailLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 },
-  detailValue: { color: '#ffffff', fontSize: 17, fontWeight: '600' },
-  detailValueLarge: { color: '#ffffff', fontSize: 24, fontWeight: '700', letterSpacing: 0.5 },
+  bankHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 14,
+  },
+  bankDetails: { gap: 12 },
+  detailRow: { gap: 2 },
+  detailLabel: { fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+  detailValue: { fontSize: 15, fontWeight: '600' },
+  detailValueLarge: { fontSize: 22, fontWeight: '700', letterSpacing: 0.5 },
   successBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 },
-  footer: { padding: 24, paddingBottom: 40, borderTopWidth: 1 },
+  footer: { padding: 16, borderTopWidth: 1 },
   submitBtn: {
-    height: 60,
+    height: 54,
   },
 });
-

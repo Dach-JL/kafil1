@@ -6,15 +6,16 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  SafeAreaView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
 import { useAuth } from '../supabase/AuthContext';
 import { addPaymentMethod } from '../api/paymentMethods';
 import { User as UserIcon, Hash } from 'lucide-react-native';
 import AppButton from '../components/common/AppButton';
 import AppInput from '../components/common/AppInput';
+import AppCard from '../components/common/AppCard';
 
 const BANK_OPTIONS = [
   { id: 'CBE', translationKey: 'banks.cbe' },
@@ -34,7 +35,7 @@ export default function AddPaymentMethodScreen({ navigation }: any) {
 
   const handleSave = async () => {
     if (!accountNumber.trim() || !accountName.trim()) {
-      Alert.alert(t('common.error'), t('createCase.allFieldsRequired', { defaultValue: 'Please fill in all required fields' }));
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), t('createCase.allFieldsRequired', { defaultValue: 'Please fill in all required fields' }));
       return;
     }
 
@@ -49,109 +50,109 @@ export default function AddPaymentMethodScreen({ navigation }: any) {
         account_name: accountName.trim(),
         is_default: false,
       });
-      Alert.alert(t('common.success'), t('profile.paymentMethodAdded', { defaultValue: 'Payment method added!' }));
+      Alert.alert(t('common.success', { defaultValue: 'Success' }), t('profile.paymentMethodAdded', { defaultValue: 'Payment method added!' }));
       navigation.goBack();
     } catch (err: any) {
-      Alert.alert(t('common.error'), err.message || 'Failed to add payment method');
+      Alert.alert(t('common.error', { defaultValue: 'Error' }), err.message || 'Failed to add payment method');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: colors.background }]} 
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={[styles.description, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.medium }]}>
-        {t('profile.addPaymentMethodDesc', { defaultValue: 'Add a bank account or mobile wallet to receive payouts or make donations easier.' })}
-      </Text>
-
-      <View style={styles.section}>
-        <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
-          {t('createCase.bankName')}
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView 
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={[styles.description, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+          {t('profile.addPaymentMethodDesc', { defaultValue: 'Add a bank account or mobile wallet to receive payouts or make contributions easier.' })}
         </Text>
-        <View style={styles.bankOptions}>
-          {BANK_OPTIONS.map(({ id, translationKey }) => {
-            const isSelected = bankName === id;
-            return (
-              <TouchableOpacity
-                key={id}
-                style={[
-                  styles.bankChip,
-                  {
-                    backgroundColor: isSelected ? colors.accent : palette.navyLight,
-                    borderColor: isSelected ? colors.accent : colors.accent + '20',
-                  },
-                ]}
-                onPress={() => setBankName(id)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.bankText, { color: isSelected ? colors.background : colors.textInverse, fontFamily: isSelected ? typography.fontFamily.bold : typography.fontFamily.medium, opacity: isSelected ? 1 : 0.6 }]}>
-                  {t(translationKey, { defaultValue: id })}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
 
-        <View style={styles.inputGroup}>
-          <View style={styles.labelRow}>
-            <Hash size={18} color={colors.accent} />
-            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
-              {t('createCase.accountNumber')}
-            </Text>
+        <AppCard style={styles.card}>
+          <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.bold }]}>
+            {t('createCase.bankName', { defaultValue: 'Select Financial Provider' })}
+          </Text>
+          <View style={styles.bankOptions}>
+            {BANK_OPTIONS.map(({ id, translationKey }) => {
+              const isSelected = bankName === id;
+              return (
+                <TouchableOpacity
+                  key={id}
+                  style={[
+                    styles.bankChip,
+                    {
+                      backgroundColor: isSelected ? colors.textPrimary : colors.surface,
+                      borderColor: isSelected ? colors.textPrimary : colors.border,
+                    },
+                  ]}
+                  onPress={() => setBankName(id)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.bankText, { color: isSelected ? colors.surface : colors.textPrimary, fontFamily: isSelected ? typography.fontFamily.bold : typography.fontFamily.medium }]}>
+                    {t(translationKey, { defaultValue: id })}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-          <AppInput
-            value={accountNumber}
-            onChangeText={setAccountNumber}
-            placeholder="1000..."
-            keyboardType="number-pad"
-          />
-        </View>
 
-        <View style={styles.inputGroup}>
-          <View style={styles.labelRow}>
-            <UserIcon size={18} color={colors.accent} />
-            <Text style={[styles.label, { color: colors.textInverse, fontFamily: typography.fontFamily.bold }]}>
-              {t('createCase.accountName')}
-            </Text>
+          <View style={styles.inputGroup}>
+            <View style={styles.labelRow}>
+              <Hash size={16} color={colors.accent} />
+              <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+                {t('createCase.accountNumber', { defaultValue: 'Account / Phone Number' })}
+              </Text>
+            </View>
+            <AppInput
+              value={accountNumber}
+              onChangeText={setAccountNumber}
+              placeholder="1000..."
+              keyboardType="number-pad"
+            />
           </View>
-          <AppInput
-            value={accountName}
-            onChangeText={setAccountName}
-            placeholder={t('auth.namePlaceholder')}
-          />
-        </View>
-      </View>
 
-      <AppButton
-        title={t('buttons.saveAccount', { defaultValue: 'Save Account' })}
-        onPress={handleSave}
-        loading={saving}
-        style={styles.saveBtn}
-      />
-    </ScrollView>
+          <View style={styles.inputGroup}>
+            <View style={styles.labelRow}>
+              <UserIcon size={16} color={colors.accent} />
+              <Text style={[styles.label, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+                {t('createCase.accountName', { defaultValue: 'Account Owner Name' })}
+              </Text>
+            </View>
+            <AppInput
+              value={accountName}
+              onChangeText={setAccountName}
+              placeholder="John Doe"
+            />
+          </View>
+        </AppCard>
+
+        <AppButton
+          title={t('buttons.saveAccount', { defaultValue: 'Save Payment Account' })}
+          onPress={handleSave}
+          loading={saving}
+          style={styles.saveBtn}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, paddingBottom: 60 },
-  description: { fontSize: 15, lineHeight: 24, marginBottom: 32 },
-  section: { marginBottom: 32 },
-  label: { fontSize: 13, textTransform: 'uppercase', letterSpacing: 1, opacity: 0.8 },
-  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  bankOptions: { flexDirection: 'row', gap: 12, marginBottom: 40, marginTop: 16, flexWrap: 'wrap' },
+  content: { padding: 20, paddingBottom: 60 },
+  description: { fontSize: 13, lineHeight: 18, marginBottom: 20 },
+  card: { padding: 20, marginBottom: 24 },
+  label: { fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  bankOptions: { flexDirection: 'row', gap: 10, marginBottom: 24, flexWrap: 'wrap' },
   bankChip: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1.5,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
   },
-  bankText: { fontSize: 14 },
-  inputGroup: { marginBottom: 28 },
-  saveBtn: { marginTop: 12 },
+  bankText: { fontSize: 13 },
+  inputGroup: { marginBottom: 16 },
+  saveBtn: { marginTop: 4 },
 });
-
