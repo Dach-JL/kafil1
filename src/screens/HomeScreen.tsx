@@ -10,17 +10,19 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Sparkles, AlertCircle } from 'lucide-react-native';
+import { Sparkles, AlertCircle, PlusCircle, Compass, Award, ShieldCheck } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
+import { useAuth } from '../supabase/AuthContext';
 import { getPublicCases } from '../api/cases';
 import { Case, CaseCategory } from '../types/cases';
 import PublicCaseCard from '../components/PublicCaseCard';
+import AppCard from '../components/common/AppCard';
 
 export default function HomeScreen({ navigation }: any) {
   const { colors, typography, spacing } = useTheme();
   const { t } = useTranslation();
+  const { profile } = useAuth();
   
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function HomeScreen({ navigation }: any) {
   const categories: { label: string; value: CaseCategory | null }[] = [
     { label: t('home.allCases', { defaultValue: 'All Cases' }), value: null },
     ...(['MEDICAL', 'EDUCATION', 'EMERGENCY', 'HOUSING', 'FOOD', 'OTHER'] as CaseCategory[]).map(cat => ({
-      label: t(`categories.${cat}`),
+      label: t(`categories.${cat}`, { defaultValue: cat }),
       value: cat,
     })),
   ];
@@ -51,6 +53,140 @@ export default function HomeScreen({ navigation }: any) {
     loadCases();
   }, [selectedCategory]);
 
+  const renderHeader = () => (
+    <View style={styles.headerContainer}>
+      {/* Greeting Banner */}
+      <View style={styles.greetingHeader}>
+        <View>
+          <Text style={[styles.welcomeSub, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
+            HUMANITARIAN DASHBOARD
+          </Text>
+          <Text style={[styles.welcomeTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            Welcome back, {profile?.name?.split(' ')[0] || 'Donor'}
+          </Text>
+        </View>
+        <TouchableOpacity 
+          style={[styles.createCaseBadge, { backgroundColor: colors.primary }]}
+          onPress={() => navigation.navigate('CreateCase')}
+          activeOpacity={0.8}
+        >
+          <PlusCircle color={colors.textOnPrimary} size={16} />
+          <Text style={[styles.createCaseBadgeText, { color: colors.textOnPrimary, fontFamily: typography.fontFamily.bold }]}>
+            New Case
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Overview Stats Cards */}
+      <View style={styles.statsRow}>
+        <AppCard style={styles.statCard}>
+          <Text style={[styles.statValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            {cases.length}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Active Cases
+          </Text>
+        </AppCard>
+
+        <AppCard style={styles.statCard}>
+          <Text style={[styles.statValue, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+            100%
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Vetted Proof
+          </Text>
+        </AppCard>
+
+        <AppCard style={styles.statCard}>
+          <View style={styles.verifiedRow}>
+            <ShieldCheck color={colors.success} size={16} />
+            <Text style={[styles.statValue, { color: colors.success, fontFamily: typography.fontFamily.heading }]}>
+              Verified
+            </Text>
+          </View>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Audit Trail
+          </Text>
+        </AppCard>
+      </View>
+
+      {/* Quick Action Navigation Bar */}
+      <View style={styles.quickActionsRow}>
+        <TouchableOpacity
+          style={[styles.actionChip, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          onPress={() => navigation.navigate('Explore')}
+          activeOpacity={0.8}
+        >
+          <Compass size={14} color={colors.textPrimary} />
+          <Text style={[styles.actionChipText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+            Explore All
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionChip, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          onPress={() => navigation.navigate('History')}
+          activeOpacity={0.8}
+        >
+          <Award size={14} color={colors.accent} />
+          <Text style={[styles.actionChipText, { color: colors.textPrimary, fontFamily: typography.fontFamily.medium }]}>
+            Impact History
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Categories Filter Header */}
+      <View style={styles.sectionHeaderRow}>
+        <View style={styles.sectionTitleRow}>
+          <Sparkles color={colors.accent} size={20} />
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+            Verified Cases
+          </Text>
+        </View>
+      </View>
+
+      {/* Categories Horizontal Scroll */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.categoriesScroll}
+      >
+        {categories.map((cat, idx) => {
+          const isSelected = selectedCategory === cat.value;
+          return (
+            <TouchableOpacity
+              key={idx}
+              style={[
+                styles.categoryPill,
+                { 
+                  backgroundColor: isSelected ? colors.textPrimary : colors.surface,
+                  borderColor: isSelected ? colors.textPrimary : colors.border
+                },
+              ]}
+              onPress={() => {
+                setLoading(true);
+                setSelectedCategory(cat.value);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.categoryPillText,
+                  { 
+                    color: isSelected ? colors.surface : colors.textPrimary, 
+                    fontFamily: isSelected ? typography.fontFamily.bold : typography.fontFamily.medium 
+                  },
+                ]}
+              >
+                {cat.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+
   if (loading && !refreshing) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
@@ -61,65 +197,10 @@ export default function HomeScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
-        <View style={styles.titleRow}>
-          <Sparkles color={colors.accent} size={24} />
-          <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-            {t('home.title', { defaultValue: 'Explore Cases' })}
-          </Text>
-        </View>
-        <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.7, fontFamily: typography.fontFamily.regular }]}>
-          {t('home.subtitle', { defaultValue: 'Support those in need around you' })}
-        </Text>
-      </View>
-
-      {/* Categories Horizontal Scroll */}
-      <View style={[styles.categoriesWrapper, { borderBottomColor: palette.navyLight }]}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesScroll}
-        >
-          {categories.map((cat, idx) => {
-            const isSelected = selectedCategory === cat.value;
-            return (
-              <TouchableOpacity
-                key={idx}
-                style={[
-                  styles.categoryPill,
-                  { 
-                    backgroundColor: isSelected ? colors.accent : palette.navyLight,
-                    borderColor: isSelected ? colors.accent : palette.navyLight
-                  },
-                ]}
-                onPress={() => {
-                  setLoading(true);
-                  setSelectedCategory(cat.value);
-                }}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.categoryPillText,
-                    { 
-                      color: isSelected ? colors.textOnPrimary : colors.textInverse, 
-                      fontFamily: typography.fontFamily.medium 
-                    },
-                  ]}
-                >
-                  {cat.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-
-      {/* Feed */}
       <FlatList
         data={cases}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
         renderItem={({ item }) => (
           <PublicCaseCard
             data={item}
@@ -138,13 +219,13 @@ export default function HomeScreen({ navigation }: any) {
         ListEmptyComponent={
           <View style={styles.empty}>
             <View style={[styles.emptyIconWrap, { backgroundColor: colors.accent + '15' }]}>
-              <AlertCircle color={colors.accent} size={48} />
+              <AlertCircle color={colors.accent} size={40} />
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-              {t('home.noCasesTitle', { defaultValue: 'No Cases Found' })}
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {t('home.noCasesTitle', { defaultValue: 'No Active Cases' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.6, fontFamily: typography.fontFamily.regular }]}>
-              {t('home.noCasesDesc', { defaultValue: 'There are currently no active cases' })} {selectedCategory ? t('home.noCasesInCategory', { defaultValue: 'in this category' }) : ''}
+            <Text style={[styles.emptyDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+              {t('home.noCasesDesc', { defaultValue: 'There are currently no cases matching this category.' })}
             </Text>
           </View>
         }
@@ -154,69 +235,143 @@ export default function HomeScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: {
+  container: { 
+    flex: 1 
+  },
+  center: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  headerContainer: {
+    paddingBottom: 8,
+  },
+  greetingHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
+    paddingBottom: 16,
   },
-  titleRow: {
+  welcomeSub: {
+    fontSize: 10,
+    letterSpacing: 1,
+    marginBottom: 2,
+    textTransform: 'uppercase',
+  },
+  welcomeTitle: {
+    fontSize: 24,
+  },
+  createCaseBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+  },
+  createCaseBadgeText: {
+    fontSize: 12,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
     gap: 10,
-    marginBottom: 6,
+    marginBottom: 16,
   },
-  title: {
-    fontSize: 28,
-    letterSpacing: -0.5,
+  statCard: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+    marginBottom: 0,
   },
-  subtitle: {
-    fontSize: 14,
-    lineHeight: 20,
+  statValue: {
+    fontSize: 20,
+    marginBottom: 2,
   },
-  categoriesWrapper: {
-    borderBottomWidth: 1,
+  statLabel: {
+    fontSize: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  verifiedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    gap: 10,
+    marginBottom: 20,
+  },
+  actionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  actionChipText: {
+    fontSize: 12,
+  },
+  sectionHeaderRow: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
   },
   categoriesScroll: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    gap: 8,
   },
   categoryPill: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 22,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
   },
   categoryPillText: {
-    fontSize: 14,
+    fontSize: 13,
   },
   list: {
-    padding: 16,
+    paddingHorizontal: 20,
     paddingBottom: 40,
   },
   emptyContainer: {
     flex: 1,
   },
   empty: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 40,
-    gap: 16,
-    marginTop: 60,
+    padding: 30,
+    marginTop: 20,
   },
   emptyIconWrap: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  emptyTitle: { fontSize: 22 },
-  emptyDesc: { fontSize: 14, textAlign: 'center', lineHeight: 22 },
+  emptyTitle: { 
+    fontSize: 18, 
+    marginBottom: 6 
+  },
+  emptyDesc: { 
+    fontSize: 13, 
+    textAlign: 'center', 
+    lineHeight: 18 
+  },
 });
-
