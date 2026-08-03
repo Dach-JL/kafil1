@@ -6,15 +6,15 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Award, AlertCircle } from 'lucide-react-native';
+import { Award, ShieldCheck, CheckCircle2 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
 import { supabase } from '../supabase/supabaseClient';
 import { Case } from '../types/cases';
 import PublicCaseCard from '../components/PublicCaseCard';
+import AppCard from '../components/common/AppCard';
 
 export default function HistoryScreen({ navigation }: any) {
   const { colors, typography, spacing } = useTheme();
@@ -48,6 +48,50 @@ export default function HistoryScreen({ navigation }: any) {
     loadCompletedCases();
   }, []);
 
+  const renderHeader = () => (
+    <View style={styles.headerSection}>
+      {/* Header Title */}
+      <View style={styles.titleRow}>
+        <View style={[styles.iconWrap, { backgroundColor: colors.accent + '20' }]}>
+          <Award color={colors.accent} size={22} />
+        </View>
+        <Text style={[styles.title, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+          {t('history.title', { defaultValue: 'Impact History' })}
+        </Text>
+      </View>
+      <Text style={[styles.subtitle, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+        {t('history.subtitle', { defaultValue: 'Verified humanitarian outcomes and transparent completion reports.' })}
+      </Text>
+
+      {/* Summary Impact Banner */}
+      <View style={styles.impactStatsRow}>
+        <AppCard style={styles.impactStatCard}>
+          <View style={styles.statIconRow}>
+            <CheckCircle2 size={16} color={colors.success} />
+            <Text style={[styles.statValue, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {cases.length}
+            </Text>
+          </View>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Cases Completed
+          </Text>
+        </AppCard>
+
+        <AppCard style={styles.impactStatCard}>
+          <View style={styles.statIconRow}>
+            <ShieldCheck size={16} color={colors.accent} />
+            <Text style={[styles.statValue, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
+              100%
+            </Text>
+          </View>
+          <Text style={[styles.statLabel, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
+            Audited Evidence
+          </Text>
+        </AppCard>
+      </View>
+    </View>
+  );
+
   if (loading && !refreshing) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background }]}>
@@ -58,23 +102,10 @@ export default function HistoryScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { borderBottomColor: palette.navyLight }]}>
-        <View style={styles.titleRow}>
-          <Award color={colors.accent} size={28} />
-          <Text style={[styles.title, { color: colors.accent, fontFamily: typography.fontFamily.heading }]}>
-            {t('history.title', { defaultValue: 'Impact History' })}
-          </Text>
-        </View>
-        <Text style={[styles.subtitle, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.medium }]}>
-          {t('history.subtitle', { defaultValue: 'Celebrating successfully completed cases' })}
-        </Text>
-      </View>
-
-      {/* Feed */}
       <FlatList
         data={cases}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
         renderItem={({ item }) => (
           <PublicCaseCard
             data={item}
@@ -89,20 +120,20 @@ export default function HistoryScreen({ navigation }: any) {
             refreshing={refreshing} 
             onRefresh={() => { setRefreshing(true); loadCompletedCases(); }} 
             tintColor={colors.accent} 
+            colors={[colors.accent]}
           />
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <View style={[styles.emptyIconWrap, { backgroundColor: palette.navyLight }]}>
-              <Award color={colors.accent} size={48} opacity={0.3} />
+            <View style={[styles.emptyIconWrap, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Award color={colors.accent} size={40} />
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-              {t('history.noResultsTitle', { defaultValue: 'No History Yet' })}
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {t('history.noResultsTitle', { defaultValue: 'No Impact Stories Yet' })}
             </Text>
-            <Text style={[styles.emptyDesc, { color: colors.textInverse, opacity: 0.8, fontFamily: typography.fontFamily.regular }]}>
+            <Text style={[styles.emptyDesc, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
               {t('history.noResultsDesc', { defaultValue: 'Completed cases will appear here as they are successfully funded and verified.' })}
             </Text>
-
           </View>
         }
       />
@@ -111,30 +142,68 @@ export default function HistoryScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: {
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
+  container: { 
+    flex: 1 
+  },
+  center: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center' 
+  },
+  headerSection: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 4,
+  },
+  iconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
   },
   subtitle: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 16,
+  },
+  impactStatsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  impactStatCard: {
+    flex: 1,
+    padding: 14,
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+  statIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  statValue: {
+    fontSize: 20,
+  },
+  statLabel: {
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   list: {
-    padding: 20,
-    paddingBottom: 60,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   card: {
     marginBottom: 16,
@@ -143,23 +212,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   empty: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 40,
-    gap: 16,
-    marginTop: 80,
+    padding: 30,
+    marginTop: 40,
   },
   emptyIconWrap: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 16,
   },
-  emptyTitle: { fontSize: 22, textAlign: 'center' },
-  emptyDesc: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
+  emptyTitle: { 
+    fontSize: 18, 
+    marginBottom: 6, 
+    textAlign: 'center' 
+  },
+  emptyDesc: { 
+    fontSize: 13, 
+    textAlign: 'center', 
+    lineHeight: 18 
+  },
 });
-
-
