@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import {
   Bell,
@@ -21,21 +22,9 @@ import {
 } from 'lucide-react-native';
 import { useNotifications } from '../supabase/NotificationsContext';
 import { useTheme } from '../hooks/useTheme';
-import { palette } from '../theme/colors';
 import { formatDistanceToNow } from 'date-fns';
 import { NotificationType } from '../api/notifications';
 import { useTranslation } from 'react-i18next';
-
-const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
-  CASE_APPROVED: { icon: CheckCircle2, color: '#EAB308' },
-  CASE_REJECTED: { icon: XCircle, color: '#EF4444' },
-  DONATION_RECEIVED: { icon: Heart, color: '#EAB308' },
-  MILESTONE_REACHED: { icon: Heart, color: '#EAB308' },
-  MESSAGE_RECEIVED: { icon: MessageSquare, color: '#EAB308' },
-  IMPACT_ACHIEVED: { icon: Star, color: '#EAB308' },
-  SYSTEM: { icon: AlertCircle, color: '#EAB308' },
-};
-
 
 export default function NotificationsScreen({ navigation }: any) {
   const { colors, typography, spacing } = useTheme();
@@ -47,6 +36,16 @@ export default function NotificationsScreen({ navigation }: any) {
     markAllAsRead, 
     refresh 
   } = useNotifications();
+
+  const TYPE_CONFIG: Record<NotificationType, { icon: any; color: string }> = {
+    CASE_APPROVED: { icon: CheckCircle2, color: colors.success },
+    CASE_REJECTED: { icon: XCircle, color: colors.error },
+    DONATION_RECEIVED: { icon: Heart, color: colors.primary },
+    MILESTONE_REACHED: { icon: Heart, color: colors.accent },
+    MESSAGE_RECEIVED: { icon: MessageSquare, color: colors.primary },
+    IMPACT_ACHIEVED: { icon: Star, color: colors.accent },
+    SYSTEM: { icon: AlertCircle, color: colors.textSecondary },
+  };
 
   const handleNotificationPress = async (n: any) => {
     if (!n.is_read) {
@@ -73,8 +72,8 @@ export default function NotificationsScreen({ navigation }: any) {
         style={[
           styles.notificationItem,
           { 
-            backgroundColor: item.is_read ? 'transparent' : palette.navyLight + '40',
-            borderBottomColor: palette.navyLight 
+            backgroundColor: item.is_read ? colors.surface : colors.background,
+            borderBottomColor: colors.border 
           }
         ]}
         onPress={() => handleNotificationPress(item)}
@@ -86,20 +85,20 @@ export default function NotificationsScreen({ navigation }: any) {
 
         <View style={styles.content}>
           <View style={styles.headerRow}>
-            <Text style={[styles.title, { color: colors.textInverse, fontFamily: item.is_read ? typography.fontFamily.medium : typography.fontFamily.bold }]}>
+            <Text style={[styles.title, { color: colors.textPrimary, fontFamily: item.is_read ? typography.fontFamily.medium : typography.fontFamily.bold }]}>
               {item.title}
             </Text>
-            {!item.is_read && <View style={[styles.unreadDot, { backgroundColor: colors.accent }]} />}
+            {!item.is_read && <View style={[styles.unreadDot, { backgroundColor: colors.accent, borderColor: colors.surface }]} />}
           </View>
-          <Text style={[styles.message, { color: colors.textInverse, opacity: 0.7, fontFamily: typography.fontFamily.regular }]} numberOfLines={2}>
+          <Text style={[styles.message, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]} numberOfLines={2}>
             {item.message}
           </Text>
-          <Text style={[styles.time, { color: colors.accent, fontFamily: typography.fontFamily.medium, opacity: 0.8 }]}>
+          <Text style={[styles.time, { color: colors.accent, fontFamily: typography.fontFamily.medium }]}>
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
           </Text>
         </View>
 
-        <ChevronRight color={colors.textInverse} opacity={0.3} size={16} />
+        <ChevronRight color={colors.textSecondary} size={16} />
       </TouchableOpacity>
     );
   };
@@ -113,14 +112,14 @@ export default function NotificationsScreen({ navigation }: any) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.headerActions, { borderBottomColor: palette.navyLight }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.headerActions, { borderBottomColor: colors.border, backgroundColor: colors.surface }]}>
         <Text style={[styles.countText, { color: colors.textSecondary, fontFamily: typography.fontFamily.medium }]}>
-          {t('notifications.total', { count: notifications.length, defaultValue: `${notifications.length} Total Notifications` })}
+          {t('notifications.total', { count: notifications.length, defaultValue: `${notifications.length} Notifications` })}
         </Text>
         <TouchableOpacity onPress={markAllAsRead} activeOpacity={0.7}>
           <Text style={[styles.markReadBtn, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-            {t('notifications.markAllRead')}
+            {t('notifications.markAllRead', { defaultValue: 'Mark all as read' })}
           </Text>
         </TouchableOpacity>
       </View>
@@ -136,20 +135,19 @@ export default function NotificationsScreen({ navigation }: any) {
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <View style={[styles.emptyIconCircle, { backgroundColor: palette.navyLight }]}>
-              <Inbox color={colors.accent} size={48} opacity={0.5} />
+            <View style={[styles.emptyIconCircle, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Inbox color={colors.accent} size={40} />
             </View>
-            <Text style={[styles.emptyTitle, { color: colors.accent, fontFamily: typography.fontFamily.bold }]}>
-              {t('notifications.empty')}
+            <Text style={[styles.emptyTitle, { color: colors.textPrimary, fontFamily: typography.fontFamily.heading }]}>
+              {t('notifications.empty', { defaultValue: 'No Notifications' })}
             </Text>
             <Text style={[styles.emptySub, { color: colors.textSecondary, fontFamily: typography.fontFamily.regular }]}>
-              {t('notifications.emptyDesc')}
+              {t('notifications.emptyDesc', { defaultValue: 'You are all caught up! Updates regarding cases and contributions will appear here.' })}
             </Text>
-
           </View>
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
   },
   countText: { fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 },
@@ -169,56 +167,56 @@ const styles = StyleSheet.create({
   listContent: { flexGrow: 1, paddingBottom: 40 },
   notificationItem: {
     flexDirection: 'row',
-    padding: 20,
+    padding: 16,
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
     alignItems: 'flex-start',
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 14,
+    marginTop: 2,
   },
   content: { flex: 1, marginRight: 8 },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    marginBottom: 4,
   },
-  title: { fontSize: 16, lineHeight: 22 },
+  title: { fontSize: 15, lineHeight: 20 },
   unreadDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: '#0A0E1A',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1.5,
   },
   message: {
-    fontSize: 14,
-    lineHeight: 22,
-    marginBottom: 10,
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 6,
   },
-  time: { fontSize: 12 },
+  time: { fontSize: 11 },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 120,
+    paddingTop: 80,
     paddingHorizontal: 40,
   },
   emptyIconCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
-  emptyTitle: { fontSize: 22, marginBottom: 12 },
-  emptySub: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
+  emptyTitle: { fontSize: 18, marginBottom: 6, textAlign: 'center' },
+  emptySub: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
 });
-
-
